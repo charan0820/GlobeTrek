@@ -1,0 +1,158 @@
+[
+  {
+    "slug": "haveli-house",
+    "name": "Haveli House",
+    "city": "Jaipur",
+    "neighborhood": "Bani Park",
+    "description": "A fictional courtyard retreat inspired by Jaipur's quiet residential lanes. Slow breakfasts, shaded terraces, and a little room to unwind.",
+    "amenities": ["Courtyard", "Breakfast", "Wi-Fi"],
+    "image": "/images/jaipur.svg",
+    "imageCredit": "Original GlobeTrek typographic artwork, CC0. Fictional property; no hotel photograph.",
+    "roomTypes": [
+      {
+        "name": "Courtyard King",
+        "capacity": 2,
+        "basePrice": 480000,
+        "totalInventory": 4,
+        "amenities": ["King bed", "Courtyard view"]
+      },
+      {
+        "name": "Terrace Suite",
+        "capacity": 4,
+        "basePrice": 720000,
+        "totalInventory": 2,
+        "amenities": ["Private terrace", "Sitting area"]
+      }
+    ]
+  },
+  {
+    "slug": "pink-city-rooms",
+    "name": "Pink City Rooms",
+    "city": "Jaipur",
+    "neighborhood": "Civil Lines",
+    "description": "A fictional city hideaway with bright rooms and a relaxed roof terrace. A simple base for exploring the Pink City at your own pace.",
+    "amenities": ["Rooftop", "Wi-Fi", "Air conditioning"],
+    "image": "/images/jaipur.svg",
+    "imageCredit": "Original GlobeTrek typographic artwork, CC0. Fictional property; no hotel photograph.",
+    "roomTypes": [
+      {
+        "name": "City Double",
+        "capacity": 2,
+        "basePrice": 320000,
+        "totalInventory": 5,
+        "amenities": ["Double bed", "Desk"]
+      },
+      {
+        "name": "Family Room",
+        "capacity": 4,
+        "basePrice": 540000,
+        "totalInventory": 3,
+        "amenities": ["Two double beds", "Balcony"]
+      }
+    ]
+  },
+  {
+    "slug": "lake-and-light",
+    "name": "Lake & Light",
+    "city": "Udaipur",
+    "neighborhood": "Ambamata",
+    "description": "A fictional lakeside guesthouse with generous windows and unhurried mornings. A comfortable place to return after a day in the old city.",
+    "amenities": ["Lake views", "Breakfast", "Wi-Fi"],
+    "image": "/images/udaipur.svg",
+    "imageCredit": "Original GlobeTrek typographic artwork, CC0. Fictional property; no hotel photograph.",
+    "roomTypes": [
+      {
+        "name": "Lake Double",
+        "capacity": 2,
+        "basePrice": 610000,
+        "totalInventory": 4,
+        "amenities": ["Lake view", "Queen bed"]
+      },
+      {
+        "name": "Panorama Suite",
+        "capacity": 3,
+        "basePrice": 890000,
+        "totalInventory": 2,
+        "amenities": ["Balcony", "Sofa bed"]
+      }
+    ]
+  },
+  {
+    "slug": "old-town-courtyard",
+    "name": "Old Town Courtyard",
+    "city": "Udaipur",
+    "neighborhood": "Chandpole",
+    "description": "A fictional small stay tucked among Udaipur's winding streets. Shared courtyard seating and local breakfast make a gentle start to the day.",
+    "amenities": ["Courtyard", "Breakfast", "Air conditioning"],
+    "image": "/images/udaipur.svg",
+    "imageCredit": "Original GlobeTrek typographic artwork, CC0. Fictional property; no hotel photograph.",
+    "roomTypes": [
+      {
+        "name": "Heritage Double",
+        "capacity": 2,
+        "basePrice": 390000,
+        "totalInventory": 5,
+        "amenities": ["Queen bed", "Desk"]
+      },
+      {
+        "name": "Courtyard Suite",
+        "capacity": 4,
+        "basePrice": 650000,
+        "totalInventory": 2,
+        "amenities": ["Sitting area", "Two beds"]
+      }
+    ]
+  },
+  {
+    "slug": "pepper-and-palm",
+    "name": "Pepper & Palm",
+    "city": "Kochi",
+    "neighborhood": "Fort Kochi",
+    "description": "A fictional garden stay made for coastal afternoons. Shady verandas and breezy rooms offer an easy pause between walks around Fort Kochi.",
+    "amenities": ["Garden", "Breakfast", "Wi-Fi"],
+    "image": "/images/kochi.svg",
+    "imageCredit": "Original GlobeTrek typographic artwork, CC0. Fictional property; no hotel photograph.",
+    "roomTypes": [
+      {
+        "name": "Garden King",
+        "capacity": 2,
+        "basePrice": 450000,
+        "totalInventory": 4,
+        "amenities": ["King bed", "Garden view"]
+      },
+      {
+        "name": "Veranda Suite",
+        "capacity": 4,
+        "basePrice": 700000,
+        "totalInventory": 2,
+        "amenities": ["Veranda", "Sofa bed"]
+      }
+    ]
+  },
+  {
+    "slug": "harbour-house",
+    "name": "Harbour House",
+    "city": "Kochi",
+    "neighborhood": "Mattancherry",
+    "description": "A fictional waterfront base near the historic trading quarter. Comfortable rooms and a shared reading room keep things pleasantly simple.",
+    "amenities": ["Reading room", "Wi-Fi", "Air conditioning"],
+    "image": "/images/kochi.svg",
+    "imageCredit": "Original GlobeTrek typographic artwork, CC0. Fictional property; no hotel photograph.",
+    "roomTypes": [
+      {
+        "name": "Harbour Double",
+        "capacity": 2,
+        "basePrice": 360000,
+        "totalInventory": 5,
+        "amenities": ["Queen bed", "Desk"]
+      },
+      {
+        "name": "Harbour Family",
+        "capacity": 4,
+        "basePrice": 580000,
+        "totalInventory": 3,
+        "amenities": ["Two beds", "Sitting area"]
+      }
+    ]
+  }
+]

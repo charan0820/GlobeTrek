@@ -1,0 +1,8 @@
+GlobeTrek destination artwork
+
+jaipur.svg, udaipur.svg and kochi.svg are original typographic artwork prepared
+for this project. They depict destination names, not actual hotel properties.
+To the extent copyright applies, this artwork is dedicated to the public domain
+under CC0 1.0 Universal: https://creativecommons.org/publicdomain/zero/1.0/
+
+System fonts are rendered by the viewer and are not distributed in these files.

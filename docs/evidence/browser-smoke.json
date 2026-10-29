@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "browser": "Edge headless",
+  "viewports": [
+    "1440x1000",
+    "390x844"
+  ],
+  "scenarios": [
+    "catalog",
+    "filter",
+    "empty result",
+    "register",
+    "availability",
+    "reserve",
+    "history",
+    "cancel",
+    "logout",
+    "login",
+    "deep-link refresh",
+    "mobile catalog/detail",
+    "no horizontal overflow"
+  ],
+  "pageErrors": []
+}

@@ -1,0 +1,22 @@
+# Configuration only. Creating or publishing a service requires user approval.
+services:
+  - type: web
+    name: globetrek
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build && npm prune --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.14.0
+      - key: MONGOMS_DISABLE_POSTINSTALL
+        value: "1"
+      - key: MONGODB_URI
+        sync: false
+      - key: APP_ORIGIN
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true

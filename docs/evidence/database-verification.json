@@ -1,0 +1,171 @@
+{
+  "valid": true,
+  "committedBookings": 1,
+  "nights": [
+    {
+      "date": "2026-10-29T00:00:00.000Z",
+      "total": 1,
+      "booked": 1
+    },
+    {
+      "date": "2026-10-30T00:00:00.000Z",
+      "total": 1,
+      "booked": 1
+    }
+  ],
+  "inventoryExplain": {
+    "explainVersion": "1",
+    "queryPlanner": {
+      "namespace": "globetrek_loadtest.inventories",
+      "indexFilterSet": false,
+      "parsedQuery": {
+        "$and": [
+          {
+            "date": {
+              "$eq": "2026-10-29T00:00:00.000Z"
+            }
+          },
+          {
+            "roomTypeId": {
+              "$eq": "6ae1910cd2d51250ab6f52e1"
+            }
+          }
+        ]
+      },
+      "queryHash": "98766CC7",
+      "planCacheKey": "315B552B",
+      "maxIndexedOrSolutionsReached": false,
+      "maxIndexedAndSolutionsReached": false,
+      "maxScansToExplodeReached": false,
+      "winningPlan": {
+        "stage": "FETCH",
+        "inputStage": {
+          "stage": "IXSCAN",
+          "keyPattern": {
+            "roomTypeId": 1,
+            "date": 1
+          },
+          "indexName": "roomTypeId_1_date_1",
+          "isMultiKey": false,
+          "multiKeyPaths": {
+            "roomTypeId": [],
+            "date": []
+          },
+          "isUnique": true,
+          "isSparse": false,
+          "isPartial": false,
+          "indexVersion": 2,
+          "direction": "forward",
+          "indexBounds": {
+            "roomTypeId": [
+              "[ObjectId('6ae1910cd2d51250ab6f52e1'), ObjectId('6ae1910cd2d51250ab6f52e1')]"
+            ],
+            "date": [
+              "[new Date(1793232000000), new Date(1793232000000)]"
+            ]
+          }
+        }
+      },
+      "rejectedPlans": []
+    },
+    "executionStats": {
+      "executionSuccess": true,
+      "nReturned": 1,
+      "executionTimeMillis": 0,
+      "totalKeysExamined": 1,
+      "totalDocsExamined": 1,
+      "executionStages": {
+        "stage": "FETCH",
+        "nReturned": 1,
+        "executionTimeMillisEstimate": 0,
+        "works": 2,
+        "advanced": 1,
+        "needTime": 0,
+        "needYield": 0,
+        "saveState": 0,
+        "restoreState": 0,
+        "isEOF": 1,
+        "docsExamined": 1,
+        "alreadyHasObj": 0,
+        "inputStage": {
+          "stage": "IXSCAN",
+          "nReturned": 1,
+          "executionTimeMillisEstimate": 0,
+          "works": 2,
+          "advanced": 1,
+          "needTime": 0,
+          "needYield": 0,
+          "saveState": 0,
+          "restoreState": 0,
+          "isEOF": 1,
+          "keyPattern": {
+            "roomTypeId": 1,
+            "date": 1
+          },
+          "indexName": "roomTypeId_1_date_1",
+          "isMultiKey": false,
+          "multiKeyPaths": {
+            "roomTypeId": [],
+            "date": []
+          },
+          "isUnique": true,
+          "isSparse": false,
+          "isPartial": false,
+          "indexVersion": 2,
+          "direction": "forward",
+          "indexBounds": {
+            "roomTypeId": [
+              "[ObjectId('6ae1910cd2d51250ab6f52e1'), ObjectId('6ae1910cd2d51250ab6f52e1')]"
+            ],
+            "date": [
+              "[new Date(1793232000000), new Date(1793232000000)]"
+            ]
+          },
+          "keysExamined": 1,
+          "seeks": 1,
+          "dupsTested": 0,
+          "dupsDropped": 0
+        }
+      },
+      "allPlansExecution": []
+    },
+    "command": {
+      "find": "inventories",
+      "filter": {
+        "roomTypeId": "6ae1910cd2d51250ab6f52e1",
+        "date": "2026-10-29T00:00:00.000Z"
+      },
+      "$db": "globetrek_loadtest"
+    },
+    "serverInfo": {
+      "host": "Cherry",
+      "port": 65467,
+      "version": "7.0.14",
+      "gitVersion": "ce59cfc6a3c5e5c067dca0d30697edd68d4f5188"
+    },
+    "serverParameters": {
+      "internalQueryFacetBufferSizeBytes": 104857600,
+      "internalQueryFacetMaxOutputDocSizeBytes": 104857600,
+      "internalLookupStageIntermediateDocumentMaxSizeBytes": 104857600,
+      "internalDocumentSourceGroupMaxMemoryBytes": 104857600,
+      "internalQueryMaxBlockingSortMemoryUsageBytes": 104857600,
+      "internalQueryProhibitBlockingMergeOnMongoS": 0,
+      "internalQueryMaxAddToSetBytes": 104857600,
+      "internalDocumentSourceSetWindowFieldsMaxMemoryBytes": 104857600,
+      "internalQueryFrameworkControl": "trySbeRestricted"
+    },
+    "ok": 1,
+    "$clusterTime": {
+      "clusterTime": {
+        "$timestamp": "7701596421585109013"
+      },
+      "signature": {
+        "hash": "AAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+        "keyId": 0
+      }
+    },
+    "operationTime": {
+      "$timestamp": "7701596421585109013"
+    }
+  }
+}

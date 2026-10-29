@@ -1,0 +1,9 @@
+node_modules
+client/dist
+artifacts
+.cache
+docs/evidence
+package-lock.json
+*.docx
+.env*
+Context-GlobeTrek.md

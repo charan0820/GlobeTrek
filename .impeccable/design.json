@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-28T06:43:08.023Z",
+  "title": "Design System: GlobeTrek",
+  "extensions": {
+    "typographyMeta": {
+      "display": {
+        "displayName": "Editorial heading",
+        "purpose": "Observed Georgia implementation; not a custom-font brand commitment."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-background",
+        "value": "background 0.15s",
+        "purpose": "Button hover feedback; disabled for reduced motion."
+      },
+      {
+        "name": "artwork-hover",
+        "value": "transform 0.3s",
+        "purpose": "Subtle artwork zoom; disabled for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone-max",
+        "value": "680px"
+      },
+      {
+        "name": "tablet-max",
+        "value": "1000px"
+      },
+      {
+        "name": "wide-min",
+        "value": "1600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary reservation and search action.",
+      "html": "<button class=\"ds-primary\">Check availability</button>",
+      "css": ".ds-primary{font:600 13px Arial,sans-serif;background:var(--green,#245746);color:white;padding:13px 19px;min-height:46px;border:1px solid transparent;border-radius:6px;cursor:pointer;transition:background .15s}.ds-primary:hover{background:#173e31}.ds-primary:focus-visible{outline:3px solid var(--rust,#a4462e);outline-offset:4px}.ds-primary:disabled{opacity:.6;cursor:wait}"
+    },
+    {
+      "name": "Secondary button",
+      "kind": "button",
+      "description": "Clear or retry action.",
+      "html": "<button class=\"ds-secondary\">Clear filters</button>",
+      "css": ".ds-secondary{font:600 13px Arial,sans-serif;background:transparent;color:var(--green,#245746);padding:13px 19px;min-height:46px;border:1px solid var(--green,#245746);border-radius:6px;cursor:pointer}.ds-secondary:hover{background:#e4e9dc}.ds-secondary:focus-visible{outline:3px solid var(--rust,#a4462e);outline-offset:4px}"
+    },
+    {
+      "name": "Labeled field",
+      "kind": "input",
+      "description": "Persistent label and explicit focus.",
+      "html": "<label class=\"ds-label\">Email address<input class=\"ds-input\" type=\"email\" autocomplete=\"email\"/></label>",
+      "css": ".ds-label{display:flex;flex-direction:column;gap:9px;font:600 13px Arial,sans-serif;color:var(--ink,#183b32)}.ds-input{font:14px Arial,sans-serif;min-height:46px;padding:12px;color:var(--ink,#183b32);background:white;border:1px solid var(--line,#d8ddd2);border-radius:6px}.ds-input:focus-visible{outline:3px solid var(--rust,#a4462e);outline-offset:4px}.ds-input:disabled{background:#eeeee8}"
+    },
+    {
+      "name": "Booking status",
+      "kind": "chip",
+      "description": "Text communicates status alongside color.",
+      "html": "<span class=\"ds-status\">Confirmed</span>",
+      "css": ".ds-status{display:inline-block;font:10px Arial,sans-serif;background:#dfebd8;color:#245039;padding:5px 9px;border-radius:4px}"
+    },
+    {
+      "name": "Catalog card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "White surface with a thin border and editorial title.",
+      "html": "<article class=\"ds-card\"><h3>Haveli House</h3><p>Fictional demo stay in Jaipur</p><a href=\"#\">View stay</a></article>",
+      "css": ".ds-card{background:white;color:var(--ink,#183b32);border:1px solid var(--line,#d8ddd2);border-radius:14px;padding:20px;font:13px Arial,sans-serif}.ds-card h3{font:400 25px Georgia,serif;margin:10px 0}.ds-card p{color:var(--muted,#526259);line-height:1.6}.ds-card a{color:inherit;text-underline-offset:4px}.ds-card a:hover{text-decoration-thickness:2px}.ds-card a:focus-visible{outline:3px solid var(--rust,#a4462e);outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A place to pause",
+    "overview": "A travel journal applied to a working hotel reservation application. Warm paper surrounds forest-green controls and local destination typography. The catalog leads to an availability form and explicit demo reservation; decorative material does not imply that fictional properties are real.",
+    "keyCharacteristics": [
+      "Editorial serif headlines with clear sans-serif controls.",
+      "Quiet surfaces separated by thin borders.",
+      "Local destination artwork and visible demo labels."
+    ],
+    "rules": [],
+    "dos": [
+      "Do preserve persistent form labels, visible focus, and explicit loading/error states.",
+      "Do identify fictional stays and simulated payments.",
+      "Do respect reduced-motion preferences; content must remain visible without animation."
+    ],
+    "donts": [
+      "Don't present destination artwork as a hotel photograph.",
+      "Don't display a previous quote as current after its input changes."
+    ]
+  }
+}

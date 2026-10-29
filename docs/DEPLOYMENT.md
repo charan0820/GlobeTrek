@@ -1,0 +1,15 @@
+# Deployment checklist for an approved demo
+
+The application has configuration ready for Render and Atlas. No service, GitHub repository, or deployment is created by these files. Obtain explicit user permission for access, account linking, network rules, commits, pushes, and publication.
+
+1. Review the local app, tests, generated journal, and dependency audit with the user. Choose a repository name under `charan0820`; ask before creating it, committing, or pushing. Configure Git identity only with permission.
+2. With approval, create an Atlas free replica-set cluster and a dedicated application database user restricted to the application database. Store its URI only in local/hosting secrets. Restrict Atlas network access to approved addresses; do not silently allow all IPs. Choose an appropriate nearby region.
+3. Against the selected persistent database, run the additive seed script once with the approved connection. Verify six hotels, twelve room types, inventory, and indexes. Do not run integration/load tests against it.
+4. Create one Render Node web service using the root build command `npm ci --include=dev && npm run build && npm prune --omit=dev` and start command `npm start`. Explicitly include development tools during the build because NODE_ENV=production would otherwise omit Vite; prune them after building. Set MONGOMS_DISABLE_POSTINSTALL=1 to avoid downloading a test database for hosting. `render.yaml` describes these settings. Review permissions before linking GitHub.
+5. Set `NODE_ENV=production`, the Atlas `MONGODB_URI`, a random `JWT_SECRET`, and `APP_ORIGIN=https://<actual-service-host>`. Do not guess the actual deployment URL. Render supplies PORT. The service serves React and `/api` from one origin.
+6. Smoke-test health, registration, login, browse, availability, booking, history, cancellation, logout, and deep-link refresh. Verify Secure/HTTP-only/SameSite cookies and no private cache headers. Check redacted logs.
+7. Record the real URL, deployment date, cold-start behavior, and any limitations in the progress record. Free service sleep is expected; do not promise continuous availability.
+
+## Ongoing operation and rollback
+
+Run the additive inventory seed daily to maintain the horizon; approve a scheduler separately before creating one. Establish backups, restore procedures, and alerts before accepting real customers. Rotate compromised secrets and invalidate sessions. Roll back application releases through the host; never delete production inventory to undo a deploy. Review database migrations separately because application rollback cannot undo a data migration.
