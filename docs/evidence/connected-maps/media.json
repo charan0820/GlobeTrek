@@ -1,0 +1,14 @@
+{
+  "observedRequests": 289,
+  "responses": {
+    "commons.wikimedia.org 200": 154,
+    "thumb.wikimedia.org 200": 130,
+    "upload.wikimedia.org 200": 4,
+    "live.staticflickr.com 200": 1
+  },
+  "coverage": 120,
+  "reviewed": 120,
+  "deliveredImageBytes": 14403178,
+  "scope": "Instrumented requests only; first stopped import and web research calls were not fully instrumented. No runtime image-provider requests.",
+  "noncommercialImage": "gr-nea-chora-beach"
+}

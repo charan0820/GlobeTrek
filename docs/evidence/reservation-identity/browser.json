@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "scope": "Read-only browser response fixtures; no accounts or reservations created",
+  "checks": [
+    "Same-date same-price confirmed/cancelled records have distinct references",
+    "Country, kind, destination-local dates, cities and selection counts shown",
+    "Expandable immutable item details include room quantities",
+    "Standalone tour keeps product name and currency",
+    "Both themes and narrow layouts",
+    "Selected axe checks"
+  ],
+  "errors": [],
+  "accessibility": [
+    {
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "theme": "dark",
+      "violations": []
+    }
+  ]
+}

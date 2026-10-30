@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { travelModels, geographicPoint } from "./travel.js";
 const { Schema, model } = mongoose;
 const integer = {
   type: Number,
@@ -32,6 +33,15 @@ const hotelSchema = new Schema(
     amenities: [String],
     image: String,
     imageCredit: String,
+    country: { type: String, default: "IN", index: true },
+    cityId: String,
+    currency: { type: String, default: "INR" },
+    timezone: { type: String, default: "Asia/Kolkata" },
+    lat: Number,
+    lng: Number,
+    demo: { type: Boolean, default: true },
+    inventoryThrough: String,
+    location: { type: geographicPoint, default: undefined },
     roomTypes: [roomSchema],
     minPrice: integer,
   },
@@ -39,12 +49,14 @@ const hotelSchema = new Schema(
 );
 hotelSchema.index({ city: 1, minPrice: 1 });
 hotelSchema.index({ name: 1 });
+hotelSchema.index({ location: "2dsphere" });
 const inventorySchema = new Schema({
   hotel: { type: Schema.Types.ObjectId, ref: "Hotel", required: true },
   roomTypeId: { type: Schema.Types.ObjectId, required: true },
   date: { type: Date, required: true },
   total: integer,
   booked: { ...integer, default: 0 },
+  held: { ...integer, default: 0 },
 });
 inventorySchema.index({ roomTypeId: 1, date: 1 }, { unique: true });
 const bookingSchema = new Schema(
@@ -89,5 +101,6 @@ export async function ensureIndexes() {
     Hotel.init(),
     Inventory.init(),
     Booking.init(),
+    ...travelModels.map((m) => m.init()),
   ]);
 }

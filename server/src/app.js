@@ -14,6 +14,16 @@ import { authenticate, mutationOrigin } from "./middleware/security.js";
 import { authController } from "./controllers/auth.js";
 import { hotelsController } from "./controllers/hotels.js";
 import { bookingsController as bookings } from "./controllers/bookings.js";
+import { travelController } from "./controllers/travel.js";
+import {
+  catalogInput,
+  departureInput,
+  tripInput,
+  tripUpdate,
+  quoteInput,
+  holdInput,
+  departureLookup,
+} from "./validators/travel.js";
 import {
   validate,
   registerInput,
@@ -28,6 +38,7 @@ export function createApp(
     logLevel = process.env.LOG_LEVEL || "info",
     authLimit = 20,
     apiLimit = 300,
+    reservationLimit = 30,
   } = {},
 ) {
   const app = express();
@@ -40,8 +51,9 @@ export function createApp(
         directives: {
           "img-src": ["'self'", "data:"],
           "script-src": ["'self'"],
-          "style-src": ["'self'"],
-          "connect-src": ["'self'"],
+          "style-src": ["'self'", "'unsafe-inline'"],
+          "connect-src": ["'self'", "https://tiles.openfreemap.org"],
+          "worker-src": ["'self'"],
         },
       },
     }),
@@ -84,7 +96,7 @@ export function createApp(
     }),
   );
   app.use(
-    express.json({ limit: "16kb" }),
+    express.json({ limit: "64kb" }),
     cookieParser(),
     mutationOrigin(config.origin),
   );
@@ -138,6 +150,70 @@ export function createApp(
   app.get("/api/users/me/bookings", requireAuth, bookings.list);
   app.get("/api/bookings/:id", requireAuth, bookings.detail);
   app.delete("/api/bookings/:id", requireAuth, bookings.cancel);
+  const travel = travelController(config);
+  const reserveLimit = rateLimit({
+    windowMs: 60000,
+    limit: reservationLimit,
+    handler: (_req, _res, next) =>
+      next(
+        new AppError(
+          429,
+          "RESERVATION_RATE_LIMITED",
+          "Too many reservation attempts. Try again shortly.",
+        ),
+      ),
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+  });
+  app.get("/api/countries", travel.countries);
+  app.get(
+    "/api/tour-departures",
+    validate(departureLookup, "query"),
+    travel.departureLookup,
+  );
+  app.get("/api/countries/:code", travel.country);
+  app.get("/api/search", travel.search);
+  app.get("/api/catalog", validate(catalogInput, "query"), travel.catalog);
+  app.get(
+    "/api/catalog/:kind/:id/departures",
+    validate(departureInput, "query"),
+    travel.departures,
+  );
+  app.get("/api/catalog/:kind/:id", travel.detail);
+  app.get("/api/trips", requireAuth, travel.listTrips);
+  app.post("/api/trips", requireAuth, validate(tripInput), travel.createTrip);
+  app.get("/api/trips/:id", requireAuth, travel.trip);
+  app.patch(
+    "/api/trips/:id",
+    requireAuth,
+    validate(tripUpdate),
+    travel.saveTrip,
+  );
+  app.delete("/api/trips/:id", requireAuth, travel.deleteTrip);
+  app.post(
+    "/api/quotes",
+    requireAuth,
+    reserveLimit,
+    validate(quoteInput),
+    travel.quote,
+  );
+  app.get("/api/quotes/:id", requireAuth, travel.quoteDetail);
+  app.post(
+    "/api/reservations",
+    requireAuth,
+    reserveLimit,
+    validate(holdInput),
+    travel.hold,
+  );
+  app.get("/api/reservations", requireAuth, travel.reservations);
+  app.get("/api/reservations/:id", requireAuth, travel.reservation);
+  app.post(
+    "/api/reservations/:id/confirm",
+    requireAuth,
+    reserveLimit,
+    travel.confirm,
+  );
+  app.delete("/api/reservations/:id", requireAuth, travel.cancel);
   app.use("/api", (_req, _res, next) =>
     next(new AppError(404, "NOT_FOUND", "API endpoint not found.")),
   );

@@ -2,43 +2,61 @@
 
 ```mermaid
 flowchart LR
-  Browser[React browser] -->|Same origin JSON and cookie| API[Express middleware and controllers]
-  API --> Auth[Authentication and ownership]
-  API --> Cache[Bounded catalog cache]
-  API --> Booking[Booking service]
-  Booking -->|Transaction| DB[(MongoDB replica set)]
-  Cache --> DB
-  Auth --> DB
+  Browser[React and Vite] -->|same-origin JSON and HttpOnly cookie| HTTP[Express controllers and validation]
+  HTTP --> Trips[Owned draft service and revisions]
+  HTTP --> Quote[Server quote and currency policy]
+  HTTP --> Reservation[Reservation transaction service]
+  HTTP --> Catalog[Catalog and bounded TTL cache]
+  Trips --> DB[(MongoDB replica set)]
+  Quote --> DB
+  Catalog --> DB
+  Reservation -->|conditional held/booked writes| DB
+  Recovery[Startup/request/awake reconciliation] --> Reservation
+  ECB[Optional ECB reference feed] --> Rates[Dated decimal rate snapshots]
+  Rates --> Quote
+  Browser --> Geo[Lazy globe and map views]
+  Geo --> Tiles[OpenFreeMap tiles]
 ```
 
-## Data choices
+## State ownership
 
-Users and bookings grow independently and are separate collections. Room types are small, bounded, and read with their hotel, so they are embedded. Inventory is referenced separately because it grows per room type per date and receives frequent conditional writes. Bookings snapshot names and prices so later catalog changes do not rewrite reservation history.
+React Query owns remote state; the planner reducer owns draft edits. Public filters live in URL parameters. Guest drafts and browser backups are versioned locally; private trip data is stored by owner and revision. Authentication cancels outstanding queries and removes other cached data while preserving the observed session query. New-session data must not expose the previous user's cache.
 
-Unique indexes protect `(roomTypeId,date)`, `(user,idempotencyKey)`, email, and hotel slug. A `(user,createdAt)` index supports booking history. The city/price index helps filtered sorting; literal case-insensitive substring search can scan and is acceptable for six hotels. Do not claim it is index-backed full-text search.
+Geographic engines consume the same entity IDs as lists and day stops. A route is derived, not a second itinerary model. Supported countries also have button/list access; geographic rendering failure does not block planning.
 
-## Reservation transaction
+## Domain and indexes
 
-1. Normalize and validate the request. Hash the parsed payload using SHA-256. Check for an existing retry key.
-2. Begin a transaction and recheck the key inside its snapshot.
-3. Read the selected hotel/room; validate capacity and dates. Compute the price with integer arithmetic.
-4. For each night, update only when `booked + requested <= total`. Increment `booked`. Missing inventory or no matching conditional update aborts all previous increments.
-5. Insert the confirmed booking and commit with majority write concern. The driver handles transient transaction retries. A duplicate-key race rereads the winning booking and checks its fingerprint.
+Tour products describe experiences; departures own seat counts and UTC schedule instants. Hotels embed room types; each local night owns stock. Packages reference these same resources and add departure capacity. Templates are published versions copied into independent drafts.
 
-Availability before booking is a hint: two users can both see the last room. The guarded write inside the transaction is the authority. An overlap query alone cannot prevent concurrent read-then-write races. Overlapping bookings by the same user are allowed because travelers may book rooms for others; inventory, rather than personal schedule, is the constraint.
+Unique indexes protect user email, room/date, tour/date, package/date and user/idempotency key. Partial unique reservation indexes permit one pending hold/account and one pending/confirmed reservation/trip. Geographic points use 2dsphere indexes. Quote cleanup uses a TTL index; capacity records and pending reservations are never TTL-deleted.
 
-## Cancellation transaction
+## Reservation lifecycle
 
-Find the booking by both its ID and logged-in owner. If already cancelled, return it. Otherwise decrement each recorded night with a nonnegative guard and persist cancelled status in the same transaction. Concurrent cancellations conflict on the booking/inventory documents; a retry observes the cancelled state. Missing inventory aborts cancellation rather than silently corrupting counts.
+1. Validate owned source, revision, country, party, local dates, overlapping stays/tours and resolved departures.
+2. Create a ten-minute server-priced quote with line items, aggregated demands, currency/fee/estimate snapshots and earliest start. No stock changes.
+3. Hold: reconcile due holds, reread the owned quote and trip inside a transaction, check expiry/revision and write a trip fence against concurrent edits/deletion.
+4. Sort demand keys and reserve only if booked + held + requested <= total. Missing stock fails closed. Insert the pending snapshot in the same transaction. Any failure rolls everything back.
+5. Confirm before the persisted deadline: held decreases and booked increases together. Deadlines are checked again on driver transaction retries. Confirmation replay does not increment twice.
+6. Expiry releases held quantities; confirmed cancellation releases booked quantities before the earliest start. Status and counters change transactionally. Repeated workers/cancellations cannot release twice.
 
-## Complexity and cache
+The browser retains one key for retries of the same quote. Changed payloads conflict. A lost response is reconciled through reservation status or the same-key retry. No external network side effects occur inside a retried database transaction.
 
-For N stay nights, date generation is O(N) space/time and booking performs N conditional writes; N is bounded at 14. The cache uses a JavaScript Map for average O(1) get/set and deterministic oldest-insertion eviction. It stores at most 100 normalized query results for 60 seconds. It is neither shared across instances nor a durable source of truth. Private data and availability bypass it.
+## Time money and content
 
-## Security and operational limits
+Trip days are inclusive civil dates; hotel checkout is exclusive. Hotel stock dates label local nights. Tour instants are UTC plus IANA timezone; ambiguous/nonexistent local schedule times are rejected. Money uses explicit minor-unit metadata and safe integer boundaries. Decimal arithmetic handles reference-rate conversion and rounding. INR estimates never determine billed amounts. The 12% service fee is educational, not a claim about local tax law.
 
-Bcrypt cost 12 hashes passwords; JWT signs a two-hour session, not encrypted user data. The HTTP-only cookie reduces token exposure to JavaScript. SameSite cookies and exact Origin checks protect mutation requests; neither prevents XSS, so the application also uses React's escaping and Helmet's security headers. A database token version makes logout effective for previously issued tokens, at the cost of one user lookup per authenticated request. Logout signs out all devices.
+Stable import IDs, published content versions, insert-only capacity and generation horizons preserve bookings. Historical stock holes are not regenerated as empty capacity. Daily extension maintains future stock while awake; request/startup expiry recovery supplements the periodic worker on sleeping hosting.
 
-The production process trusts one upstream proxy for Render; revisit that setting on other infrastructure. Structured logs contain only request ID, method, route template, status, and duration. They are a source for request counts; there is no public metrics endpoint or guaranteed long-term log retention. No secrets, query strings, or request bodies are logged.
+## Cache complexity and limits
 
-Production work beyond this MVP includes verified email/recovery, audited backups/restores, persistent monitoring, staff operations, shared rate limiting, rolling inventory scheduling, payment reconciliation, accessibility review, and higher-volume capacity testing. No infrastructure is provisioned automatically.
+The catalog Map holds at most 100 normalized query results for 60 seconds with deterministic oldest-entry eviction. Age headers preserve the original freshness budget. Availability, drafts, quotes and reservations bypass public caching. The cache is per-process and disposable.
+
+For R resource demands, aggregation uses a Map, sorting costs O(R log R), and transaction work is O(R) sequential database writes. Trips and stop counts are bounded. Catalogs are small editorial datasets; geographic filtering is indexed, name search is escaped, results are paginated and sorting is allowlisted. No Redis, search cluster or microservices are required here.
+
+## Security and operational boundaries
+
+Bcrypt cost 12; expiring JWT in HttpOnly/SameSite cookie (Secure in production); exact mutation-Origin validation; ownership checks; authentication/reservation/general rate limits; request IDs; explicit redacted log fields. Logout invalidates all issued tokens through the user's token version. CSP permits only the map provider connections needed by the bundled worker and retains same-origin script restrictions.
+
+Free hosting may sleep. Cleanup is bounded and delayed while idle; late confirmation is still rejected. This demo has no continuous-worker SLA, live payment processor, supplier guarantees or production customer data. Application rollback does not undo data migrations or justify resetting inventory.
+
+Legacy hotel-only bookings keep original IDs, retry hashes, snapshots and cancellation behavior. New UI reservations use the shared quote/hold lifecycle. Legacy listings remain India-only and retain their historical date/room limits.

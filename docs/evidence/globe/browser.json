@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": [
+    "Restored local boundary file renders the globe",
+    "Country selection remains connected",
+    "Invalid JSON and temporary failure recover with bounded retries",
+    "Persistent failure preserves country list and explicit retry recovers"
+  ],
+  "errors": []
+}

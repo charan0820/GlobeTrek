@@ -1,5 +1,7 @@
 # GlobeTrek interview practice
 
+For the expanded travel planner, also read [TRAVEL-LEARNING.md](TRAVEL-LEARNING.md) and [RELEASE-LEARNING.md](RELEASE-LEARNING.md). They add questions about departures/packages, shared inventory, holds/expiry, draft conflicts, currency/timezones, WebGL fallback and measured evidence. Earlier hotel-only examples below remain foundation exercises.
+
 Use these questions to practice explanation, not memorization. A strong answer follows a concrete request, points to the implementation, cites test evidence, and names a tradeoff. Read the test/performance record before using any numerical claim.
 
 ## Project ownership and scope

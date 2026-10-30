@@ -25,7 +25,10 @@ async function selection(hotelId, input, session) {
     hotel,
     room,
     dates,
-    price: calculatePrice(room.basePrice, dates.length, input.rooms),
+    price: {
+      ...calculatePrice(room.basePrice, dates.length, input.rooms),
+      currency: hotel.currency || "INR",
+    },
   };
 }
 export async function availability(hotelId, input) {
@@ -36,7 +39,7 @@ export async function availability(hotelId, input) {
   }).lean();
   const remaining =
     inventory.length === dates.length
-      ? Math.min(...inventory.map((i) => i.total - i.booked))
+      ? Math.min(...inventory.map((i) => i.total - i.booked - (i.held || 0)))
       : 0;
   return {
     available: remaining >= input.rooms,
@@ -81,7 +84,12 @@ export async function reserve(userId, input, key) {
             {
               roomTypeId: room._id,
               date,
-              $expr: { $lte: [{ $add: ["$booked", input.rooms] }, "$total"] },
+              $expr: {
+                $lte: [
+                  { $add: ["$booked", { $ifNull: ["$held", 0] }, input.rooms] },
+                  "$total",
+                ],
+              },
             },
             { $inc: { booked: input.rooms } },
             { session },

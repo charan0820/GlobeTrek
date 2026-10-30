@@ -29,11 +29,12 @@ export async function seed({ days = 90, today = utcToday() } = {}) {
         },
       })),
     );
-    await Inventory.bulkWrite(operations, { ordered: true });
+    if (operations.length)
+      await Inventory.bulkWrite(operations, { ordered: true });
     hotels.push(hotel);
   }
   const orphan = await Inventory.findOne({
-    hotel: { $nin: hotels.map((h) => h._id) },
+    hotel: { $nin: await Hotel.distinct("_id") },
   });
   if (orphan)
     throw new Error(

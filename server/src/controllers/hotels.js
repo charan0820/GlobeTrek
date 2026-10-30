@@ -3,6 +3,7 @@ import { id } from "../validators/index.js";
 import { missing } from "../utils/errors.js";
 import { TtlCache } from "../utils/cache.js";
 import { availability } from "../services/booking.js";
+import { reconcileExpired } from "../services/reservations.js";
 export function hotelsController({ cacheEnabled }) {
   const cache = new TtlCache();
   return {
@@ -11,8 +12,12 @@ export function hotelsController({ cacheEnabled }) {
       const key = JSON.stringify(req.validated);
       const cached = cacheEnabled && cache.get(key);
       res.set("Cache-Control", "public, max-age=60");
-      if (cached) return res.set("X-Cache", "HIT").json(cached);
-      const filter = {};
+      if (cached)
+        return res
+          .set("X-Cache", "HIT")
+          .set("Age", String(Math.floor((Date.now() - cached.at) / 1000)))
+          .json(cached.body);
+      const filter = { country: "IN" }; // Legacy catalog contract; global discovery uses /api/catalog.
       if (city) filter.city = city;
       if (minCapacity !== undefined) {
         filter["roomTypes.capacity"] = { $gte: minCapacity };
@@ -40,7 +45,7 @@ export function hotelsController({ cacheEnabled }) {
         data,
         meta: { page, limit, total, pages: Math.ceil(total / limit) },
       };
-      if (cacheEnabled) cache.set(key, response);
+      if (cacheEnabled) cache.set(key, { body: response, at: Date.now() });
       res.set("X-Cache", cacheEnabled ? "MISS" : "DISABLED").json(response);
     },
     detail: async (req, res) => {
@@ -48,10 +53,12 @@ export function hotelsController({ cacheEnabled }) {
       if (!hotel) throw missing("Hotel");
       res.json({ success: true, data: hotel });
     },
-    availability: async (req, res) =>
-      res.json({
+    availability: async (req, res) => {
+      await reconcileExpired();
+      return res.json({
         success: true,
         data: await availability(id.parse(req.params.id), req.validated),
-      }),
+      });
+    },
   };
 }

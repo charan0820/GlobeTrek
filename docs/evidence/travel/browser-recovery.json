@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "checks": [
+    "offline autosave survives reload and explicit recovery",
+    "stale tab cannot overwrite another tab and can save a copy",
+    "authored calendar closes with Escape and restores focus",
+    "a lost hold response is retried with the original key",
+    "fixed package uses a separate review and reservation journey",
+    "template copies are editable and do not mutate their source",
+    "draft copy and deletion preserve the original",
+    "country filters, clear and browser navigation remain synchronized",
+    "map-provider and WebGL failures leave accessible discovery usable"
+  ],
+  "errors": [],
+  "accessibility": [
+    {
+      "name": "planner-conflict-recovered",
+      "violations": []
+    },
+    {
+      "name": "calendar-dialog",
+      "violations": []
+    },
+    {
+      "name": "planner-mobile",
+      "violations": []
+    }
+  ],
+  "usage": {
+    "local-assets": {
+      "responses": 113,
+      "statuses": {
+        "200": 113
+      }
+    },
+    "application-api": {
+      "responses": 54,
+      "statuses": {
+        "200": 48,
+        "201": 5,
+        "409": 1
+      }
+    },
+    "tiles.openfreemap.org": {
+      "responses": 74,
+      "statuses": {
+        "200": 74
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "profile": "product-admin",
+  "sourceRoots": ["client/src"],
+  "locale": "en-IN",
+  "canonicalMap": "UX-CONTRACT.md",
+  "requiredCapabilities": ["Select/Listbox", "Date", "Form", "Scrollbar", "CRUD"],
+  "ownership": { "Select/Listbox": "native", "Date": "authored" },
+  "commands": { "unit": "npm test", "build": "npm run build", "lint": "npm run lint" },
+  "evidence": { "crudFullFlow": "scripts/browser-travel-smoke.mjs", "failurePaths": "server/tests/travel.test.js" }
+}

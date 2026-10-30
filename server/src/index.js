@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { configuration } from "./config.js";
 import { createApp } from "./app.js";
 import { ensureIndexes } from "./models/index.js";
+import { startMaintenance } from "./services/maintenance.js";
 const config = configuration();
 await mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 10000 });
 const hello = await mongoose.connection.db.admin().command({ hello: 1 });
@@ -10,12 +11,14 @@ if (!hello.setName)
     "MongoDB must run as a replica set; transactions are required.",
   );
 await ensureIndexes();
+const stopMaintenance = startMaintenance();
 const server = createApp(config).listen(config.port, "0.0.0.0", () =>
   console.log(`GlobeTrek listening on port ${config.port}`),
 );
 for (const signal of ["SIGINT", "SIGTERM"])
   process.on(signal, () => {
     server.close(async () => {
+      stopMaintenance();
       await mongoose.disconnect();
       process.exit(0);
     });

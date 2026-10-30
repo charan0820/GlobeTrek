@@ -1,5 +1,61 @@
 # GlobeTrek progress
 
+## Distinguishable reservation summaries — 29 October 2026
+
+Replaced first-hotel-plus-more list titles with destination/booking-kind summaries. Cards now show destination-local booked dates, cities, travelers, stay/tour counts, lodging nights, currency total, short references and lifecycle timestamps. An expandable list exposes the immutable item dates, room types and quantities. No booking is labelled a replacement merely because its selection matches another record; unique references and status remain explicit. Existing reservation records require no migration and no API or inventory rules changed.
+
+Verification: three focused unit cases passed for whole-selection aggregation, destination-local overnight tour dates and missing historical metadata. Lint/build and built-asset verification pass. Read-only browser fixtures verified otherwise identical confirmed/cancelled records, standalone product naming, expandable details, both themes, narrow layouts and selected axe checks with zero violations. Browser evidence is in docs/evidence/reservation-identity. These fixture checks did not create accounts or reservations; the entire backend suite was not rerun for this presentation change. No Git or deployment operations were performed.
+
+## Globe asset recovery — 29 October 2026
+
+The user reported Globe unavailable. The served build was missing countries.geojson after overlapping local rebuilds; one failed while clearing dist. Restored all public assets through a successful build. Vite now retains served output during rebuilding, and the build command verifies boundary/media manifests against source hashes and checks entry assets before succeeding. The globe validates loaded GeoJSON, retries transient failures twice and offers an explicit Retry globe action after persistent failure. Country-list access is preserved.
+
+Lint/build and the real-browser globe test pass: normal rendering/selection, HTML masquerading as JSON, temporary 503, bounded retries, persistent failure and manual recovery. No server restart, account reset, database changes or Git operations were performed. The globe test is included in prepared CI; no remote run has been triggered.
+
+## Mouse-wheel momentum — 29 October 2026
+
+Implemented the user's explicit request for a gradual stopping motion. The shared useSoftScroll hook eases discrete vertical wheel steps with elapsed-time damping, bounds queued travel and immediately reverses direction when requested. Native scroll containers and scrollbars remain in place. Touch, fine trackpad deltas, keyboard input, browser zoom, horizontal gestures, form controls and map gestures bypass custom easing; reduced motion cancels it.
+
+Lint/build pass. The browser test recorded frame positions and verified deceleration, reversal, nested list ownership/containment, input pass-through, reduced motion and modal background locking. The complete connected-map browser regression also passed. Evidence is in docs/evidence/scrolling; no new dependency, external API, Git operation or deployment was introduced. The learning journal includes a visually checked momentum-scrolling chapter; original content is preserved.
+
+## Country imagery and scrolling refinement — 29 October 2026
+
+Added the existing credited country photographs to saved-trip rows and reservation detail headings. Corrected full-size place image sizing to use auto height and cover cropping, removing the grey letterboxing reported in the user's screenshots. Enabled smooth page/navigation and list scrolling with the existing reduced-motion override; no wheel interception was added. Lint/build pass. A focused real-browser check verified US images on both screens, narrow reservation layout, the cropped Waikiki preview, and smooth/ reduced-motion computed styles. Its isolated simulated reservation was released after verification. No new image-provider calls, database contract changes or Git operations.
+
+## Connected maps and place previews — 29 October 2026
+
+Implemented the approved refinement without changing booking APIs, inventory, pricing or authentication contracts. This section supersedes earlier UI/check-count/journal descriptions below.
+
+- Desktop country explorer has URL-backed List/Map/Split views; mobile has List/Map. City-grouped rows, map markers and photo previews share selection. Show in list reveals the selected row even when the list is already open. Country header images are compact and responsive.
+- Planner previews support place additions, tour departure selection and an explicit stay/date picker. Occurrence IDs distinguish repeat visits. Selected-day/All days maps use labelled day colours, separate daily routes, overlap choices and Fit places. Native scrolling, reduced motion and visible-control focus restoration remain supported.
+- All 120 attraction photo mappings were visually reviewed and attribution recorded. Two local WebP variants per attraction total 14,403,178 bytes; XMP source/creator/license metadata is embedded. The Nea Chora beachfront harbour photograph is CC BY-NC-SA 2.0 for this noncommercial demo; that restriction is exposed in its credit and attribution README. Fictional products use explicitly representative destination images.
+- Verification: **63 tests passed**, lint/build/catalog checks passed, strict premium audit reported zero findings. Existing full travel smoke/recovery journeys and the new connected-map browser suite passed. The new suite covers five viewport widths, both themes, repeated selections, offscreen-row reveal, overlapping occurrences, thirty-day drafts, reduced motion, Escape/focus restoration and image failure. Selected axe checks found zero violations; these checks are not full accessibility certification.
+- Independent review identified two material issues: repeated Show in list failed to reveal a row, and previews covered map navigation. Both were fixed and independently scored resolved. SHIP applies to those two fixes. See CONNECTED-MAPS-REVIEW.md; no detector/engine was available.
+- The parent Word journal was updated with explicit approval. All 155 existing nonempty paragraphs are preserved; its original 21 pages render identically, and the two new pages were visually reviewed. Workspace and parent copies match. New notes and interview questions are also in CONNECTED-MAPS-LEARNING.md.
+- Evidence is in docs/evidence/connected-maps. Instrumented import requests total 289, including metadata responses; earlier interrupted imports and web research are excluded because their complete counts were not recorded. There are no runtime image-provider calls. No new load benchmark, hosted CI, deployment, commit or push was performed.
+
+Next: user review of country discovery and the planner, then a guided explanation of shared selection, stop identities and scroll/focus ownership. Existing deployment and Git permission boundaries still apply.
+
+## Current local verification checkpoint — 29 October 2026
+
+The expanded ten-country travel planner is implemented locally. The accepted scope is in [IMPLEMENTATION.md](IMPLEMENTATION.md); setup is in the root README. All implementation changes remain uncommitted. The paused checkpoint below is historical and is superseded by this section.
+
+- Discovery includes the globe, accessible country list, map/list filters, 30 cities, 120 attractions, 60 demo stays, 60 demo tours, 20 editable templates and 20 fixed packages. Catalog counts, references, boundaries and attribution pass validation.
+- Guest and signed-in planning supports ordered days, stay ranges, scheduled tours, local recovery, serialized revision-aware saves, conflict copies and authentication return. Separate package and standalone journeys use the same reservation service.
+- Server pricing, destination timezones, quotes, transactional holds, confirmation, expiry, cancellation and retained idempotency keys are implemented. Packages share hotel/tour inventory; the historical hotel booking contract remains available.
+- Final automated suite: **58 passing tests**. Lint, production build and catalog validation pass. Production dependency audit reported zero known vulnerabilities. CI is configured but has not run remotely.
+- Browser smoke and recovery checks passed: guest-to-account preservation, reservation lifecycle, offline draft recovery, conflicting tabs, lost hold response, template independence, package checkout, URL navigation, calendar focus and WebGL/map failure alternatives. Selected axe WCAG checks found zero violations; tested layouts had no horizontal overflow at 320, 390, 768, 1024 and 1440 pixels. These are scoped automated checks, not comprehensive accessibility certification.
+- Seven isolated local k6 profiles passed with direct database assertions and zero unexpected failures. Each 20-request last-capacity race produced one winner and nineteen expected sold-out responses. See [PERFORMANCE.md](PERFORMANCE.md) for measurements and limitations.
+- Independent visual review found two issues: a planner basemap capture without geographic context and mobile globe surface artifacts. Both were fixed and recaptured; the reviewer's approval applies to those two fixes. See [DESIGN-REVIEW.md](DESIGN-REVIEW.md).
+- The learning journal was merged with all 98 existing nonempty parent paragraphs preserved, rendered and visually checked across 21 pages, then copied to the parent Work folder with approval. Workspace and parent SHA-256 hashes match. New material covers travel architecture, recovery, performance and interview questions. Understanding of the new critical code still requires a guided review with the student.
+- The temporary demo was started on port 3002. Its database disappears when the demo stops. Use the documented demo command to restart if needed. No account connection, hosted infrastructure, deployment, staging, commit or push was performed.
+
+Next: review the connected journey with the student, walk through draft revisions and shared-inventory holds/expiry, then obtain explicit permission for Git changes and hosting. Hosted smoke tests, cold-start measurements and a student-recorded demo remain outstanding. No release claim should imply those steps are complete.
+
+## Historical paused implementation checkpoint — 29 October 2026
+
+The expanded ten-country implementation is saved in the working tree, without a Git commit. See [the complete checkpoint](CHECKPOINT-2026-10-29.md) for implemented features, actual verification, unresolved work and exact resume steps. Latest backend suite: 45 passing tests; build/lint pass. Browser verification must resume with the final authentication cache fix. The temporary port-3002 demo is stopped. The product is not yet release-complete or deployed. The sections below record earlier historical checkpoints.
+
 On 29 October 2026 the user restored the original GlobeTrek tourism-discovery scope and authorized significantly accelerated AI implementation. The completed hotel MVP is Phase 0, not the complete product. Context-GlobeTrek.md retains the original features; ROADMAP.md tracks the restored implementation milestones. The earlier four-day hotel-only restriction is superseded. AI-assisted frontend and backend implementation are authorized; access and Git/publication approvals remain required.
 
 ## Scope restoration 29 October 2026
@@ -37,4 +93,4 @@ On 29 October 2026 the user restored the original GlobeTrek tourism-discovery sc
 
 ## Remaining external steps
 
-Obtain explicit approvals for persistent database/account configuration, Git commits/pushes, and public deployment. Choose a repository name only with user input. Run hosted smoke tests after approved deployment. Record a demo video with the student after the walkthrough. Review the Word journal layout manually or resolve the native renderer before calling document visual QA complete.
+Obtain explicit approvals for persistent database/account configuration, Git commits/pushes, and public deployment. The user has already created a repository; verify its configured remote before any approved push. Run hosted smoke tests after approved deployment. Record a demo video with the student after the walkthrough. Word journal visual QA is now complete for the current 21-page edition.

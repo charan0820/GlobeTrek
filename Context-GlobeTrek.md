@@ -4,7 +4,7 @@
 
 ## 1. How to use this document
 
-This is the single source of truth for GlobeTrek, a MERN tourism discovery and booking platform. It records the working rules, the locked technical decisions, the reduced scope, and a day-by-day plan. When a decision here conflicts with an older brief, this document wins. Update the progress tracker (section 12) at the end of each session.
+This document preserves earlier planning for GlobeTrek, a MERN tourism discovery and booking platform. The accepted ten-country contract in docs/IMPLEMENTATION.md takes precedence over historical scope, schedules and implementation instructions below. Read docs/PROGRESS.md for the latest verified state and remaining work; do not restart from the historical day-by-day plan.
 
 ## 2. Working rules for the assistant
 

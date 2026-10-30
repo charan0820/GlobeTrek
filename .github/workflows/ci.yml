@@ -14,5 +14,24 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      - run: npm run verify:catalog
       - run: npm test
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Start isolated demo
+        run: PORT=3002 LOG_LEVEL=silent npm run demo > /tmp/globetrek-demo.log 2>&1 &
+      - name: Wait for seed and server
+        run: curl --fail --retry 40 --retry-connrefused --retry-delay 2 http://127.0.0.1:3002/api/health
+      - run: node scripts/browser-travel-smoke.mjs
+      - run: node scripts/browser-travel-recovery.mjs
+      - run: node scripts/browser-map-interactions.mjs
+      - run: node scripts/browser-globe.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: travel-browser-evidence
+          path: |
+            artifacts/travel-browser
+            artifacts/travel-recovery
+            artifacts/connected-maps
+            artifacts/globe

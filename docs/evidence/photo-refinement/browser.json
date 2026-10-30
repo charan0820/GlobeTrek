@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "checks": [
+    "US image in saved trip",
+    "US image in confirmed reservation",
+    "mobile layout without overflow",
+    "Waikiki preview uses cropped cover frame without letterboxing",
+    "smooth scrolling with reduced-motion override"
+  ],
+  "preview": {
+    "fit": "cover",
+    "height": 218.75,
+    "width": 350
+  },
+  "errors": []
+}

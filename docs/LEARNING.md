@@ -1,5 +1,9 @@
 # GlobeTrek learning journal
 
+These are foundation notes. Expanded travel concepts are in [TRAVEL-LEARNING.md](TRAVEL-LEARNING.md), with recovery and delivery topics in [RELEASE-LEARNING.md](RELEASE-LEARNING.md). The combined Word journal includes the interview material.
+
+The map/list refinement is covered in [CONNECTED-MAPS-LEARNING.md](CONNECTED-MAPS-LEARNING.md): shared selection, occurrence IDs, day routes, scroll ownership, photo provenance and accessible previews.
+
 This journal connects the implementation to the concepts needed to explain GlobeTrek in an interview. Code being present does not mean a topic has been learned: complete each teach-back and small exercise before marking it understood. The project is a MERN demo with fictional hotels and simulated payment.
 
 ## Following one request through MERN

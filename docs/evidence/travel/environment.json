@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-29T13:34:57.772Z",
+  "node": "v24.14.0",
+  "platform": "win32",
+  "arch": "x64",
+  "machine": {
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+    "logicalCpus": 12,
+    "totalMemoryBytes": 16802910208
+  },
+  "counts": {
+    "countries": 10,
+    "cities": 30,
+    "attractions": 120,
+    "hotels": 60,
+    "tours": 60,
+    "templates": 20,
+    "packages": 20
+  },
+  "profiles": [
+    {
+      "name": "catalog-uncached",
+      "mode": "browse",
+      "elapsedMs": 16238,
+      "cpuMicroseconds": {
+        "user": 13313000,
+        "system": 4063000
+      },
+      "maxRssBytes": 373907456
+    },
+    {
+      "name": "catalog-cached",
+      "mode": "browse",
+      "elapsedMs": 15528,
+      "cpuMicroseconds": {
+        "user": 11312000,
+        "system": 3906000
+      },
+      "maxRssBytes": 359735296
+    },
+    {
+      "name": "quotes",
+      "mode": "quote",
+      "elapsedMs": 15493,
+      "cpuMicroseconds": {
+        "user": 13156000,
+        "system": 2234000
+      },
+      "maxRssBytes": 372248576
+    },
+    {
+      "name": "room",
+      "mode": "contention",
+      "elapsedMs": 590,
+      "cpuMicroseconds": {
+        "user": 78000,
+        "system": 32000
+      },
+      "maxRssBytes": 358547456
+    },
+    {
+      "name": "tour",
+      "mode": "contention",
+      "elapsedMs": 592,
+      "cpuMicroseconds": {
+        "user": 94000,
+        "system": 0
+      },
+      "maxRssBytes": 359604224
+    },
+    {
+      "name": "package-shared",
+      "mode": "contention",
+      "elapsedMs": 641,
+      "cpuMicroseconds": {
+        "user": 109000,
+        "system": 46000
+      },
+      "maxRssBytes": 360390656
+    },
+    {
+      "name": "expired-recovery",
+      "mode": "recovery",
+      "elapsedMs": 15522,
+      "cpuMicroseconds": {
+        "user": 12547000,
+        "system": 2875000
+      },
+      "maxRssBytes": 374775808
+    }
+  ],
+  "databaseAssertionsPassed": true
+}

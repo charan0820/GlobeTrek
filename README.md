@@ -1,18 +1,12 @@
 # GlobeTrek
 
-GlobeTrek is being developed as a tourism discovery and trip-planning application built with MongoDB, Express, React, and Node.js: globe to country map to attractions, hotels, tours, itineraries, and reservations. See the [restored product roadmap](docs/ROADMAP.md).
+A MERN travel planner: explore a globe, discover destinations on a map, arrange a dated itinerary, and reserve selected demo stays and scheduled tours together.
 
-The currently runnable Phase 0 is the hotel booking foundation: explore six fictional hotels across Jaipur, Udaipur, and Kochi, check dates, and reserve rooms with simulated payment. The globe, maps, attractions, tours, itineraries, holds, and expiry are planned features, not yet implemented.
+The launch collection covers India, Japan, Thailand, Indonesia, France, Italy, Spain, Greece, Turkey and the United States: **30 cities, 120 attractions, 60 stays, 60 tours, 20 editable itineraries and 20 fixed packages**. Real place information links to destination guides; properties, operators, inventory, prices and payments are fictional demonstration data.
 
-The central engineering exercise is preventing overselling: each night is conditionally reserved in the same transaction as the booking record. Retry keys and transactional cancellation protect inventory from duplicate requests.
+## Run locally
 
-Verified locally: 30 automated tests pass, including minimum room-capacity filtering and cache separation. The desktop/mobile browser flow was verified, and 20 concurrent last-room requests produced one committed reservation with no overselling. [Measured results and limitations](docs/PERFORMANCE.md).
-
-[Desktop catalog](docs/images/desktop.png) · [Mobile catalog](docs/images/mobile.png) · [Availability quote](docs/images/quote.png) · [Booking history](docs/images/bookings.png)
-
-## Run the local demo
-
-Requires Node.js 22.12+ (developed with 24.14), npm, and permission to download the MongoDB test binary on first use.
+Requires Node.js 22.12+ (developed with 24.14), npm, and a MongoDB binary download on the first test/demo run.
 
 ```sh
 npm ci
@@ -20,38 +14,45 @@ npm run build
 npm run demo
 ```
 
-Open http://localhost:3000. Register a demo account with a unique password. The demo uses a temporary MongoDB replica set and a random session secret. **All demo data disappears when stopped.** This mode is for local development only.
+Open [the local application](http://localhost:3000). Initial seeding creates a year of inventory and can take a few minutes. The demo uses a temporary MongoDB replica set and a random session secret: **stopping it removes its database**. Source files and documentation remain saved.
 
-## Run with a persistent database
+For a persistent local replica set, copy `.env.example` to `.env`, supply your own database URI and session secret, then run `npm run seed` and `npm start`. Never commit `.env`. Keep browser and API on the same origin in the built application.
 
-1. Create a local MongoDB replica set or, with your approval, an Atlas cluster. Standalone MongoDB does not support this booking transaction.
-2. Copy `.env.example` to `.env` at the repository root. Set `MONGODB_URI`, a random `JWT_SECRET` (at least 32 characters), and `APP_ORIGIN`.
-3. Run `npm run seed`, then `npm run dev`. Open http://localhost:5173; Vite proxies `/api` to Express on port 3000. Use the exact hostname configured in `APP_ORIGIN`.
-4. For a single-server build, run `npm run build`, set `APP_ORIGIN=http://localhost:3000`, then `npm start`.
+## Product behavior
 
-Seeding is additive: reruns preserve room IDs, existing properties, and booked counts. It inserts missing inventory for the next 90 days. Run it daily for a continuously rolling horizon; no automatic hosted scheduler is provisioned. Catalog changes require an explicit migration instead of reseeding over booked data.
+- Explore the globe or search; open a country and filter places, stays, tours, itineraries and packages.
+- Build a guest trip locally or copy an itinerary. Sign in to save it across devices.
+- Plan one country, 1–30 inclusive days, and 1–12 travelers. Selected stays use exclusive checkout dates. Lodging gaps are allowed and identified.
+- Reorder stops, select scheduled tours, choose stay dates and review planning checks. Map connections do not provide road routing or transport times.
+- Switch between List, Map and Split on desktop. City-grouped results, marker selection and photo previews stay connected; mobile previews provide Show in list. The planner also offers an All days map with labelled day colours and separate daily routes.
+- Review the server-calculated destination-currency price. Optional ECB-based INR estimates are dated and informational; enable the public feed with `FX_REFRESH_ENABLED=true` only when network use is approved.
+- Request a ten-minute hold, then confirm a simulated reservation. Every selected item reserves together or the transaction rolls back.
+- Book fixed packages separately. They consume the same hotel/tour stock as other reservations.
+- Cancel the whole reservation before its earliest item starts. Draft edits never change a confirmed snapshot.
 
-## Verify
+## Engineering evidence
+
+The core exercise is preventing overselling across multiple stock types. Conditional writes account for held and booked quantities; MongoDB transactions protect the entire selection. Idempotency keys survive ambiguous responses. Revision checks protect saved drafts from stale tabs. Persisted deadlines protect confirmation even when a free host sleeps.
 
 ```sh
 npm run lint
+npm run verify:catalog
 npm test
 npm run build
-node scripts/loadtest.mjs
 ```
 
-The final command requires k6 in PATH or `K6_BIN` pointing to its executable. It starts its own disposable database and API on port 3001; never point it at a deployed database. Raw results are stored under ignored `artifacts/loadtests`. CI runs lint, integration tests, and the client build. No workflow has been pushed or run remotely yet.
+Browser checks use a running demo on port 3002 by default (`BASE_URL` can override it):
 
-## Understand the code
+```sh
+node scripts/browser-travel-smoke.mjs
+node scripts/browser-travel-recovery.mjs
+node scripts/browser-map-interactions.mjs
+```
 
-- `server/src/services/booking.js`: pricing, availability, reservation transactions, cancellation.
-- `server/src/models/index.js`: embedded room types, inventory and booking indexes.
-- `server/src/controllers`: HTTP concerns; `middleware` handles login and origin validation.
-- `client/src`: React state, routing, forms, API calls, and responsive styling.
-- [API contract](docs/API.md), [architecture](docs/ARCHITECTURE.md), [learning journal](docs/LEARNING.md), [interview sheet](docs/INTERVIEW.md), [service register](docs/SERVICES.md), [progress](docs/PROGRESS.md), [deployment](docs/DEPLOYMENT.md).
+Windows uses installed Edge; Linux uses Playwright Chromium (`npx playwright install --with-deps chromium`). k6 evidence comes from `scripts/travel-loadtest.mjs` against its own temporary database and localhost:3020; provide `K6_BIN` if k6 is not on PATH. Never run load fixtures against a persistent customer database.
 
-## Honest limits
+See [performance evidence](docs/PERFORMANCE.md), [progress](docs/PROGRESS.md), [architecture](docs/ARCHITECTURE.md), [travel API](docs/TRAVEL-API.md), [authentication and legacy API](docs/API.md), [service register](docs/SERVICES.md), [learning notes](docs/TRAVEL-LEARNING.md), and [deployment preparation](docs/DEPLOYMENT.md).
 
-This is a production-minded educational MVP, not a live travel marketplace. Hotels are fictional; payments and the flat 12% service fee are simulated. There is no refund processing, email verification, password reset, staff support system, or real hotel integration. Caching and rate limiting are process-local. The booking history returns the latest 100 records. Availability is advisory until the booking transaction commits. Free hosting can cold-start. Load results from one development computer do not establish public production capacity.
+This is a production-minded demo with automated local checks. No hosted deployment has been performed. Commits, pushes, account connections, infrastructure and publication require the owner's permission. The original hotel foundation and measurements are historical evidence, not a substitute for travel-flow verification.
 
-No access approval, Git commit, push, account connection, or publication is implied by this repository. The intended GitHub owner is `charan0820`; a repository has not been created.
+Photograph credits are in `client/public/destinations/README.md` and its manifests. The Nea Chora harbour photograph has a **CC BY-NC-SA 2.0 noncommercial license**; other images retain their individual recorded licenses. New learning notes are in [CONNECTED-MAPS-LEARNING.md](docs/CONNECTED-MAPS-LEARNING.md).

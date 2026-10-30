@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import { configuration } from "../config.js";
 import { ensureIndexes } from "../models/index.js";
-import { seed } from "./seed.js";
+import { seedTravel as seed } from "./travel.js";
 try {
   await mongoose.connect(configuration().mongoUri);
   await ensureIndexes();
-  const hotels = await seed();
+  const counts = await seed();
   console.log(
-    `Seeded ${hotels.length} demo hotels and 90 days of inventory. Existing reservations preserved.`,
+    `Seeded GlobeTrek catalog: ${JSON.stringify(counts)}. 365 days of inventory; reservations preserved.`,
   );
 } finally {
   await mongoose.disconnect();

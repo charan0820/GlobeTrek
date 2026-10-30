@@ -2,6 +2,7 @@ import { Booking } from "../models/index.js";
 import { id } from "../validators/index.js";
 import { AppError, missing } from "../utils/errors.js";
 import { reserve, cancel } from "../services/booking.js";
+import { reconcileExpired } from "../services/reservations.js";
 export const bookingsController = {
   create: async (req, res) => {
     const key = req.get("Idempotency-Key");
@@ -11,6 +12,7 @@ export const bookingsController = {
         "INVALID_RETRY_KEY",
         "Provide an Idempotency-Key of 16–100 letters, numbers, hyphens or underscores.",
       );
+    await reconcileExpired();
     const { booking, replayed } = await reserve(
       req.user.id,
       req.validated,

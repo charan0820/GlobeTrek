@@ -12,3 +12,6 @@ artifacts/
 Thumbs.db
 playwright-report/
 test-results/
+.impeccable/review/
+.impeccable/mocks/
+premium-audit.json

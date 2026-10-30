@@ -1,5 +1,7 @@
 # GlobeTrek API contract
 
+The authentication and legacy hotel endpoints below remain supported. The expanded discovery, trip, quote and multi-item reservation contract is documented in [TRAVEL-API.md](TRAVEL-API.md). New UI bookings use quotes and holds; legacy date/room limits apply only to the old hotel-only API.
+
 Base path `/api`. Successful responses use `{ "success": true, "data": ... }` with optional `meta`. Errors use `{ "success": false, "error": { "code", "message", "details"?, "requestId"? } }`. `X-Request-Id` is returned on every response. No passwords, tokens, or request payloads are logged.
 
 JSON mutation requests must include `Content-Type: application/json` and `Origin` equal to `APP_ORIGIN`. Browser fetch supplies Origin automatically. Login sets an HTTP-only, SameSite=Lax cookie, Secure in production. Sessions expire after two hours. Logout invalidates all current tokens for that user. Private responses are `Cache-Control: no-store`.
