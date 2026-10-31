@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    "Restored local boundary file renders the globe",
+    "Country selection remains connected",
+    "Real pointer hover raises and leaves; click keeps selection raised",
+    "Oblique drag reveals raised geometry and theme preserves camera/selection",
+    "Invalid JSON and temporary failure recover with bounded retries",
+    "Persistent failure preserves country list and explicit retry recovers"
+  ],
+  "errors": []
+}

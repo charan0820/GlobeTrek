@@ -29,6 +29,7 @@ import {
 import { AppError, missing } from "../utils/errors.js";
 import { TtlCache } from "../utils/cache.js";
 import { range } from "../services/travel-policy.js";
+import { estimateSelections, tripEstimate } from "../services/estimates.js";
 const collections = {
   attractions: Attraction,
   stays: Hotel,
@@ -42,6 +43,16 @@ const escape = (q) => q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 export function travelController({ cacheEnabled = true } = {}) {
   const cache = new TtlCache();
   return {
+    estimates: async (req, res) =>
+      ok(
+        res.set("Cache-Control", "no-store"),
+        await estimateSelections(req.validated),
+      ),
+    estimateTrip: async (req, res) =>
+      ok(
+        res.set("Cache-Control", "no-store"),
+        await tripEstimate(validateTrip(req.validated)),
+      ),
     departureLookup: async (req, res) =>
       ok(
         res,
@@ -186,10 +197,17 @@ export function travelController({ cacheEnabled = true } = {}) {
     listTrips: async (req, res) =>
       ok(
         res,
-        await Trip.find({ user: req.user.id })
-          .sort({ updatedAt: -1 })
-          .limit(100)
-          .lean(),
+        await Promise.all(
+          (
+            await Trip.find({ user: req.user.id })
+              .sort({ updatedAt: -1 })
+              .limit(100)
+              .lean()
+          ).map(async (trip) => ({
+            ...trip,
+            pricingSummary: await tripEstimate(trip),
+          })),
+        ),
       ),
     trip: async (req, res) =>
       ok(res, await ownTrip(req.user.id, id.parse(req.params.id))),

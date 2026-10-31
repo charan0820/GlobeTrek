@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Single click retains selection on Explore",
+    "Double click enters after connected approach",
+    "Newer country supersedes unfinished transition",
+    "Modified country link keeps native new-tab behavior",
+    "Reduced-motion country entry",
+    "List mounts no geographic engine; model stays idle without rendering frames",
+    "Failed relief preserves complete list journey"
+  ],
+  "errors": []
+}

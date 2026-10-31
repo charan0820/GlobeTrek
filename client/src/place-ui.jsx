@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ImageOff, X } from "lucide-react";
 import { Modal } from "./ui.jsx";
 import { placeId } from "./geo/presentation.js";
+import { Price } from "./pricing.jsx";
 
 export function useNarrow() {
   const [narrow, setNarrow] = useState(
@@ -110,6 +111,7 @@ export function PlaceSummary({ record, kind }) {
         {record.demo ? " · Demo" : ""}
       </p>
       <h3>{record.name}</h3>
+      <Price record={record} kind={kind} />
       <p>{record.description}</p>
       <p className="place-meta">
         <Duration record={record} kind={kind} />
@@ -140,6 +142,10 @@ export function PlacePreview({
   addDisabled = false,
   children,
 }) {
+  const location = useLocation();
+  const detailParams = new URLSearchParams(location.search);
+  detailParams.set("kind", kind);
+  if (record) detailParams.set("item", placeId(record));
   const narrow = useNarrow();
   const identity = record?.occurrenceId || record?.id || record?._id;
   const closeRef = useRef(null),
@@ -179,7 +185,23 @@ export function PlacePreview({
       <div className="preview-copy">
         <PlaceSummary record={record} kind={kind} />
         <div className="preview-actions">
-          <Link to={`/discover/${kind}/${placeId(record)}`}>
+          <Link
+            onClick={(event) => {
+              if (
+                event.button === 0 &&
+                !event.ctrlKey &&
+                !event.metaKey &&
+                !event.shiftKey &&
+                !event.altKey
+              )
+                onClose();
+            }}
+            to={
+              location.pathname.startsWith("/countries/")
+                ? `${location.pathname}?${detailParams}`
+                : `/discover/${kind}/${placeId(record)}`
+            }
+          >
             View full details
           </Link>
           {onShowList && (

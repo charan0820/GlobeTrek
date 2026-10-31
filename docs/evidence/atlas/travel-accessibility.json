@@ -1,0 +1,18 @@
+[
+  {
+    "name": "discovery-desktop",
+    "violations": []
+  },
+  {
+    "name": "planner-saved-desktop",
+    "violations": []
+  },
+  {
+    "name": "confirmed-desktop",
+    "violations": []
+  },
+  {
+    "name": "discovery-dark-mobile",
+    "violations": []
+  }
+]

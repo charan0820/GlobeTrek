@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { planningIssues, planningBudget } from "../../client/src/planning.js";
+import { planningIssues } from "../../client/src/planning.js";
+import {
+  stayAmount,
+  tourAmount,
+  priceTotal,
+} from "../src/services/travel-policy.js";
 const records = [
   { _id: "tour-a", name: "Morning walk", durationMinutes: 120, city: "Tokyo" },
   { _id: "tour-b", name: "Museum tour", durationMinutes: 120, city: "Tokyo" },
@@ -12,34 +17,18 @@ const base = () => ({
   stays: [],
 });
 describe("planner guidance", () => {
-  it("estimates enough whole rooms for the party and excludes informational stops", () => {
-    const draft = base();
-    draft.travelers = 5;
-    draft.stays = [
-      {
-        hotelId: "hotel",
-        roomTypeId: "room",
-        checkIn: "2026-12-01",
-        checkOut: "2026-12-03",
-      },
-    ];
-    draft.days[0].stops = [
-      { kind: "tour", refId: "tour" },
-      { kind: "attraction", refId: "place" },
-    ];
-    expect(
-      planningBudget(
-        draft,
-        [
-          {
-            _id: "hotel",
-            currency: "JPY",
-            roomTypes: [{ _id: "room", basePrice: 10000, capacity: 2 }],
-          },
-        ],
-        [{ _id: "tour", currency: "JPY", price: 5000 }],
-      ),
-    ).toEqual({ subtotal: 85000, fee: 10200, total: 95200, currency: "JPY" });
+  it("retains whole-room native currency arithmetic and the server fee", () => {
+    const stay = stayAmount(10000, 2, 5, 2),
+      tour = tourAmount(5000, 5);
+    expect(stay).toBe(60000);
+    expect(tour).toBe(25000);
+    expect(priceTotal([{ amount: stay }, { amount: tour }], "JPY")).toEqual({
+      subtotal: 85000,
+      fee: 10200,
+      total: 95200,
+      currency: "JPY",
+      feeLabel: "Demo service fee (12%)",
+    });
   });
   it("distinguishes unresolved tours, timed overlaps and informational stops", () => {
     const draft = base();

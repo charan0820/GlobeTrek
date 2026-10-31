@@ -1,35 +1,114 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-29T14:05:58Z",
+  "generatedAt": "2026-10-30",
   "title": "Design System: GlobeTrek",
   "extensions": {
     "connectedGeography": {
-      "source": ["client/src/travel.css", "client/src/geo/presentation.js", "client/src/geo/map-style.js", "client/src/geo/Map.jsx", "client/src/place-ui.jsx"],
+      "source": [
+        "client/src/travel.css",
+        "client/src/geo/presentation.js",
+        "client/src/geo/map-style.js",
+        "client/src/geo/Map.jsx",
+        "client/src/place-ui.jsx"
+      ],
       "countryModes": {
         "values": ["List", "Map", "Split"],
         "desktopDefault": "Split",
         "narrowBehavior": "Below 760px, Split renders as List without changing the URL preference.",
         "grouping": "Alphabetical city headings and place names; multi-city products appear once with covered cities.",
-        "headingPhoto": {"desktopMaxWidth": "420px", "desktopHeight": "240px", "mobileHeight": "180px"}
+        "headingPhoto": {
+          "desktopMaxWidth": "420px",
+          "desktopHeight": "240px",
+          "mobileHeight": "180px"
+        }
       },
-      "scrolling": {"desktopMaxHeight": "min(760px, 78dvh)", "owners": ["country result list", "planner day rail"], "mobile": "document", "wheel": "native", "reveals": "Explicitly reveal on every Show in list activation; respect reduced motion."},
-      "preview": {"desktop": "non-modal map card", "mobile": "existing Radix dialog owner as bottom sheet", "mobileMaxHeight": "82dvh", "selection": "Shared by list, marker and preview; dismissal retains selection; filtered-out selection clears.", "focus": "Escape restores a visible initiating or selected control.", "actions": "Show in list closes sheet, switches view and reveals entry; additions obey ordinary limits."},
-      "dayIdentity": {"count": 30, "index": "zero-based", "hue": "round((index * 137.508 + 212) % 360)", "light": {"saturation": "72%", "lightness": "26%"}, "dark": {"saturation": "78%", "lightness": "72%"}, "appliesTo": ["tabs", "stop badges", "markers", "legends", "route features"], "labels": "Always retain explicit day and stop labels.", "routes": "Group by day; never connect separate days; select stop occurrences independently."},
-      "darkMapPalette": {"background": "#233b49", "waterFill": "#122c40", "vegetation": "#2e514c", "buildings": "#3b5360", "otherFills": "#293f4c", "fillOutline": "#58717d", "waterLines": "#56879b", "boundaries": "#a7bac6", "majorRoads": "#c4ad7a", "otherLines": "#718c9a", "labels": "#edf5f7", "labelHalo": "#172b38", "labelHaloWidth": 1.5},
+      "scrolling": {
+        "desktopMaxHeight": "min(760px, 78dvh)",
+        "owners": ["country result list", "planner day rail"],
+        "mobile": "document",
+        "wheel": "Discrete vertical wheel steps use shared useSoftScroll; trackpad, touch, map gestures and reduced motion bypass easing.",
+        "reveals": "Explicitly reveal on every Show in list activation; respect reduced motion."
+      },
+      "preview": {
+        "desktop": "non-modal map card",
+        "mobile": "existing Radix dialog owner as bottom sheet",
+        "mobileMaxHeight": "82dvh",
+        "selection": "Shared by list, marker and preview; dismissal retains selection; filtered-out selection clears.",
+        "focus": "Escape restores a visible initiating or selected control.",
+        "actions": "Show in list closes sheet, switches view and reveals entry; additions obey ordinary limits."
+      },
+      "dayIdentity": {
+        "count": 30,
+        "index": "zero-based",
+        "hue": "round((index * 137.508 + 212) % 360)",
+        "light": {
+          "saturation": "72%",
+          "lightness": "26%"
+        },
+        "dark": {
+          "saturation": "78%",
+          "lightness": "72%"
+        },
+        "appliesTo": [
+          "tabs",
+          "stop badges",
+          "markers",
+          "legends",
+          "route features"
+        ],
+        "labels": "Always retain explicit day and stop labels.",
+        "routes": "Group by day; never connect separate days; select stop occurrences independently."
+      },
+      "darkMapPalette": {
+        "background": "#303d35",
+        "waterFill": "#294749",
+        "vegetation": "#354c3b",
+        "buildings": "#4a584d",
+        "otherFills": "#38463d",
+        "fillOutline": "#697769",
+        "waterLines": "#72969a",
+        "boundaries": "#c5baa2",
+        "majorRoads": "#dfbb8e",
+        "otherLines": "#95a18f",
+        "labels": "#eee9dd",
+        "labelHalo": "#1d2421",
+        "labelHaloWidth": 1.5
+      },
       "mapControls": "Top-left navigation below Fit places, clear of right-hand previews; retain basemap attribution and list fallback.",
-      "duration": {"attractions": "Suggested visit", "tours": "Tour duration", "schedule": "Destination-local time shown separately."},
-      "media": {"storage": "Local attributed files", "credits": ["source", "title", "creator", "license", "modification notes"], "demoProducts": "Clearly representative destination photography", "failure": "Preserve readable details and actions", "noncommercialImage": {"id": "gr-nea-chora-beach", "license": "CC BY-NC-SA 2.0", "restriction": "Noncommercial demo use only", "record": "client/public/destinations/README.md"}}
+      "duration": {
+        "attractions": "Suggested visit",
+        "tours": "Tour duration",
+        "schedule": "Destination-local time shown separately."
+      },
+      "media": {
+        "storage": "Local attributed files",
+        "credits": [
+          "source",
+          "title",
+          "creator",
+          "license",
+          "modification notes"
+        ],
+        "demoProducts": "Clearly representative destination photography",
+        "failure": "Preserve readable details and actions",
+        "noncommercialImage": {
+          "id": "gr-nea-chora-beach",
+          "license": "CC BY-NC-SA 2.0",
+          "restriction": "Noncommercial demo use only",
+          "record": "client/public/destinations/README.md"
+        }
+      }
     },
     "typographyMeta": {
       "display": {
-        "displayName": "Sora display",
+        "displayName": "Cormorant Garamond display",
         "purpose": "General page headings; discovery has its own responsive display role."
       }
     },
     "shadows": [
       {
         "name": "dialog-light",
-        "value": "0 14px 50px #102e3a26",
+        "value": "0 14px 50px #26312e26",
         "purpose": "Light-theme modal shadow."
       },
       {
@@ -62,7 +141,39 @@
         "name": "wide-min",
         "value": "1600px"
       }
-    ]
+    ],
+    "atlasDiscovery": {
+      "mode": "Experience",
+      "desktopMinWidth": 1100,
+      "leftReserved": 312,
+      "rightReserved": 312,
+      "mobileOrder": ["navigation", "globe", "country collection", "preview"],
+      "wordmark": "Allura",
+      "editorial": "Cormorant Garamond",
+      "operational": "Source Sans 3",
+      "initialCountry": "JP",
+      "automaticRotation": false,
+      "fontSource": "client/public/fonts/README.md",
+      "countryList": "Direct destination links",
+      "globeClick": "Persistent raised selection and preview",
+      "hoverHeights": {
+        "resting": 0.001,
+        "hovered": 0.025,
+        "selected": 0.055
+      },
+      "polygonTransitionMs": 300,
+      "labels": "Supported countries on visible surface; selected then hovered collision priority; pointer-transparent",
+      "fit": "90% of smaller dimension including selected extrusion; camera FOV/aspect calculation",
+      "themeControl": "Top-right shared utility header, scrolling with document",
+      "hoverSurface": "200ms translate/fade pseudo-element; text stays still; keyboard parity and reduced-motion override",
+      "editorialScale": {
+        "pageDesktop": 72,
+        "pageMobile": 42,
+        "exploreDesktop": 76,
+        "exploreMobile": 44,
+        "section": 34
+      }
+    }
   },
   "components": [
     {
@@ -71,14 +182,14 @@
       "refersTo": "button-primary",
       "description": "Theme-aware primary planning and reservation action.",
       "html": "<button class=\"ds-primary\">Plan a trip</button>",
-      "css": ".ds-primary{font:600 15px \"Source Sans 3\",sans-serif;line-height:1.3;background:var(--action,#2459d3);color:var(--on-action,#fff);padding:12px 18px;min-height:48px;border:1px solid transparent;border-radius:6px;cursor:pointer}.ds-primary:hover{filter:brightness(.93)}.ds-primary:focus-visible{outline:3px solid var(--action,#2459d3);outline-offset:3px}.ds-primary:disabled{opacity:.55;cursor:not-allowed}"
+      "css": ".ds-primary{font:600 15px \"Source Sans 3\",sans-serif;line-height:1.3;background:var(--action,#a34b12);color:var(--on-action,#fff);padding:12px 18px;min-height:48px;border:1px solid transparent;border-radius:6px;cursor:pointer}.ds-primary:hover{filter:brightness(.93)}.ds-primary:focus-visible{outline:3px solid var(--action,#a34b12);outline-offset:3px}.ds-primary:disabled{opacity:.55;cursor:not-allowed}"
     },
     {
       "name": "Secondary button",
       "kind": "button",
       "description": "Secondary action with a quiet border and soft hover fill.",
       "html": "<button class=\"ds-secondary\">Clear filters</button>",
-      "css": ".ds-secondary{font:600 15px \"Source Sans 3\",sans-serif;line-height:1.3;background:transparent;color:var(--ink,#102e3a);padding:12px 18px;min-height:48px;border:1px solid var(--line,#d5e0e5);border-radius:6px;cursor:pointer}.ds-secondary:hover{background:var(--soft,#e7eef3)}.ds-secondary:focus-visible{outline:3px solid var(--action,#2459d3);outline-offset:3px}.ds-secondary:disabled{opacity:.55;cursor:not-allowed}",
+      "css": ".ds-secondary{font:600 15px \"Source Sans 3\",sans-serif;line-height:1.3;background:transparent;color:var(--ink,#26312e);padding:12px 18px;min-height:48px;border:1px solid var(--line,#d8d2c6);border-radius:6px;cursor:pointer}.ds-secondary:hover{background:var(--soft,#e9e3d7)}.ds-secondary:focus-visible{outline:3px solid var(--action,#a34b12);outline-offset:3px}.ds-secondary:disabled{opacity:.55;cursor:not-allowed}",
       "refersTo": "button-secondary"
     },
     {
@@ -86,7 +197,7 @@
       "kind": "input",
       "description": "Persistent label and explicit focus.",
       "html": "<label class=\"ds-label\">Email address<input class=\"ds-input\" type=\"email\" autocomplete=\"email\"/></label>",
-      "css": ".ds-label{display:flex;flex-direction:column;gap:7px;font:600 14px \"Source Sans 3\",sans-serif;color:var(--ink,#102e3a)}.ds-input{font:16px \"Source Sans 3\",sans-serif;min-height:46px;padding:10px 12px;color:var(--ink,#102e3a);background:var(--surface,#fff);border:1px solid var(--line,#d5e0e5);border-radius:6px;caret-color:var(--action,#2459d3)}.ds-input:focus-visible{outline:3px solid var(--action,#2459d3);outline-offset:3px}",
+      "css": ".ds-label{display:flex;flex-direction:column;gap:7px;font:600 14px \"Source Sans 3\",sans-serif;color:var(--ink,#26312e)}.ds-input{font:16px \"Source Sans 3\",sans-serif;min-height:46px;padding:10px 12px;color:var(--ink,#26312e);background:var(--surface,#fff);border:1px solid var(--line,#d8d2c6);border-radius:6px;caret-color:var(--action,#a34b12)}.ds-input:focus-visible{outline:3px solid var(--action,#a34b12);outline-offset:3px}",
       "refersTo": "field"
     },
     {
@@ -94,7 +205,7 @@
       "kind": "chip",
       "description": "Reservation status communicates its meaning in text alongside color.",
       "html": "<span class=\"ds-status\">Confirmed</span>",
-      "css": ".ds-status{display:inline-flex;align-items:center;gap:7px;font:13px \"Source Sans 3\",sans-serif;background:var(--soft,#e7eef3);color:var(--action,#2459d3);padding:5px 10px;border-radius:4px;text-transform:capitalize}"
+      "css": ".ds-status{display:inline-flex;align-items:center;gap:7px;font:13px \"Source Sans 3\",sans-serif;background:var(--soft,#e9e3d7);color:var(--action,#a34b12);padding:5px 10px;border-radius:4px;text-transform:capitalize}"
     },
     {
       "name": "Surface panel",
@@ -102,7 +213,7 @@
       "refersTo": "card",
       "description": "Bordered surface container; ordinary catalog entries use divided rows.",
       "html": "<article class=\"ds-card\"><h3>Reservation summary</h3><p>Demo payment. Review selected items and their total.</p><a href=\"#\">Open trip draft</a></article>",
-      "css": ".ds-card{background:var(--surface,#fff);color:var(--ink,#102e3a);border:1px solid var(--line,#d5e0e5);border-radius:12px;padding:28px;font:16px \"Source Sans 3\",sans-serif}.ds-card h3{font:600 17px Sora,sans-serif;letter-spacing:-.03em}.ds-card p{color:var(--muted,#526772);line-height:1.6;max-width:72ch}.ds-card a{color:inherit;text-underline-offset:4px}.ds-card a:hover{text-decoration-thickness:2px}.ds-card a:focus-visible{outline:3px solid var(--action,#2459d3);outline-offset:3px}"
+      "css": ".ds-card{background:var(--surface,#fff);color:var(--ink,#26312e);border:1px solid var(--line,#d8d2c6);border-radius:12px;padding:28px;font:16px \"Source Sans 3\",sans-serif}.ds-card h3{font:600 17px Cormorant Garamond,sans-serif;letter-spacing:-.03em}.ds-card p{color:var(--muted,#526772);line-height:1.6;max-width:72ch}.ds-card a{color:inherit;text-underline-offset:4px}.ds-card a:hover{text-decoration-thickness:2px}.ds-card a:focus-visible{outline:3px solid var(--action,#a34b12);outline-offset:3px}"
     }
   ],
   "narrative": {
@@ -113,7 +224,13 @@
       "Cool neutral surfaces, ocean ink and theme-aware cobalt actions.",
       "Clear task controls, thin borders and visible demo-data labels."
     ],
-    "rules": [{"name": "The Day Identity Rule", "body": "Thirty planner days use stable, zero-based day colours from `client/src/geo/presentation.js`: hue is `round((index * 137.508 + 212) % 360)`, with light-theme saturation/lightness of 72%/26% and dark-theme 78%/72%. Tabs, stop badges, markers, legends and route features share this identity. Always retain explicit day and stop labels; colour alone is insufficient.", "section": "colors"}],
+    "rules": [
+      {
+        "name": "The Day Identity Rule",
+        "body": "Thirty planner days use stable, zero-based day colours from `client/src/geo/presentation.js`: hue is `round((index * 137.508 + 212) % 360)`, with light-theme saturation/lightness of 72%/26% and dark-theme 78%/72%. Tabs, stop badges, markers, legends and route features share this identity. Always retain explicit day and stop labels; colour alone is insufficient.",
+        "section": "colors"
+      }
+    ],
     "dos": [
       "**Do** preserve visible focus: a 3px action outline with 3px offset for the controls covered by the stylesheet. Keep themed visible scrollbars and text alongside color.",
       "**Do** respect reduced motion: country selection uses immediate orientation; CSS animations and transitions reduce to 0.01ms. Keep drag's move-button equivalents and map/list selection consistent.",
@@ -121,7 +238,7 @@
       "**Do** credit destination photographs by author, source and license; retain dated informational INR estimates."
     ],
     "donts": [
-      "**Don't** restore the superseded forest/cream and serif hotel-journal identity.",
+      "**Don't** reintroduce ocean/cobalt brand colours or decorative script in operational UI.",
       "**Don't** add decorative globe auto-rotation, invented ratings or operator partnerships, or represent straight map connections as navigation.",
       "**Don't** claim destination photographs depict fictional properties, or show an invalidated quote as current."
     ]

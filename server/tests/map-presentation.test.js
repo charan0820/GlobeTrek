@@ -86,8 +86,11 @@ describe("connected map presentation", () => {
       ],
     };
     const adapted = adaptMapStyle(style, true);
-    expect(adapted.layers[0].paint["fill-color"]).toBe("#122c40");
-    expect(adapted.layers[1].paint["text-color"]).toBe("#edf5f7");
+    expect(adapted.layers[0].paint["fill-color"]).toBe("#294749");
+    expect(adapted.layers[1].paint["text-color"]).toBe("#eee9dd");
+    expect(adaptMapStyle(style, false).layers[0].paint["fill-color"]).toBe(
+      "#b9d1cf",
+    );
     expect(style.layers[0].paint["fill-color"]).toBe("#fff");
   });
 });

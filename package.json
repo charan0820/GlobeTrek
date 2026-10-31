@@ -18,6 +18,7 @@
     "test": "vitest run",
     "lint": "eslint .",
     "verify:catalog": "node scripts/catalog-integrity.mjs",
+    "verify:models": "node scripts/validate-relief.mjs",
     "test:browser": "node scripts/browser-travel-smoke.mjs && node scripts/browser-travel-recovery.mjs",
     "demo": "node scripts/demo.mjs"
   },
@@ -25,11 +26,14 @@
     "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^9.39.0",
     "concurrently": "^9.2.1",
+    "earcut": "3.2.4",
     "eslint": "^9.39.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.5.0",
     "mongodb-memory-server": "^10.3.0",
     "playwright": "^1.64.1",
+    "pngjs": "7.0.0",
+    "polygon-clipping": "0.15.7",
     "prettier": "^3.6.2",
     "supertest": "^7.1.4",
     "vitest": "^5.0.5"

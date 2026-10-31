@@ -1,0 +1,8 @@
+{
+  "checks": [
+    "Published tour unit rates remain visible alongside failed estimates and retry recovers",
+    "Trip estimate failure preserves selections, remains explicit without a total and recovers",
+    "A delayed superseded party estimate cannot overwrite the latest total"
+  ],
+  "errors": []
+}

@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "https://tiles.openfreemap.org/planet/20261025_080012_pt/12/3639/1612.pbf",
+      "reason": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://tiles.openfreemap.org/planet/20261025_080012_pt/12/3638/1611.pbf",
+      "reason": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://tiles.openfreemap.org/planet/20261025_080012_pt/12/3639/1611.pbf",
+      "reason": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://tiles.openfreemap.org/planet/20261025_080012_pt/12/3639/1613.pbf",
+      "reason": "net::ERR_ABORTED"
+    },
+    {
+      "url": "https://tiles.openfreemap.org/planet/20261025_080012_pt/12/3637/1611.pbf",
+      "reason": "net::ERR_ABORTED"
+    }
+  ]
+}

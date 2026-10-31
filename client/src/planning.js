@@ -1,38 +1,4 @@
-import { dayKeys, POLICY } from "../../shared/travel.js";
-export function planningBudget(draft, hotels, tours) {
-  if (!hotels || !tours) return null;
-  let subtotal = 0,
-    currency,
-    count = 0;
-  for (const stay of draft.stays) {
-    const hotel = hotels.find((h) => h._id === stay.hotelId),
-      room = hotel?.roomTypes.find((r) => r._id === stay.roomTypeId);
-    if (!room) return null;
-    let nights;
-    try {
-      nights = dayKeys(stay.checkIn, stay.checkOut).length;
-    } catch {
-      return null;
-    }
-    currency ||= hotel.currency;
-    subtotal +=
-      room.basePrice * nights * Math.ceil(draft.travelers / room.capacity);
-    count++;
-  }
-  for (const day of draft.days)
-    for (const stop of day.stops)
-      if (stop.kind === "tour") {
-        const tour = tours.find((t) => t._id === stop.refId);
-        if (!tour) return null;
-        currency ||= tour.currency;
-        subtotal += tour.price * draft.travelers;
-        count++;
-      }
-  const fee = Math.round((subtotal * POLICY.feePercent) / 100);
-  return count && Number.isSafeInteger(subtotal + fee)
-    ? { subtotal, fee, total: subtotal + fee, currency }
-    : null;
-}
+import { dayKeys } from "../../shared/travel.js";
 
 // These checks explain the draft. The reservation service remains authoritative.
 export function planningIssues(draft, records, departures) {

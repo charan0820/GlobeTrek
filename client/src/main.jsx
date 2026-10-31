@@ -18,13 +18,13 @@ const lazyExport = (file, name) =>
   lazy(() => file().then((m) => ({ default: m[name] })));
 const Discovery = lazyExport(() => import("./discovery.jsx"), "Discovery"),
   CountryExplorer = lazyExport(
-    () => import("./discovery.jsx"),
-    "CountryExplorer",
+    () => import("./CountryWorkspace.jsx"),
+    "default",
   ),
   ProductDetail = lazyExport(() => import("./discovery.jsx"), "ProductDetail"),
   ResumeIntent = lazyExport(() => import("./discovery.jsx"), "ResumeIntent");
-const TripSetup = lazyExport(() => import("./planner.jsx"), "TripSetup"),
-  Planner = lazyExport(() => import("./planner.jsx"), "Planner"),
+const TripSetup = lazyExport(() => import("./CountryWorkspace.jsx"), "SetupEntry"),
+  Planner = lazyExport(() => import("./CountryWorkspace.jsx"), "PlannerEntry"),
   MyTrips = lazyExport(() => import("./planner.jsx"), "MyTrips");
 const Review = lazyExport(() => import("./reservations.jsx"), "Review"),
   Reservations = lazyExport(() => import("./reservations.jsx"), "Reservations"),
@@ -40,12 +40,11 @@ import {
   storageRead,
   storageWrite,
 } from "./ui.jsx";
-import "@fontsource/sora/latin-400.css";
-import "@fontsource/sora/latin-600.css";
 import "@fontsource/source-sans-3/latin-400.css";
 import "@fontsource/source-sans-3/latin-600.css";
 import "react-day-picker/style.css";
 import "./travel.css";
+import "./workspace.css";
 const client = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, staleTime: 15000, refetchOnWindowFocus: false },
@@ -76,6 +75,17 @@ class AppBoundary extends Component {
 function Shell() {
   const { user, error: authError } = useAuth(),
     location = useLocation();
+  const discovery = location.pathname === "/";
+  const countryWorkspace = location.pathname.startsWith("/countries/");
+  const [wide, setWide] = useState(
+    () => matchMedia("(min-width: 1100px)").matches,
+  );
+  useEffect(() => {
+    const media = matchMedia("(min-width: 1100px)");
+    const update = () => setWide(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   useSoftScroll(location.pathname);
   const [theme, setTheme] = useState(
     () =>
@@ -104,44 +114,80 @@ function Shell() {
     });
     document.getElementById("main")?.focus({ preventScroll: true });
   }, [location.pathname]);
+  const themeButton = (
+    <button
+      className="icon-button theme-toggle"
+      aria-label={`Use ${theme === "light" ? "dark" : "light"} theme`}
+      onClick={() => {
+        const next = theme === "light" ? "dark" : "light";
+        setTheme(next);
+        storageWrite("gt.theme", next);
+      }}
+    >
+      {theme === "light" ? <Moon size={19} /> : <Sun size={19} />}
+    </button>
+  );
   return (
-    <>
+    <div className={`app-shell${discovery ? " discovery-shell" : ""}`}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <div className="demo-bar">
-        Real places. Demo stays, tours and reservations. No real payments.
+        <span>
+          Real places. Demo stays, tours and reservations. No real payments.
+        </span>
       </div>
-      <header className="header wrap">
+      <div className="theme-header-slot">{themeButton}</div>
+      <header className={discovery ? "atlas-rail" : "header wrap"}>
         <Link className="brand" to="/" aria-label="GlobeTrek home">
-          <Compass size={29} strokeWidth={1.5} />
           <span>
             GlobeTrek<span className="brand-dot">.</span>
           </span>
         </Link>
-        <nav aria-label="Main navigation">
-          <NavLink to="/" end>
-            Explore
-          </NavLink>
-          <NavLink to="/trips">My trips</NavLink>
-          <NavLink to="/reservations">Reservations</NavLink>
-          <NavLink to="/account">
-            {user ? user.name.split(" ")[0] : "Account"}
-          </NavLink>
-        </nav>
-        <button
-          className="icon-button theme-toggle"
-          aria-label={`Use ${theme === "light" ? "dark" : "light"} theme`}
-          onClick={() => {
-            const next = theme === "light" ? "dark" : "light";
-            setTheme(next);
-            storageWrite("gt.theme", next);
-          }}
-        >
-          {theme === "light" ? <Moon size={19} /> : <Sun size={19} />}
-        </button>
+        {discovery ? (
+          <>
+            <nav className="atlas-primary" aria-label="Start your journey">
+              <Link to={user ? "/account" : "/login"}>
+                {user ? "Account" : "Login"}
+              </Link>
+              <Link className="atlas-build" to="/planner/new">
+                Build your trip <ArrowRight size={16} />
+              </Link>
+            </nav>
+            <details className="atlas-secondary" open={wide}>
+              <summary>More navigation</summary>
+              <nav aria-label="Your journeys">
+                <Link to="/trips">My trips</Link>
+                <Link to="/reservations">Reservations</Link>
+              </nav>
+            </details>
+            <p className="atlas-signoff">
+              Curiosity, given
+              <br />a direction.
+            </p>
+          </>
+        ) : (
+          <>
+            <nav aria-label="Main navigation">
+              <NavLink to="/" end>
+                Explore
+              </NavLink>
+              <NavLink to="/trips">My trips</NavLink>
+              <NavLink to="/reservations">Reservations</NavLink>
+              <NavLink to="/account">
+                {user ? user.name.split(" ")[0] : "Account"}
+              </NavLink>
+            </nav>
+          </>
+        )}
       </header>
-      <main id="main" tabIndex={-1} className="wrap">
+      <main
+        id="main"
+        tabIndex={-1}
+        className={
+          discovery ? "atlas-main" : countryWorkspace ? "country-main" : "wrap"
+        }
+      >
         <ErrorMessage error={authError} />
         <Suspense fallback={<Status>Loading your journey…</Status>}>
           <Routes>
@@ -178,16 +224,18 @@ function Shell() {
           </Routes>
         </Suspense>
       </main>
-      <footer className="footer wrap">
-        <Link className="brand" to="/">
-          GlobeTrek.
-        </Link>
-        <p>Curiosity, given a direction.</p>
-        <Link to="/planner/new">
-          Plan your next journey <ArrowRight size={16} />
-        </Link>
-      </footer>
-    </>
+      {!discovery && (
+        <footer className="footer wrap">
+          <Link className="brand" to="/">
+            GlobeTrek.
+          </Link>
+          <p>Curiosity, given a direction.</p>
+          <Link to="/planner/new">
+            Plan your next journey <ArrowRight size={16} />
+          </Link>
+        </footer>
+      )}
+    </div>
   );
 }
 function Account() {

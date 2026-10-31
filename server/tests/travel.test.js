@@ -41,6 +41,7 @@ import {
 } from "../src/services/travel-policy.js";
 import { addDays, dateKey, dayKeys } from "../../shared/travel.js";
 import { deleteTrip, saveTrip } from "../src/services/trips.js";
+import { estimateSelections, tripEstimate } from "../src/services/estimates.js";
 import { parseRates, refreshRates } from "../src/services/exchange-rates.js";
 const config = {
   secret: "travel-tests-only-secret-over-32-characters",
@@ -114,6 +115,188 @@ beforeEach(async () => {
 afterAll(async () => {
   await mongoose.disconnect();
   if (replica) await replica.stop();
+});
+describe("read-only planning estimates", () => {
+  it("excludes informational attraction tickets from draft totals", async () => {
+    const input = draft(),
+      attraction = await Attraction.findOne({ country: "JP" });
+    input.days[0].stops = [
+      { id: "planned-place", kind: "attraction", refId: attraction.id },
+    ];
+    expect((await tripEstimate(input)).total).toBeNull();
+    input.stays = [
+      {
+        hotelId: hotel.id,
+        roomTypeId: hotel.roomTypes[0].id,
+        checkIn: start,
+        checkOut: addDays(start, 2),
+      },
+    ];
+    const withAttraction = await tripEstimate(input);
+    input.days[0].stops = [];
+    expect((await tripEstimate(input)).total).toBe(withAttraction.total);
+  });
+  it("rejects mismatched tour departures without claiming a total", async () => {
+    const tour = await Tour.findOne({ country: "JP" }),
+      other = await Tour.findOne({ country: "JP", _id: { $ne: tour._id } }),
+      departure = await TourDeparture.findOne({
+        tour: other._id,
+        startAt: { $gt: new Date() },
+      });
+    const [estimate] = await estimateSelections({
+      travelers: 2,
+      selections: [{ kind: "tours", id: tour.id, departureId: departure.id }],
+    });
+    expect(estimate.total).toBeNull();
+    expect(estimate.missing).toMatch(/matching/);
+  });
+  it("matches the authoritative stay quote for capacity, nights and fees without changing inventory", async () => {
+    const selection = {
+      kind: "stays",
+      id: hotel.id,
+      roomTypeId: hotel.roomTypes[0].id,
+      checkIn: start,
+      checkOut: addDays(start, 3),
+    };
+    const before = await Inventory.find({ roomTypeId: hotel.roomTypes[0]._id })
+      .sort({ date: 1 })
+      .lean();
+    const response = await write("/api/estimates")
+      .send({ travelers: 5, selections: [selection] })
+      .expect(200);
+    expect(response.headers["cache-control"]).toBe("no-store");
+    const estimate = response.body.data[0];
+    expect(estimate.assumptions.rooms).toBe(
+      Math.ceil(5 / hotel.roomTypes[0].capacity),
+    );
+    expect(estimate.total).toBe(
+      priceTotal(
+        [
+          {
+            amount:
+              hotel.roomTypes[0].basePrice *
+              3 *
+              Math.ceil(5 / hotel.roomTypes[0].capacity),
+          },
+        ],
+        hotel.currency,
+      ).total,
+    );
+    expect(estimate.availabilityGuaranteed).toBe(false);
+    expect(await Quote.countDocuments()).toBe(0);
+    expect(await Reservation.countDocuments()).toBe(0);
+    expect(
+      await Inventory.find({ roomTypeId: hotel.roomTypes[0]._id })
+        .sort({ date: 1 })
+        .lean(),
+    ).toEqual(before);
+    const quote = await createQuote(
+      users[0].id,
+      source({ travelers: 5, checkOut: addDays(start, 3) }),
+    );
+    expect(estimate.total).toBe(quote.price.total);
+  });
+  it("estimates package components using the same prices and fee as checkout", async () => {
+    const departure = await PackageDeparture.findOne({
+      country: "JP",
+      startAt: { $gt: new Date() },
+    }).sort({ date: 1 });
+    const [estimate] = await estimateSelections({
+      travelers: 3,
+      selections: [
+        {
+          kind: "packages",
+          id: String(departure.package),
+          departureId: departure.id,
+        },
+      ],
+    });
+    const quote = await createQuote(users[0].id, {
+      kind: "package",
+      departureId: departure.id,
+      travelers: 3,
+    });
+    expect(estimate.total).toBe(quote.price.total);
+    expect(estimate.assumptions.components.length).toBe(4);
+    expect(estimate.assumptions.date).toBe(departure.date);
+  });
+  it("keeps zero-decimal and legitimate zero-price tours visible", async () => {
+    const tour = await Tour.findOne({ country: "JP" }),
+      original = tour.price;
+    try {
+      await Tour.updateOne({ _id: tour._id }, { $set: { price: 0 } });
+      const [estimate] = await estimateSelections({
+        travelers: 12,
+        selections: [{ kind: "tours", id: tour.id }],
+      });
+      expect(estimate.currency).toBe("JPY");
+      expect(estimate.unitPrice).toBe(0);
+      expect(estimate.total).toBe(0);
+      expect(estimate.fee).toBe(0);
+    } finally {
+      await Tour.updateOne({ _id: tour._id }, { $set: { price: original } });
+    }
+  });
+  it("explains missing dates, absent products and empty trips instead of inventing zero totals", async () => {
+    const rows = await estimateSelections({
+      selections: [
+        { kind: "stays", id: hotel.id },
+        { kind: "stays", id: "000000000000000000000000" },
+      ],
+    });
+    expect(rows[0].unitPrice).toBeGreaterThanOrEqual(0);
+    expect(rows[0].total).toBeNull();
+    expect(rows[0].missing).toMatch(/dates/);
+    expect(rows[1].total).toBeNull();
+    expect((await tripEstimate(draft())).total).toBeNull();
+  });
+  it("bounds and validates public estimate input", async () => {
+    const selection = { kind: "stays", id: hotel.id };
+    await write("/api/estimates")
+      .send({ travelers: 2, selections: Array(21).fill(selection) })
+      .expect(400);
+    await write("/api/estimates")
+      .send({ travelers: 0, selections: [selection] })
+      .expect(400);
+    await write("/api/estimates")
+      .send({ selections: [{ ...selection, id: "bad" }] })
+      .expect(400);
+    await write("/api/estimates")
+      .send({ selections: [{ ...selection, checkIn: start }] })
+      .expect(400);
+    await write("/api/estimates")
+      .send({
+        selections: [
+          { ...selection, checkIn: addDays(start, 1), checkOut: start },
+        ],
+      })
+      .expect(400);
+  });
+  it("includes owned saved-trip summaries and preserves cross-user isolation", async () => {
+    const input = draft();
+    input.stays = [
+      {
+        hotelId: hotel.id,
+        roomTypeId: hotel.roomTypes[0].id,
+        checkIn: start,
+        checkOut: addDays(start, 2),
+      },
+    ];
+    const created = await write("/api/trips").send(input).expect(201);
+    const own = await write("/api/trips", users[0], "get").expect(200),
+      other = await write("/api/trips", users[1], "get").expect(200);
+    expect(
+      own.body.data.find((t) => t._id === created.body.data._id).pricingSummary
+        .total,
+    ).toBeGreaterThan(0);
+    expect(other.body.data).toEqual([]);
+    const guest = await request(app)
+      .post("/api/estimates/trip")
+      .set("Origin", config.origin)
+      .send(input)
+      .expect(200);
+    expect(guest.body.data.total).toBe(own.body.data[0].pricingSummary.total);
+  });
 });
 describe("travel catalog and domain", () => {
   it("seeds all ten countries and exact content counts", async () => {

@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "theme": "light",
+      "fg": "ink",
+      "bg": "canvas",
+      "ratio": 11.92
+    },
+    {
+      "theme": "light",
+      "fg": "muted",
+      "bg": "canvas",
+      "ratio": 5.19
+    },
+    {
+      "theme": "light",
+      "fg": "action",
+      "bg": "canvas",
+      "ratio": 5.21
+    },
+    {
+      "theme": "light",
+      "fg": "on-action",
+      "bg": "action",
+      "ratio": 5.78
+    },
+    {
+      "theme": "light",
+      "fg": "danger",
+      "bg": "soft",
+      "ratio": 5.61
+    },
+    {
+      "theme": "light",
+      "fg": "success",
+      "bg": "soft",
+      "ratio": 5.64
+    },
+    {
+      "theme": "light",
+      "fg": "warning",
+      "bg": "soft",
+      "ratio": 5.14
+    },
+    {
+      "theme": "dark",
+      "fg": "ink",
+      "bg": "canvas",
+      "ratio": 13.07
+    },
+    {
+      "theme": "dark",
+      "fg": "muted",
+      "bg": "canvas",
+      "ratio": 8.51
+    },
+    {
+      "theme": "dark",
+      "fg": "action",
+      "bg": "canvas",
+      "ratio": 7.84
+    },
+    {
+      "theme": "dark",
+      "fg": "on-action",
+      "bg": "action",
+      "ratio": 7.84
+    },
+    {
+      "theme": "dark",
+      "fg": "danger",
+      "bg": "soft",
+      "ratio": 6.35
+    },
+    {
+      "theme": "dark",
+      "fg": "success",
+      "bg": "soft",
+      "ratio": 6.58
+    },
+    {
+      "theme": "dark",
+      "fg": "warning",
+      "bg": "soft",
+      "ratio": 6.7
+    }
+  ]
+}

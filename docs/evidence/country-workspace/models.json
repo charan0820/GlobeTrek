@@ -1,0 +1,805 @@
+{
+  "heightExaggeration": 8,
+  "evidence": [
+    {
+      "code": "IN",
+      "desktop": {
+        "file": "/relief/in-desktop.glb",
+        "bytes": 865524,
+        "triangles": 25481,
+        "vertices": 15518,
+        "sha256": "e936cba0975a0941c77349f8eeb1eb513eeba3b0ae09d5a9196e0dc5e7c90c0f"
+      },
+      "mobile": {
+        "file": "/relief/in-mobile.glb",
+        "bytes": 263124,
+        "triangles": 7308,
+        "vertices": 4842,
+        "sha256": "3b6d4ef86535e9be49f26ff9eff2f895114eba9abc9e1685c5967804d474b370"
+      },
+      "regions": [
+        {
+          "id": "IN-0",
+          "label": "Mainland",
+          "inset": false
+        },
+        {
+          "id": "IN-1",
+          "label": "Andaman and Nicobar",
+          "inset": true
+        },
+        {
+          "id": "IN-2",
+          "label": "Lakshadweep",
+          "inset": true
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "in-amber-fort",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-hawa-mahal",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-city-palace-jaipur",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-jantar-mantar-jaipur",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-city-palace-udaipur",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-lake-pichola",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-saheliyon-ki-bari",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-bagore-ki-haveli",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-fort-kochi-beach",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-mattancherry-palace",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-paradesi-synagogue",
+          "region": "IN-0"
+        },
+        {
+          "id": "in-st-francis-church-kochi",
+          "region": "IN-0"
+        }
+      ]
+    },
+    {
+      "code": "JP",
+      "desktop": {
+        "file": "/relief/jp-desktop.glb",
+        "bytes": 700800,
+        "triangles": 19501,
+        "vertices": 12936,
+        "sha256": "30aa567c378d2d48a6b5b1b708ad114b5275cd7ceab6e41d953b3def10fe9972"
+      },
+      "mobile": {
+        "file": "/relief/jp-mobile.glb",
+        "bytes": 275860,
+        "triangles": 7405,
+        "vertices": 5164,
+        "sha256": "2716162156aec078066e8c74f88addc4b38d4f8b4053faa1c4c71a3bdc408d56"
+      },
+      "regions": [
+        {
+          "id": "JP-0",
+          "label": "Main islands",
+          "inset": false
+        },
+        {
+          "id": "JP-1",
+          "label": "Southern islands",
+          "inset": true
+        },
+        {
+          "id": "JP-2",
+          "label": "Pacific islands",
+          "inset": true
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "jp-senso-ji",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-meiji-jingu",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-ueno-park",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-shinjuku-gyoen",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-fushimi-inari-taisha",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-kiyomizu-dera",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-kinkaku-ji",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-arashiyama-bamboo-grove",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-osaka-castle",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-dotonbori",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-shitenno-ji",
+          "region": "JP-0"
+        },
+        {
+          "id": "jp-kuromon-market",
+          "region": "JP-0"
+        }
+      ]
+    },
+    {
+      "code": "TH",
+      "desktop": {
+        "file": "/relief/th-desktop.glb",
+        "bytes": 480856,
+        "triangles": 14097,
+        "vertices": 8627,
+        "sha256": "7ca453ab8efdea92900d4211d1a360a4f570af9d23229bd1dc2788ab1bd81f91"
+      },
+      "mobile": {
+        "file": "/relief/th-mobile.glb",
+        "bytes": 150252,
+        "triangles": 4147,
+        "vertices": 2760,
+        "sha256": "7631af3f28ea063e4f9d6e6c25928fab54e20d03435662aa2727827bff231d1b"
+      },
+      "regions": [
+        {
+          "id": "TH-0",
+          "label": "Thailand",
+          "inset": false
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "th-grand-palace-bangkok",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-wat-arun",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-wat-pho",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-lumphini-park",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-wat-phra-singh",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-wat-chedi-luang",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-doi-suthep-temple",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-tha-phae-gate",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-phuket-old-town",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-kata-beach",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-wat-chalong",
+          "region": "TH-0"
+        },
+        {
+          "id": "th-promthep-cape",
+          "region": "TH-0"
+        }
+      ]
+    },
+    {
+      "code": "ID",
+      "desktop": {
+        "file": "/relief/id-desktop.glb",
+        "bytes": 837760,
+        "triangles": 22738,
+        "vertices": 15661,
+        "sha256": "523f16e02ec2fda42f1102fc4eced397c61c9fec72d105834d71de1e89165d19"
+      },
+      "mobile": {
+        "file": "/relief/id-mobile.glb",
+        "bytes": 544936,
+        "triangles": 14620,
+        "vertices": 10233,
+        "sha256": "a89d1cb26f7bd3e69ef0f431e3d0e7655c1a6cef607dec7b267b4230b9db1bd5"
+      },
+      "regions": [
+        {
+          "id": "ID-0",
+          "label": "Indonesian archipelago",
+          "inset": false
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "id-ubud-palace",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-sacred-monkey-forest",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-tegallalang-rice-terraces",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-campuhan-ridge-walk",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-kraton-yogyakarta",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-taman-sari",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-prambanan",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-malioboro-street",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-national-monument-jakarta",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-kota-tua",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-istiqlal-mosque",
+          "region": "ID-0"
+        },
+        {
+          "id": "id-taman-mini-indonesia-indah",
+          "region": "ID-0"
+        }
+      ]
+    },
+    {
+      "code": "FR",
+      "desktop": {
+        "file": "/relief/fr-desktop.glb",
+        "bytes": 2444372,
+        "triangles": 77359,
+        "vertices": 42083,
+        "sha256": "caeda33ea6646647138d14ad9675bc2dc267e95e6f3eefd9afd322a8165ffe8b"
+      },
+      "mobile": {
+        "file": "/relief/fr-mobile.glb",
+        "bytes": 491504,
+        "triangles": 14447,
+        "vertices": 8807,
+        "sha256": "741d8cb9e899bebf3e20713fcce5be54573d52957914dce2d1779420c4460401"
+      },
+      "regions": [
+        {
+          "id": "FR-0",
+          "label": "Metropolitan France",
+          "inset": false
+        },
+        {
+          "id": "FR-1",
+          "label": "French Guiana",
+          "inset": true
+        },
+        {
+          "id": "FR-2",
+          "label": "Caribbean",
+          "inset": true
+        },
+        {
+          "id": "FR-3",
+          "label": "Réunion",
+          "inset": true
+        },
+        {
+          "id": "FR-4",
+          "label": "Mayotte",
+          "inset": true
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "fr-eiffel-tower",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-louvre-museum",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-luxembourg-gardens",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-sacre-coeur",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-promenade-des-anglais",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-castle-hill-nice",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-cours-saleya",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-matisse-museum-nice",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-basilica-of-fourviere",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-vieux-lyon",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-parc-de-la-tete-d-or",
+          "region": "FR-0"
+        },
+        {
+          "id": "fr-place-bellecour",
+          "region": "FR-0"
+        }
+      ]
+    },
+    {
+      "code": "IT",
+      "desktop": {
+        "file": "/relief/it-desktop.glb",
+        "bytes": 487884,
+        "triangles": 14191,
+        "vertices": 8791,
+        "sha256": "d932fab4b75f4f6ecc9556915996fdfb8430e5cb239b63ffe35a32275b33f3d1"
+      },
+      "mobile": {
+        "file": "/relief/it-mobile.glb",
+        "bytes": 163184,
+        "triangles": 4482,
+        "vertices": 3008,
+        "sha256": "24a4dcfbccfb0468bd68480ffe6c529ce665c28b5bef3abf18b78838c9612dc0"
+      },
+      "regions": [
+        {
+          "id": "IT-0",
+          "label": "Italy",
+          "inset": false
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "it-colosseum",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-roman-forum",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-pantheon-rome",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-trevi-fountain",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-florence-cathedral",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-uffizi-gallery",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-ponte-vecchio",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-piazzale-michelangelo",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-st-marks-square",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-rialto-bridge",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-doges-palace",
+          "region": "IT-0"
+        },
+        {
+          "id": "it-basilica-santa-maria-della-salute",
+          "region": "IT-0"
+        }
+      ]
+    },
+    {
+      "code": "ES",
+      "desktop": {
+        "file": "/relief/es-desktop.glb",
+        "bytes": 724824,
+        "triangles": 21964,
+        "vertices": 12782,
+        "sha256": "d394f9cf57e9a71c4ca918b1e0cc97dd162952cc87242f0fd0d6b80f833dd17d"
+      },
+      "mobile": {
+        "file": "/relief/es-mobile.glb",
+        "bytes": 206468,
+        "triangles": 5809,
+        "vertices": 3768,
+        "sha256": "55ae209827524c8ba950a5ffa8fd8836f67f0d9da02f64f9336be305a8c9eedd"
+      },
+      "regions": [
+        {
+          "id": "ES-0",
+          "label": "Mainland and Balearic Islands",
+          "inset": false
+        },
+        {
+          "id": "ES-1",
+          "label": "Canary Islands",
+          "inset": true
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "es-sagrada-familia",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-park-guell",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-casa-batllo",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-gothic-quarter-barcelona",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-prado-museum",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-retiro-park",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-royal-palace-madrid",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-plaza-mayor-madrid",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-plaza-de-espana-seville",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-royal-alcazar-seville",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-seville-cathedral",
+          "region": "ES-0"
+        },
+        {
+          "id": "es-maria-luisa-park",
+          "region": "ES-0"
+        }
+      ]
+    },
+    {
+      "code": "GR",
+      "desktop": {
+        "file": "/relief/gr-desktop.glb",
+        "bytes": 870736,
+        "triangles": 24543,
+        "vertices": 15975,
+        "sha256": "76233839c5c5f3e9100fc2c26de4dfe86c24cacb66911491154d5a6075dc03b4"
+      },
+      "mobile": {
+        "file": "/relief/gr-mobile.glb",
+        "bytes": 330068,
+        "triangles": 8942,
+        "vertices": 6157,
+        "sha256": "b784b44f12915f66d4ca8664df64f753f2a41b29825146512ded7c7e8d490105"
+      },
+      "regions": [
+        {
+          "id": "GR-0",
+          "label": "Greece and islands",
+          "inset": false
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "gr-acropolis-athens",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-acropolis-museum",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-ancient-agora-athens",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-national-garden-athens",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-white-tower",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-rotunda-thessaloniki",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-aristotelous-square",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-ano-poli",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-old-venetian-harbour-chania",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-chania-lighthouse",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-archaeological-museum-chania",
+          "region": "GR-0"
+        },
+        {
+          "id": "gr-nea-chora-beach",
+          "region": "GR-0"
+        }
+      ]
+    },
+    {
+      "code": "TR",
+      "desktop": {
+        "file": "/relief/tr-desktop.glb",
+        "bytes": 560356,
+        "triangles": 16855,
+        "vertices": 9916,
+        "sha256": "d474467839dae87b3af36a14c42bbe3280bba76ba1d18bf17e5eea55d186b7d3"
+      },
+      "mobile": {
+        "file": "/relief/tr-mobile.glb",
+        "bytes": 148860,
+        "triangles": 4196,
+        "vertices": 2705,
+        "sha256": "06b4f10fdcbff5c6ef75ab6db57030030aacc836f3254c3038d2de988e32d755"
+      },
+      "regions": [
+        {
+          "id": "TR-0",
+          "label": "Turkey",
+          "inset": false
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "tr-hagia-sophia",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-blue-mosque",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-topkapi-palace",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-galata-tower",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-goreme-open-air-museum",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-uchisar-castle",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-love-valley",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-pigeon-valley",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-hadrians-gate",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-kaleici",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-antalya-museum",
+          "region": "TR-0"
+        },
+        {
+          "id": "tr-lower-duden-waterfalls",
+          "region": "TR-0"
+        }
+      ]
+    },
+    {
+      "code": "US",
+      "desktop": {
+        "file": "/relief/us-desktop.glb",
+        "bytes": 2046584,
+        "triangles": 58186,
+        "vertices": 37423,
+        "sha256": "984548156b396c6df7139dbbf94429fd576afa8519e937afbe859c343a86872e"
+      },
+      "mobile": {
+        "file": "/relief/us-mobile.glb",
+        "bytes": 893860,
+        "triangles": 24220,
+        "vertices": 16725,
+        "sha256": "a00d97c50cae67f81ce6372b48434ffc31b96d1dddf221c57c5e67203fe6a9f3"
+      },
+      "regions": [
+        {
+          "id": "US-0",
+          "label": "Contiguous United States",
+          "inset": false
+        },
+        {
+          "id": "US-1",
+          "label": "Alaska",
+          "inset": true
+        },
+        {
+          "id": "US-2",
+          "label": "Hawaii",
+          "inset": true
+        },
+        {
+          "id": "US-3",
+          "label": "Northwestern Hawaiian Islands",
+          "inset": true
+        }
+      ],
+      "attractionAnchors": [
+        {
+          "id": "us-central-park",
+          "region": "US-0"
+        },
+        {
+          "id": "us-metropolitan-museum-of-art",
+          "region": "US-0"
+        },
+        {
+          "id": "us-brooklyn-bridge",
+          "region": "US-0"
+        },
+        {
+          "id": "us-statue-of-liberty",
+          "region": "US-0"
+        },
+        {
+          "id": "us-golden-gate-bridge",
+          "region": "US-0"
+        },
+        {
+          "id": "us-golden-gate-park",
+          "region": "US-0"
+        },
+        {
+          "id": "us-ferry-building",
+          "region": "US-0"
+        },
+        {
+          "id": "us-palace-of-fine-arts",
+          "region": "US-0"
+        },
+        {
+          "id": "us-waikiki-beach",
+          "region": "US-2"
+        },
+        {
+          "id": "us-diamond-head",
+          "region": "US-2"
+        },
+        {
+          "id": "us-iolani-palace",
+          "region": "US-2"
+        },
+        {
+          "id": "us-bishop-museum",
+          "region": "US-2"
+        }
+      ]
+    }
+  ]
+}

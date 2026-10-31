@@ -9,6 +9,7 @@ import React, {
 import {
   Link,
   useNavigate,
+  useLocation,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -49,7 +50,8 @@ import {
   Modal,
 } from "./ui.jsx";
 import { useQueryClient } from "@tanstack/react-query";
-import { planningIssues, planningBudget } from "./planning.js";
+import { planningIssues } from "./planning.js";
+import { Price, PriceCollection, useTripEstimate } from "./pricing.jsx";
 import {
   dayKeys,
   addDays,
@@ -69,6 +71,7 @@ import {
   revealInContainer,
 } from "./geo/presentation.js";
 const TravelMap = lazy(() => import("./geo/Map.jsx"));
+const CountryModel = lazy(() => import("./geo/CountryModel.jsx"));
 const GUEST_KEY = "globetrek.draft.v1";
 const strip = ({
   name,
@@ -89,6 +92,15 @@ export function tripReducer(state, action) {
   const draft = structuredClone(state.draft);
   const day = draft.days.find((d) => d.date === action.date);
   if (action.type === "name") draft.name = action.value;
+  if (action.type === "settings") {
+    draft.startDate = action.startDate;
+    draft.endDate = action.endDate;
+    draft.travelers = action.travelers;
+    draft.days = dayKeys(action.startDate, action.endDate, true).map(
+      (date) =>
+        draft.days.find((day) => day.date === date) || { date, stops: [] },
+    );
+  }
   if (action.type === "add") day.stops.push(action.stop);
   if (action.type === "departure")
     day.stops.find((s) => s.id === action.id).departureId = action.departureId;
@@ -112,11 +124,13 @@ export function tripReducer(state, action) {
     draft.stays[action.index][action.key] = action.value;
   return { draft, generation: state.generation + 1 };
 }
-export function TripSetup() {
+export function TripSetup({ embedded = false, countryCode }) {
   const [params] = useSearchParams(),
     navigate = useNavigate();
   const countries = useApi("/countries");
-  const [country, setCountry] = useState(params.get("country") || "IN"),
+  const [country, setCountry] = useState(
+      countryCode || params.get("country") || "IN",
+    ),
     [startDate, setStart] = useState(dateOffset(7)),
     [endDate, setEnd] = useState(dateOffset(10)),
     [travelers, setTravelers] = useState(2),
@@ -126,6 +140,14 @@ export function TripSetup() {
     enabled: !!params.get("template"),
   });
   const previous = guestDraft();
+  const [replacement, setReplacement] = useState(null);
+  function persist(draft) {
+    if (!storageWrite(GUEST_KEY, { version: 1, savedAt: Date.now(), draft }))
+      throw Error(
+        "Local storage is unavailable. Enable it to preserve your guest trip.",
+      );
+    navigate(`/countries/${draft.country}?mode=plan&trip=local`);
+  }
   function create(e) {
     e.preventDefault();
     setError(null);
@@ -199,17 +221,48 @@ export function TripSetup() {
           kind: "attraction",
           refId: params.get("add"),
         });
-      if (!storageWrite(GUEST_KEY, { version: 1, savedAt: Date.now(), draft }))
-        throw Error(
-          "Local storage is unavailable. Enable it to preserve your guest trip.",
-        );
-      navigate("/planner/local");
+      if (previous) {
+        setReplacement(draft);
+        return;
+      }
+      persist(draft);
     } catch (err) {
       setError(err);
     }
   }
   return (
-    <div className="setup-layout">
+    <div className={`setup-layout${embedded ? " inline-trip-setup" : ""}`}>
+      <Modal
+        open={Boolean(replacement)}
+        onOpenChange={(open) => {
+          if (!open) setReplacement(null);
+        }}
+        title="Replace your local draft?"
+        description={`Starting this trip replaces ${previous?.name || "your current browser draft"}. Saved account trips are preserved.`}
+      >
+        <div className="actions">
+          <button
+            className="button secondary"
+            onClick={() => setReplacement(null)}
+          >
+            Keep current draft
+          </button>
+          <button
+            className="button danger"
+            onClick={() => {
+              try {
+                persist(replacement);
+                setReplacement(null);
+              } catch (err) {
+                setError(err);
+                setReplacement(null);
+              }
+            }}
+          >
+            Replace local draft
+          </button>
+        </div>
+      </Modal>
       <section>
         <h1>
           A journey,
@@ -238,7 +291,11 @@ export function TripSetup() {
                 <select
                   id={id}
                   value={country}
-                  onChange={(e) => setCountry(e.target.value)}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                    if (embedded)
+                      navigate(`/countries/${e.target.value}?mode=plan&new=1`);
+                  }}
                 >
                   {rows.map((c) => (
                     <option key={c.code} value={c.code}>
@@ -303,15 +360,26 @@ export function TripSetup() {
     </div>
   );
 }
-export function Planner() {
-  const { id } = useParams(),
+export function Planner({ tripId: requestedId, workspace }) {
+  const route = useParams(),
+    id = requestedId || route.id,
     { user, checking } = useAuth();
   const query = useApi(`/trips/${id}`, { enabled: id !== "local" && !!user });
   const [recovery, setRecovery] = useState(null);
   if (id === "local") {
     const draft = guestDraft();
     return draft ? (
-      <TripEditor key="local" initial={draft} />
+      draft.country !== workspace?.country && workspace ? (
+        <p className="notice">
+          Your local draft belongs to {draft.country}.{" "}
+          <Link to={`/countries/${draft.country}?mode=plan&trip=local`}>
+            Continue that trip
+          </Link>{" "}
+          or start a new one explicitly.
+        </p>
+      ) : (
+        <TripEditor key="local" initial={draft} workspace={workspace} />
+      )
     ) : (
       <div className="empty">
         <h1>Your next journey starts here.</h1>
@@ -327,6 +395,15 @@ export function Planner() {
   return (
     <QueryState query={query}>
       {(trip) => {
+        if (workspace && trip.country !== workspace.country)
+          return (
+            <p className="notice">
+              This trip belongs to {trip.country}.{" "}
+              <Link to={`/countries/${trip.country}?mode=plan&trip=${id}`}>
+                Open its country workspace
+              </Link>
+            </p>
+          );
         const backup = storageRead(`globetrek.backup.${id}`);
         const differs =
           backup?.version === 1 &&
@@ -359,6 +436,7 @@ export function Planner() {
           );
         return (
           <TripEditor
+            workspace={workspace}
             key={`${id}:${query.dataUpdatedAt}`}
             initial={
               differs && recovery === "restore" ? backup.draft : strip(trip)
@@ -392,14 +470,22 @@ function TripEditor({
   tripId,
   initialRevision = 0,
   initialDirty = false,
+  workspace,
 }) {
+  const [workspaceParams, setWorkspaceParams] = useSearchParams();
+  const geoView = ["model", "map", "list"].includes(workspaceParams.get("view"))
+    ? workspaceParams.get("view")
+    : "model";
+  const GeographicEngine =
+    workspace && geoView === "model" ? CountryModel : TravelMap;
   const [state, dispatch] = useReducer(tripReducer, {
       draft: initial,
       generation: initialDirty ? 1 : 0,
     }),
     { draft, generation } = state;
   const { user } = useAuth(),
-    navigate = useNavigate();
+    navigate = useNavigate(),
+    location = useLocation();
   const [revision, setRevision] = useState(initialRevision),
     [savedGeneration, setSavedGeneration] = useState(0),
     [saveStatus, setSaveStatus] = useState(
@@ -409,11 +495,77 @@ function TripEditor({
     [busy, setBusy] = useState(false),
     [conflict, setConflict] = useState(false);
   const saving = useRef(false);
-  const [date, setDate] = useState(draft.startDate),
+  const [date, setDateState] = useState(
+      draft.days.some((d) => d.date === workspaceParams.get("day"))
+        ? workspaceParams.get("day")
+        : draft.startDate,
+    ),
     [kind, setKind] = useState("attractions"),
     [selected, setSelected] = useState(null),
-    [view, setView] = useState("list"),
+    [legacyView, setView] = useState("list"),
     [tour, setTour] = useState(null);
+  // The canonical workspace URL owns presentation; legacy local state must not
+  // hide previews after returning from Show in list to a geographic view.
+  const view = workspace ? (geoView === "list" ? "list" : "map") : legacyView;
+  function setDate(value) {
+    setDateState(value);
+    if (workspace)
+      setWorkspaceParams((old) => {
+        const p = new URLSearchParams(old);
+        p.set("day", value);
+        return p;
+      });
+  }
+  const urlDay = workspaceParams.get("day");
+  useEffect(() => {
+    if (workspace && draft.days.some((d) => d.date === urlDay))
+      setDateState(urlDay);
+  }, [urlDay, workspace, draft.days]);
+  const [settings, setSettings] = useState({
+      startDate: draft.startDate,
+      endDate: draft.endDate,
+      travelers: draft.travelers,
+    }),
+    [settingsErrors, setSettingsErrors] = useState({});
+  function updateSettings(event) {
+    event.preventDefault();
+    const errors = {};
+    let keys;
+    try {
+      keys = dayKeys(settings.startDate, settings.endDate, true);
+      if (
+        settings.startDate < dateOffset(0) ||
+        settings.endDate > dateOffset(365)
+      )
+        throw Error("Choose dates within the next 365 days.");
+    } catch (err) {
+      errors.endDate = err.message;
+    }
+    if (
+      !Number.isInteger(settings.travelers) ||
+      settings.travelers < 1 ||
+      settings.travelers > 12
+    )
+      errors.travelers = "Choose 1–12 travelers.";
+    if (
+      keys &&
+      (draft.days.some((day) => !keys.includes(day.date) && day.stops.length) ||
+        draft.stays.some(
+          (stay) =>
+            stay.checkIn < settings.startDate ||
+            stay.checkOut > settings.endDate,
+        ))
+    )
+      errors.endDate =
+        "Move or remove selections outside the new dates first. Your plan has been kept.";
+    setSettingsErrors(errors);
+    if (Object.keys(errors).length) {
+      event.currentTarget.elements.namedItem(Object.keys(errors)[0])?.focus();
+      return;
+    }
+    dispatch({ type: "settings", ...settings });
+    if (!keys.includes(date)) setDate(settings.startDate);
+  }
   const [mapScope, setMapScope] = useState("day"),
     [previewRecord, setPreviewRecord] = useState(null),
     [previewOpen, setPreviewOpen] = useState(false),
@@ -436,6 +588,58 @@ function TripEditor({
     kind === "attractions" ? attractions : kind === "tours" ? tours : stays;
   const day = draft.days.find((d) => d.date === date) || draft.days[0];
   const records = [...(attractions.data || []), ...(tours.data || [])];
+  const pendingAdd = workspaceParams.get("add"),
+    pendingTour = workspaceParams.get("addTour"),
+    pendingStay = workspaceParams.get("addStay");
+  useEffect(() => {
+    if (!workspace?.active || !(pendingAdd || pendingTour || pendingStay))
+      return;
+    const record = pendingAdd
+      ? attractions.data?.find((r) => r.id === pendingAdd)
+      : pendingTour
+        ? tours.data?.find((r) => r._id === pendingTour)
+        : stays.data?.find((r) => r._id === pendingStay);
+    if (!record) return;
+    if (pendingAdd) {
+      const existing = day.stops.find(
+        (s) => s.kind === "attraction" && s.refId === pendingAdd,
+      );
+      if (existing) setSelected(existing.id);
+      else if (day.stops.length < 12)
+        dispatch({
+          type: "add",
+          date: day.date,
+          stop: {
+            id: crypto.randomUUID(),
+            kind: "attraction",
+            refId: pendingAdd,
+          },
+        });
+    } else if (pendingTour) {
+      setKind("tours");
+      setTour(record);
+    } else setStayCandidate(record);
+    setWorkspaceParams(
+      (old) => {
+        const p = new URLSearchParams(old);
+        p.delete("add");
+        p.delete("addTour");
+        p.delete("addStay");
+        return p;
+      },
+      { replace: true },
+    );
+  }, [
+    pendingAdd,
+    pendingTour,
+    pendingStay,
+    workspace?.active,
+    attractions.data,
+    tours.data,
+    stays.data,
+    day,
+    setWorkspaceParams,
+  ]);
   const resolve = (stop) =>
     records.find((r) => String(r.id || r._id) === stop.refId);
   const allPoints = tripPoints(draft.days, resolve);
@@ -456,6 +660,12 @@ function TripEditor({
   function showPlannerList() {
     setPreviewOpen(false);
     setView("list");
+    if (workspace)
+      setWorkspaceParams((old) => {
+        const p = new URLSearchParams(old);
+        p.set("view", "list");
+        return p;
+      });
     requestAnimationFrame(() =>
       revealInContainer(
         dayPanel.current,
@@ -484,7 +694,16 @@ function TripEditor({
     staleTime: 60000,
   });
   const issues = planningIssues(draft, records, schedule.data);
-  const budget = planningBudget(draft, stays.data, tours.data);
+  const estimated = useTripEstimate(draft),
+    budget = estimated.data;
+  const priceRecords = [
+    ...(attractions.data || []).map((r) => ({
+      ...r,
+      priceKind: "attractions",
+    })),
+    ...(tours.data || []).map((r) => ({ ...r, priceKind: "tours" })),
+    ...(stays.data || []).map((r) => ({ ...r, priceKind: "stays" })),
+  ];
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, {
@@ -536,7 +755,13 @@ function TripEditor({
     setError(null);
     try {
       const result = await send("/trips", draft);
-      navigate(`/planner/${result.data._id}`);
+      if (workspace) {
+        const next = new URLSearchParams(workspaceParams);
+        next.set("trip", result.data._id);
+        next.set("mode", "plan");
+        next.delete("new");
+        navigate(`/countries/${draft.country}?${next}`);
+      } else navigate(`/planner/${result.data._id}`);
     } catch (err) {
       setError(err);
     } finally {
@@ -603,469 +828,624 @@ function TripEditor({
   const gaps = draft.days
     .slice(0, -1)
     .filter((d) => !covered.has(d.date)).length;
-  return (
-    <>
-      <h1 className="sr-only">Trip planner</h1>
-      <div className="planner-heading">
-        <div>
-          <Link className="back-link" to={`/countries/${draft.country}`}>
-            Explore {draft.country}
-          </Link>
-          <Field
-            label="Trip name"
-            value={draft.name}
-            maxLength={100}
-            onChange={(e) => dispatch({ type: "name", value: e.target.value })}
+  const heading = (
+    <div className="planner-heading">
+      <div>
+        <Link className="back-link" to={`/countries/${draft.country}`}>
+          Explore {draft.country}
+        </Link>
+        <Field
+          label="Trip name"
+          value={draft.name}
+          maxLength={100}
+          onChange={(e) => dispatch({ type: "name", value: e.target.value })}
+        />
+        <form className="trip-settings" noValidate onSubmit={updateSettings}>
+          <DateField
+            name="startDate"
+            label="Trip starts"
+            value={settings.startDate}
+            error={settingsErrors.startDate}
+            onChange={(value) =>
+              setSettings((s) => ({ ...s, startDate: value }))
+            }
           />
-          <p>
-            {draft.startDate} — {draft.endDate} · {draft.travelers} travelers{" "}
-            <span className="save-status" role="status">
-              {saveStatus}
-            </span>
-          </p>
-        </div>
-        <div className="actions">
-          {!user ? (
-            <Link className="button" to="/login?next=/planner/local">
-              Log in to save
-            </Link>
-          ) : !tripId ? (
-            <button className="button" disabled={busy} onClick={saveCopy}>
-              Save trip to account
-            </button>
-          ) : (
-            <button
-              className="button"
-              disabled={
-                busy ||
-                generation !== savedGeneration ||
-                conflict ||
-                issues.some((i) => i.severity === "error")
-              }
-              onClick={review}
-            >
-              Review selected bookings
-            </button>
-          )}
-        </div>
-      </div>
-      <ErrorMessage error={error} />
-      {budget && (
-        <section className="planning-budget" aria-label="Planning estimate">
-          <div>
-            <h2>Planning estimate</h2>
-            <p>Selected stays and tours · includes the demo 12% service fee</p>
-          </div>
-          <strong>{formatMoney(budget.total, budget.currency)}</strong>
-          <p className="fine-print">
-            Based on current catalog prices. Review for the authoritative server
-            quote and availability. Attraction tickets, transport, meals and
-            unselected lodging are excluded.
-          </p>
-        </section>
-      )}
-      {issues.length > 0 && (
-        <section
-          className="notice planning-checks"
-          aria-label="Planning checks"
-        >
-          <h2>Before you reserve</h2>
-          <ul>
-            {issues.map((issue, i) => (
-              <li key={`${issue.code}-${i}`}>{issue.message}</li>
-            ))}
-          </ul>
-          <p className="fine-print">
-            Warnings guide planning. Final prices, capacity and booking rules
-            are checked by the server.
-          </p>
-        </section>
-      )}
-      {schedule.error && (
-        <p className="notice">
-          Scheduled times could not load. Your draft is preserved; review will
-          recheck them on the server.
+          <DateField
+            name="endDate"
+            label="Trip ends"
+            value={settings.endDate}
+            error={settingsErrors.endDate}
+            onChange={(value) => setSettings((s) => ({ ...s, endDate: value }))}
+          />
+          <Field
+            name="travelers"
+            label="Travelers"
+            type="number"
+            min="1"
+            max="12"
+            value={settings.travelers}
+            error={settingsErrors.travelers}
+            onChange={(event) =>
+              setSettings((s) => ({
+                ...s,
+                travelers: Number(event.target.value),
+              }))
+            }
+          />
+          <button className="button secondary">Update dates and party</button>
+        </form>
+        <p>
+          {draft.startDate} — {draft.endDate} · {draft.travelers} travelers{" "}
+          <span className="save-status" role="status">
+            {saveStatus}
+          </span>
         </p>
-      )}
-      {conflict && (
-        <div className="actions">
+      </div>
+      <div className="actions">
+        {!user ? (
+          <Link
+            className="button"
+            to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`}
+          >
+            Log in to save
+          </Link>
+        ) : !tripId ? (
+          <button className="button" disabled={busy} onClick={saveCopy}>
+            Save trip to account
+          </button>
+        ) : (
+          <button
+            className="button"
+            disabled={
+              busy ||
+              generation !== savedGeneration ||
+              conflict ||
+              issues.some((i) => i.severity === "error")
+            }
+            onClick={review}
+          >
+            Review selected bookings
+          </button>
+        )}
+      </div>
+    </div>
+  );
+  return (
+    <PriceCollection
+      records={priceRecords}
+      travelers={draft.travelers}
+      from={date}
+      to={date < draft.endDate ? addDays(date, 1) : undefined}
+    >
+      <div className={workspace ? "embedded-planner" : ""}>
+        <h1 className="sr-only">Trip planner</h1>
+        {!workspace && heading}
+        <ErrorMessage error={error} />
+        {estimated.enabled ? (
+          <section className="planning-budget" aria-label="Planning estimate">
+            <div>
+              <h2>Planning estimate</h2>
+              <p>
+                Selected stays and tours · includes the demo 12% service fee
+              </p>
+            </div>
+            <strong>
+              {estimated.error
+                ? "Estimate unavailable"
+                : budget?.total != null
+                  ? formatMoney(budget.total, budget.currency)
+                  : estimated.isFetching
+                    ? "Updating estimate…"
+                    : "Estimate incomplete"}
+            </strong>
+            {estimated.error && (
+              <div>
+                <ErrorMessage error={estimated.error} />
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={() => estimated.refetch()}
+                  disabled={estimated.isFetching}
+                >
+                  Retry trip estimate
+                </button>
+              </div>
+            )}
+            {budget?.missing && <p>{budget.missing}</p>}
+            <p className="fine-print">
+              {budget?.incomplete ? "Some selections remain incomplete. " : ""}
+              Based on current catalog prices. Review for the authoritative
+              server quote and availability. Attraction tickets, transport,
+              meals and unselected lodging are excluded.
+            </p>
+          </section>
+        ) : (
+          <p className="fine-print">
+            Add a stay or scheduled tour for a booking estimate. Attraction
+            tickets and transport are not sold here.
+          </p>
+        )}
+        {issues.length > 0 && (
+          <section
+            className="notice planning-checks"
+            aria-label="Planning checks"
+          >
+            <h2>Before you reserve</h2>
+            <ul>
+              {issues.map((issue, i) => (
+                <li key={`${issue.code}-${i}`}>{issue.message}</li>
+              ))}
+            </ul>
+            <p className="fine-print">
+              Warnings guide planning. Final prices, capacity and booking rules
+              are checked by the server.
+            </p>
+          </section>
+        )}
+        {schedule.error && (
+          <p className="notice">
+            Scheduled times could not load. Your draft is preserved; review will
+            recheck them on the server.
+          </p>
+        )}
+        {conflict && (
+          <div className="actions">
+            <button
+              className="button secondary"
+              onClick={() => window.location.reload()}
+            >
+              Reload server version
+            </button>
+            <button className="button" onClick={saveCopy}>
+              Save my edits as a copy
+            </button>
+          </div>
+        )}
+        {saveStatus.startsWith("Not saved") && !conflict && (
           <button
             className="button secondary"
-            onClick={() => window.location.reload()}
+            onClick={() => dispatch({ type: "name", value: draft.name })}
           >
-            Reload server version
+            Retry saving
           </button>
-          <button className="button" onClick={saveCopy}>
-            Save my edits as a copy
+        )}
+        <div className="day-tabs" aria-label="Trip days">
+          {draft.days.map((d, i) => (
+            <button
+              key={d.date}
+              style={dayStyle(i)}
+              aria-pressed={date === d.date}
+              onClick={() => {
+                setDate(d.date);
+                setTour(null);
+                setEditingStop(null);
+                setPreviewOpen(false);
+              }}
+            >
+              Day {i + 1}
+              <small>{d.date.slice(5)}</small>
+            </button>
+          ))}
+        </div>
+        <div className="view-switch mobile-view">
+          <button
+            aria-pressed={view === "list"}
+            onClick={() => setView("list")}
+          >
+            Day plan
+          </button>
+          <button aria-pressed={view === "map"} onClick={() => setView("map")}>
+            Map
           </button>
         </div>
-      )}
-      {saveStatus.startsWith("Not saved") && !conflict && (
-        <button
-          className="button secondary"
-          onClick={() => dispatch({ type: "name", value: draft.name })}
-        >
-          Retry saving
-        </button>
-      )}
-      <div className="day-tabs" aria-label="Trip days">
-        {draft.days.map((d, i) => (
-          <button
-            key={d.date}
-            style={dayStyle(i)}
-            aria-pressed={date === d.date}
-            onClick={() => {
-              setDate(d.date);
-              setTour(null);
-              setEditingStop(null);
-              setPreviewOpen(false);
-            }}
+        <div className={`planner-workspace view-${view}`}>
+          <section
+            className="day-panel"
+            ref={dayPanel}
+            tabIndex={0}
+            aria-label="Day plan and places to add"
           >
-            Day {i + 1}
-            <small>{d.date.slice(5)}</small>
-          </button>
-        ))}
-      </div>
-      <div className="view-switch mobile-view">
-        <button aria-pressed={view === "list"} onClick={() => setView("list")}>
-          Day plan
-        </button>
-        <button aria-pressed={view === "map"} onClick={() => setView("map")}>
-          Map
-        </button>
-      </div>
-      <div className={`planner-workspace view-${view}`}>
-        <section
-          className="day-panel"
-          ref={dayPanel}
-          tabIndex={0}
-          aria-label="Day plan and places to add"
-        >
-          <h2>Your day, in order.</h2>
-          <p className="fine-print">
-            Reorder stops or move them to another day. Connections do not
-            include transport.
-          </p>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={({ active, over }) => {
-              if (over && active.id !== over.id)
-                dispatch({
-                  type: "move",
-                  date,
-                  id: active.id,
-                  to: day.stops.findIndex((s) => s.id === over.id),
-                });
-            }}
-          >
-            <SortableContext
-              items={day.stops.map((s) => s.id)}
-              strategy={verticalListSortingStrategy}
+            {workspace && heading}
+            <h2>Your day, in order.</h2>
+            <p className="fine-print">
+              Reorder stops or move them to another day. Connections do not
+              include transport.
+            </p>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={({ active, over }) => {
+                if (over && active.id !== over.id)
+                  dispatch({
+                    type: "move",
+                    date,
+                    id: active.id,
+                    to: day.stops.findIndex((s) => s.id === over.id),
+                  });
+              }}
             >
-              {day.stops.map((stop, index) => (
-                <SortableStop
-                  key={stop.id}
-                  stop={stop}
-                  record={resolve(stop)}
-                  index={index}
-                  count={day.stops.length}
-                  days={draft.days}
-                  date={date}
-                  selected={selected === stop.id}
-                  dayIndex={draft.days.findIndex((d) => d.date === date)}
-                  onSelect={() =>
-                    selectPoint(
-                      allPoints.find((point) => point.occurrenceId === stop.id),
+              <SortableContext
+                items={day.stops.map((s) => s.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {day.stops.map((stop, index) => (
+                  <SortableStop
+                    key={stop.id}
+                    stop={stop}
+                    record={resolve(stop)}
+                    index={index}
+                    count={day.stops.length}
+                    days={draft.days}
+                    date={date}
+                    selected={selected === stop.id}
+                    dayIndex={draft.days.findIndex((d) => d.date === date)}
+                    onSelect={() =>
+                      selectPoint(
+                        allPoints.find(
+                          (point) => point.occurrenceId === stop.id,
+                        ),
+                      )
+                    }
+                    dispatch={dispatch}
+                    departure={schedule.data?.find(
+                      (d) => d._id === stop.departureId,
+                    )}
+                    onChooseDeparture={() => {
+                      setKind("tours");
+                      setTour(resolve(stop));
+                      setEditingStop(stop.id);
+                    }}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+            {!day.stops.length && (
+              <div className="empty compact">
+                <MapPin size={28} />
+                <h3>Leave room for discovery.</h3>
+                <p>Add a place or a tour below to begin this day.</p>
+              </div>
+            )}
+          </section>
+          <aside className="planner-collection">
+            <h3>Add to this day</h3>
+            <div className="tabs compact-tabs">
+              {[
+                ["attractions", "Places"],
+                ["tours", "Tours"],
+                ["stays", "Stays"],
+              ].map(([k, label]) => (
+                <button
+                  key={k}
+                  aria-pressed={kind === k}
+                  onClick={() => {
+                    setKind(k);
+                    setTour(null);
+                    setEditingStop(null);
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {tour ? (
+              <div className="departure-picker">
+                <h4>{tour.name}</h4>
+                <Price record={tour} kind="tours" />
+                <QueryState query={departures}>
+                  {(rows) =>
+                    rows.length ? (
+                      rows.map((r) => (
+                        <button
+                          className="button secondary full"
+                          key={r._id}
+                          disabled={r.remaining < draft.travelers}
+                          onClick={() => add(tour, r._id)}
+                        >
+                          Add{" "}
+                          {new Intl.DateTimeFormat("en-IN", {
+                            timeZone: r.timezone,
+                            hour: "numeric",
+                            minute: "2-digit",
+                          }).format(new Date(r.startAt))}{" "}
+                          · {r.remaining} seats
+                        </button>
+                      ))
+                    ) : (
+                      <p>No departures on this day. Choose another day.</p>
                     )
                   }
-                  dispatch={dispatch}
-                  departure={schedule.data?.find(
-                    (d) => d._id === stop.departureId,
-                  )}
-                  onChooseDeparture={() => {
-                    setKind("tours");
-                    setTour(resolve(stop));
-                    setEditingStop(stop.id);
+                </QueryState>
+                <button
+                  className="text-button"
+                  onClick={() => {
+                    setTour(null);
+                    setEditingStop(null);
                   }}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-          {!day.stops.length && (
-            <div className="empty compact">
-              <MapPin size={28} />
-              <h3>Leave room for discovery.</h3>
-              <p>Add a place or a tour below to begin this day.</p>
-            </div>
-          )}
-          <h3>Add to this day</h3>
-          <div className="tabs compact-tabs">
-            {[
-              ["attractions", "Places"],
-              ["tours", "Tours"],
-              ["stays", "Stays"],
-            ].map(([k, label]) => (
-              <button
-                key={k}
-                aria-pressed={kind === k}
-                onClick={() => {
-                  setKind(k);
-                  setTour(null);
-                  setEditingStop(null);
-                }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {tour ? (
-            <div className="departure-picker">
-              <h4>{tour.name}</h4>
-              <QueryState query={departures}>
-                {(rows) =>
-                  rows.length ? (
-                    rows.map((r) => (
-                      <button
-                        className="button secondary full"
-                        key={r._id}
-                        disabled={r.remaining < draft.travelers}
-                        onClick={() => add(tour, r._id)}
-                      >
-                        Add{" "}
-                        {new Intl.DateTimeFormat("en-IN", {
-                          timeZone: r.timezone,
-                          hour: "numeric",
-                          minute: "2-digit",
-                        }).format(new Date(r.startAt))}{" "}
-                        · {r.remaining} seats
-                      </button>
-                    ))
-                  ) : (
-                    <p>No departures on this day. Choose another day.</p>
-                  )
-                }
-              </QueryState>
-              <button
-                className="text-button"
-                onClick={() => {
-                  setTour(null);
-                  setEditingStop(null);
-                }}
-              >
-                Back to tours
-              </button>
-            </div>
-          ) : (
-            <QueryState query={catalog}>
-              {(rows) => (
-                <div className="add-list">
-                  {groupPlaces(rows, countryInfo.data?.cities).map((group) => (
-                    <section className="city-group" key={group.name}>
-                      <h4>
-                        {group.name} <small>{group.items.length} results</small>
-                      </h4>
-                      {group.items.map((r) => (
-                        <div key={r.id || r._id}>
-                          <button
-                            className="add-place-preview"
-                            onClick={(event) => {
-                              previewOrigin.current = event.currentTarget;
-                              setPreviewRecord({ ...r, previewKind: kind });
-                              setPreviewOpen(true);
-                            }}
-                          >
-                            <PlacePhoto record={r} compact />
-                            <span>
-                              <strong>{r.name}</strong>
-                              <small>
-                                {r.city}
-                                {r.demo ? " · Demo" : ""}
-                              </small>
-                              <small>
-                                <Duration record={r} kind={kind} />
-                              </small>
-                            </span>
-                          </button>
-                          <button
-                            className="icon-button"
-                            aria-label={`Add ${r.name}`}
-                            disabled={
-                              kind === "stays"
-                                ? date >= draft.endDate ||
-                                  draft.stays.length >= 30
-                                : day.stops.length >= 12
-                            }
-                            onClick={() => {
-                              if (kind === "tours") setTour(r);
-                              else if (kind === "stays") setStayCandidate(r);
-                              else add(r);
-                            }}
-                          >
-                            <Plus size={18} />
-                          </button>
-                        </div>
-                      ))}
-                    </section>
-                  ))}
-                </div>
-              )}
-            </QueryState>
-          )}
-        </section>
-        <section className="planner-map">
-          <div className="map-scope">
-            <button
-              aria-pressed={mapScope === "day"}
-              onClick={() => setMapScope("day")}
-            >
-              Selected day
-            </button>
-            <button
-              aria-pressed={mapScope === "all"}
-              onClick={() => setMapScope("all")}
-            >
-              All days
-            </button>
-          </div>
-          <div className="day-legend" aria-label="Map day colours">
-            {draft.days.map((d, index) => (
-              <button
-                key={d.date}
-                style={dayStyle(index)}
-                aria-pressed={date === d.date}
-                onClick={() => {
-                  setDate(d.date);
-                  setPreviewOpen(false);
-                }}
-              >
-                Day {index + 1}
-              </button>
-            ))}
-          </div>
-          <GeoBoundary>
-            <Suspense fallback={<p>Loading the map…</p>}>
-              <TravelMap
-                connect
-                items={points}
-                selected={selected}
-                onSelect={selectPoint}
-                center={points[0] || attractions.data?.[0]}
-              >
-                {previewOpen && previewItem && (!narrow || view === "map") && (
-                  <PlacePreview
-                    trigger={previewOrigin.current}
-                    record={previewItem}
-                    kind={
-                      previewItem.previewKind ||
-                      (previewItem.stopKind === "tour"
-                        ? "tours"
-                        : "attractions")
-                    }
-                    onClose={() => setPreviewOpen(false)}
-                    onShowList={showPlannerList}
-                    onAdd={previewRecord ? addFromPreview : undefined}
-                    addDisabled={!canAddPreview}
-                    addLabel={`Add to Day ${draft.days.findIndex((d) => d.date === date) + 1}`}
-                  />
+                >
+                  Back to tours
+                </button>
+              </div>
+            ) : (
+              <QueryState query={catalog}>
+                {(rows) => (
+                  <div className="add-list">
+                    {groupPlaces(rows, countryInfo.data?.cities).map(
+                      (group) => (
+                        <section className="city-group" key={group.name}>
+                          <h4>
+                            {group.name}{" "}
+                            <small>{group.items.length} results</small>
+                          </h4>
+                          {group.items.map((r) => (
+                            <div key={r.id || r._id}>
+                              <button
+                                className="add-place-preview"
+                                onClick={(event) => {
+                                  previewOrigin.current = event.currentTarget;
+                                  setPreviewRecord({ ...r, previewKind: kind });
+                                  setPreviewOpen(true);
+                                }}
+                              >
+                                <PlacePhoto record={r} compact />
+                                <span>
+                                  <strong>{r.name}</strong>
+                                  <Price record={r} kind={kind} />
+                                  <small>
+                                    {r.city}
+                                    {r.demo ? " · Demo" : ""}
+                                  </small>
+                                  <small>
+                                    <Duration record={r} kind={kind} />
+                                  </small>
+                                </span>
+                              </button>
+                              <button
+                                className="icon-button"
+                                aria-label={`Add ${r.name}`}
+                                disabled={
+                                  kind === "stays"
+                                    ? date >= draft.endDate ||
+                                      draft.stays.length >= 30
+                                    : day.stops.length >= 12
+                                }
+                                onClick={() => {
+                                  if (kind === "tours") setTour(r);
+                                  else if (kind === "stays")
+                                    setStayCandidate(r);
+                                  else add(r);
+                                }}
+                              >
+                                <Plus size={18} />
+                              </button>
+                            </div>
+                          ))}
+                        </section>
+                      ),
+                    )}
+                  </div>
                 )}
-              </TravelMap>
-            </Suspense>
-          </GeoBoundary>
-          <p className="fine-print">
-            Daily duration is a planning estimate. Check transport, opening
-            hours, entry requirements, and access independently.
-          </p>
-        </section>
-      </div>
-      {narrow && view === "list" && previewOpen && previewItem && (
-        <PlacePreview
-          trigger={previewOrigin.current}
-          record={previewItem}
-          kind={
-            previewItem.previewKind ||
-            (previewItem.stopKind === "tour" ? "tours" : "attractions")
-          }
-          onClose={() => setPreviewOpen(false)}
-          onAdd={previewRecord ? addFromPreview : undefined}
-          addDisabled={!canAddPreview}
-          addLabel={`Add to Day ${draft.days.findIndex((d) => d.date === date) + 1}`}
-        />
-      )}
-      {stayCandidate && (
-        <StayPicker
-          hotel={stayCandidate}
-          date={date}
-          draft={draft}
-          onClose={() => setStayCandidate(null)}
-          onAdd={(stay) => {
-            dispatch({ type: "addStay", stay });
-            setStayCandidate(null);
-          }}
-        />
-      )}
-      <section className="stay-section">
-        <h2>Where you’ll stay</h2>
-        {draft.stays.map((stay, index) => {
-          const hotel = stays.data?.find((h) => h._id === stay.hotelId);
-          return (
-            <div className="stay-edit" key={`${index}-${stay.hotelId}`}>
-              <strong>{hotel?.name || "Stay"}</strong>
-              <DateField
-                label="Check-in"
-                value={stay.checkIn}
-                onChange={(v) =>
-                  dispatch({ type: "stay", index, key: "checkIn", value: v })
-                }
-              />
-              <DateField
-                label="Checkout"
-                value={stay.checkOut}
-                onChange={(v) =>
-                  dispatch({ type: "stay", index, key: "checkOut", value: v })
-                }
-              />
-              <Field label="Room type">
-                {(id) => (
-                  <select
-                    id={id}
-                    value={stay.roomTypeId}
-                    onChange={(e) =>
-                      dispatch({
-                        type: "stay",
-                        index,
-                        key: "roomTypeId",
-                        value: e.target.value,
+              </QueryState>
+            )}
+          </aside>
+          <section className="planner-map">
+            {workspace && (
+              <div className="view-switch" aria-label="Presentation">
+                {[
+                  ["model", "Model"],
+                  ["map", "Detailed map"],
+                  ["list", "List"],
+                ].map(([key, label]) => (
+                  <button
+                    key={key}
+                    aria-pressed={geoView === key}
+                    onClick={() =>
+                      setWorkspaceParams((old) => {
+                        const p = new URLSearchParams(old);
+                        p.set("view", key);
+                        return p;
                       })
                     }
                   >
-                    {hotel?.roomTypes.map((r) => (
-                      <option value={r._id} key={r._id}>
-                        {r.name} · sleeps {r.capacity}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </Field>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="map-scope">
               <button
-                className="icon-button danger"
-                aria-label={`Remove ${hotel?.name || "stay"}`}
-                onClick={() => dispatch({ type: "removeStay", index })}
+                aria-pressed={mapScope === "day"}
+                onClick={() => setMapScope("day")}
               >
-                <Trash2 size={18} />
+                Selected day
+              </button>
+              <button
+                aria-pressed={mapScope === "all"}
+                onClick={() => setMapScope("all")}
+              >
+                All days
               </button>
             </div>
-          );
-        })}
-        <p className="notice">
-          {gaps
-            ? `${gaps} night${gaps === 1 ? "" : "s"} without selected lodging. These costs are excluded.`
-            : "All trip nights have selected lodging."}{" "}
-          Only selected stays and tours will be reserved. Prices and
-          availability are calculated at review.
-        </p>
-      </section>
-    </>
+            <div className="day-legend" aria-label="Map day colours">
+              {draft.days.map((d, index) => (
+                <button
+                  key={d.date}
+                  style={dayStyle(index)}
+                  aria-pressed={date === d.date}
+                  onClick={() => {
+                    setDate(d.date);
+                    setPreviewOpen(false);
+                  }}
+                >
+                  Day {index + 1}
+                </button>
+              ))}
+            </div>
+            <GeoBoundary>
+              {(!workspace || (workspace.active && geoView !== "list")) && (
+                <Suspense
+                  fallback={<p>Loading geography… The day list is ready.</p>}
+                >
+                  <GeographicEngine
+                    country={draft.country}
+                    cameraState={workspace?.cameraState}
+                    connect
+                    items={points}
+                    selected={selected}
+                    onSelect={selectPoint}
+                    center={points[0] || attractions.data?.[0]}
+                  >
+                    {previewOpen &&
+                      previewItem &&
+                      (!narrow || view === "map") && (
+                        <PlacePreview
+                          trigger={previewOrigin.current}
+                          record={previewItem}
+                          kind={
+                            previewItem.previewKind ||
+                            (previewItem.stopKind === "tour"
+                              ? "tours"
+                              : "attractions")
+                          }
+                          onClose={() => setPreviewOpen(false)}
+                          onShowList={showPlannerList}
+                          onAdd={previewRecord ? addFromPreview : undefined}
+                          addDisabled={!canAddPreview}
+                          addLabel={`Add to Day ${draft.days.findIndex((d) => d.date === date) + 1}`}
+                        />
+                      )}
+                  </GeographicEngine>
+                </Suspense>
+              )}
+            </GeoBoundary>
+            {workspace?.active &&
+              geoView === "list" &&
+              previewOpen &&
+              previewItem && (
+                <PlacePreview
+                  trigger={previewOrigin.current}
+                  record={previewItem}
+                  kind={
+                    previewItem.previewKind ||
+                    (previewItem.stopKind === "tour" ? "tours" : "attractions")
+                  }
+                  onClose={() => setPreviewOpen(false)}
+                  onAdd={previewRecord ? addFromPreview : undefined}
+                  addDisabled={!canAddPreview}
+                  addLabel={`Add to Day ${draft.days.findIndex((d) => d.date === date) + 1}`}
+                />
+              )}
+            <p className="fine-print">
+              Daily duration is a planning estimate. Check transport, opening
+              hours, entry requirements, and access independently.
+            </p>
+          </section>
+        </div>
+        {!workspace &&
+          narrow &&
+          view === "list" &&
+          previewOpen &&
+          previewItem && (
+            <PlacePreview
+              trigger={previewOrigin.current}
+              record={previewItem}
+              kind={
+                previewItem.previewKind ||
+                (previewItem.stopKind === "tour" ? "tours" : "attractions")
+              }
+              onClose={() => setPreviewOpen(false)}
+              onAdd={previewRecord ? addFromPreview : undefined}
+              addDisabled={!canAddPreview}
+              addLabel={`Add to Day ${draft.days.findIndex((d) => d.date === date) + 1}`}
+            />
+          )}
+        {stayCandidate && (
+          <StayPicker
+            hotel={stayCandidate}
+            date={date}
+            draft={draft}
+            onClose={() => setStayCandidate(null)}
+            onAdd={(stay) => {
+              dispatch({ type: "addStay", stay });
+              setStayCandidate(null);
+            }}
+          />
+        )}
+        <section className="stay-section">
+          <h2>Where you’ll stay</h2>
+          {draft.stays.map((stay, index) => {
+            const hotel = stays.data?.find((h) => h._id === stay.hotelId);
+            return (
+              <div className="stay-edit" key={`${index}-${stay.hotelId}`}>
+                <strong>{hotel?.name || "Stay"}</strong>
+                {hotel && (
+                  <PriceCollection
+                    records={[hotel]}
+                    kind="stays"
+                    travelers={draft.travelers}
+                    from={stay.checkIn}
+                    to={stay.checkOut}
+                    roomTypeId={stay.roomTypeId}
+                  >
+                    <Price record={hotel} kind="stays" />
+                  </PriceCollection>
+                )}
+                <DateField
+                  label="Check-in"
+                  value={stay.checkIn}
+                  onChange={(v) =>
+                    dispatch({ type: "stay", index, key: "checkIn", value: v })
+                  }
+                />
+                <DateField
+                  label="Checkout"
+                  value={stay.checkOut}
+                  onChange={(v) =>
+                    dispatch({ type: "stay", index, key: "checkOut", value: v })
+                  }
+                />
+                <Field label="Room type">
+                  {(id) => (
+                    <select
+                      id={id}
+                      value={stay.roomTypeId}
+                      onChange={(e) =>
+                        dispatch({
+                          type: "stay",
+                          index,
+                          key: "roomTypeId",
+                          value: e.target.value,
+                        })
+                      }
+                    >
+                      {hotel?.roomTypes.map((r) => (
+                        <option value={r._id} key={r._id}>
+                          {r.name} · sleeps {r.capacity}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </Field>
+                <button
+                  className="icon-button danger"
+                  aria-label={`Remove ${hotel?.name || "stay"}`}
+                  onClick={() => dispatch({ type: "removeStay", index })}
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            );
+          })}
+          <p className="notice">
+            {gaps
+              ? `${gaps} night${gaps === 1 ? "" : "s"} without selected lodging. These costs are excluded.`
+              : "All trip nights have selected lodging."}{" "}
+            Only selected stays and tours will be reserved. Prices and
+            availability are calculated at review.
+          </p>
+        </section>
+      </div>
+    </PriceCollection>
   );
 }
 function StayPicker({ hotel, date, draft, onClose, onAdd }) {
@@ -1132,6 +1512,16 @@ function StayPicker({ hotel, date, draft, onClose, onAdd }) {
             </select>
           )}
         </Field>
+        <PriceCollection
+          records={[hotel]}
+          kind="stays"
+          travelers={draft.travelers}
+          from={checkIn}
+          to={checkOut}
+          roomTypeId={roomTypeId}
+        >
+          <Price record={hotel} kind="stays" />
+        </PriceCollection>
         <button className="button" type="submit">
           Add stay
         </button>
@@ -1183,6 +1573,12 @@ function SortableStop({
         <button className="stop-title text-button" onClick={onSelect}>
           {record && <PlacePhoto record={record} compact />}
           {record?.name || stop.refId}
+          {record && (
+            <Price
+              record={record}
+              kind={stop.kind === "tour" ? "tours" : "attractions"}
+            />
+          )}
           <small>
             {stop.kind === "tour"
               ? stop.departureId
@@ -1321,6 +1717,7 @@ function SavedTripRow({ trip }) {
       <h2>
         <Link to={`/planner/${trip._id}`}>{trip.name}</Link>
       </h2>
+      <Price record={trip} kind="trip" summary={trip.pricingSummary} />
       <p>
         {trip.country} · {trip.startDate} — {trip.endDate} · {trip.travelers}{" "}
         travelers

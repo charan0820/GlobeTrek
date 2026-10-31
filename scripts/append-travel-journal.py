@@ -30,7 +30,7 @@ for p in document.paragraphs:
     for run in p.runs:
         corrected=run.text.replace('6. hat belongs in state', '6. What belongs in state').replace('7. race can happen with network responses', '7. What race can happen with network responses')
         if corrected != run.text:run.text=corrected
-for filename, marker in [('TRAVEL-LEARNING.md', 'GlobeTrek travel planner learning notes'), ('RELEASE-LEARNING.md', 'Release hardening and recovery'), ('CONNECTED-MAPS-LEARNING.md', 'Connected maps and place previews'), ('SCROLLING-LEARNING.md', 'Momentum scrolling')]:
+for filename, marker in [('TRAVEL-LEARNING.md', 'GlobeTrek travel planner learning notes'), ('RELEASE-LEARNING.md', 'Release hardening and recovery'), ('CONNECTED-MAPS-LEARNING.md', 'Connected maps and place previews'), ('SCROLLING-LEARNING.md', 'Momentum scrolling'), ('ATLAS-LEARNING.md', 'Atlas identity and discovery layout'), ('GLOBE-INTERACTION-LEARNING.md', 'Interactive geography and camera projection'), ('COUNTRY-WORKSPACE-LEARNING.md', 'Country relief workspace and read only pricing')]:
   if not any(p.text == marker for p in document.paragraphs):
     document.add_page_break()
     for line in (root / 'docs' / filename).read_text(encoding='utf-8').splitlines():

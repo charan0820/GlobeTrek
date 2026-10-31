@@ -110,3 +110,46 @@ export const catalogInput = z
   })
   .strict();
 export const departureInput = z.object({ from: date, to: date }).strict();
+export const estimateInput = z
+  .object({
+    travelers: z.number().int().min(1).max(12).default(2),
+    selections: z
+      .array(
+        z
+          .object({
+            kind: z.enum([
+              "attractions",
+              "stays",
+              "tours",
+              "templates",
+              "packages",
+            ]),
+            id: ref,
+            roomTypeId: id.optional(),
+            departureId: id.optional(),
+            checkIn: date.optional(),
+            checkOut: date.optional(),
+          })
+          .strict()
+          .superRefine((value, ctx) => {
+            if (
+              ["stays", "tours", "packages"].includes(value.kind) &&
+              !/^[a-f\d]{24}$/i.test(value.id)
+            )
+              ctx.addIssue({
+                code: "custom",
+                message: "Invalid product identifier.",
+                path: ["id"],
+              });
+            if (Boolean(value.checkIn) !== Boolean(value.checkOut))
+              ctx.addIssue({
+                code: "custom",
+                message: "Provide both stay dates.",
+                path: ["checkOut"],
+              });
+          }),
+      )
+      .min(1)
+      .max(20),
+  })
+  .strict();

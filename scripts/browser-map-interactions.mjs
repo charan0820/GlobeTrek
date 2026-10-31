@@ -51,9 +51,10 @@ async function axe(name) {
 }
 try {
   await page.goto(`${base}/countries/JP`);
-  await button("Split").waitFor();
+  await button("Model").waitFor();
+  assert.equal(await button("Model").getAttribute("aria-pressed"), "true");
+  await button("Detailed map").click();
   await readyMap();
-  assert.equal(await button("Split").getAttribute("aria-pressed"), "true");
   assert.equal(await page.locator(".city-group").count(), 3);
   const cityNames = await page.locator(".city-group > h2").allTextContents();
   assert(
@@ -62,12 +63,12 @@ try {
       cityNames[2].startsWith("Tokyo"),
   );
   await button("List").click();
-  assert.equal(await page.locator(".explorer-map").isVisible(), false);
-  await button("Map").click();
-  assert.equal(await page.locator(".place-list").isVisible(), false);
+  assert.equal(await page.locator(".country-geography").isVisible(), false);
+  await button("Detailed map").click();
+  assert.equal(await page.locator(".place-list").isVisible(), true);
   await page.goBack();
   assert.equal(await button("List").getAttribute("aria-pressed"), "true");
-  await button("Split").click();
+  await button("Detailed map").click();
   await firstMarker();
   await page.locator(".place-preview").waitFor();
   assert.equal(await page.locator(".place-row.is-selected").count(), 1);
@@ -96,14 +97,14 @@ try {
   });
   await button("Senso-ji").click();
   checks.push(
-    "Desktop List/Map/Split, URL Back, alphabetical city groups and bidirectional marker selection",
+    "Desktop Model/Detailed map/List, URL Back, alphabetical city groups and bidirectional marker selection",
   );
   await button("Close place preview").click();
   for (const width of [320, 390, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 950 });
     if (width < 760) {
-      await button("Split").waitFor({ state: "hidden" });
-      await button("Map").click();
+      await button("Model").waitFor();
+      await button("Detailed map").click();
       await firstMarker();
       await page.getByRole("dialog").waitFor();
       await page
@@ -117,7 +118,7 @@ try {
       );
       await capture(`country-dark-${width}`);
     } else {
-      await button("Split").click();
+      await button("Detailed map").click();
       await capture(`country-dark-${width}`);
     }
   }
@@ -134,6 +135,7 @@ try {
     .first()
     .click();
   await button("Add Senso-ji").click();
+  await button("Detailed map").click();
   await button("All days").click();
   await readyMap();
   await page.waitForFunction(
@@ -165,6 +167,12 @@ try {
     .locator(".add-place-preview")
     .filter({ hasText: "Kinkaku-ji" })
     .click();
+  await page.locator(".place-preview").waitFor();
+  assert.equal(
+    await page.locator(".country-model canvas,.map-panel canvas").count(),
+    0,
+  );
+  await capture("planner-list-preview");
   await page
     .locator(".place-preview")
     .getByRole("button", { name: "Add to Day 1", exact: true })
@@ -182,6 +190,7 @@ try {
     .click();
   assert.equal(await page.locator(".stay-edit").count(), 1);
   await page.getByRole("button", { name: /Use light theme/ }).click();
+  await button("Detailed map").click();
   await readyMap();
   await capture("planner-light-desktop");
   await page.setViewportSize({ width: 390, height: 844 });
@@ -217,7 +226,7 @@ try {
   await page.waitForFunction(
     () => document.querySelectorAll(".day-tabs button").length === 30,
   );
-  await button("Map").click();
+  await button("Detailed map").click();
   await button("All days").click();
   await readyMap();
   assert.equal(await page.locator(".day-legend button").count(), 30);

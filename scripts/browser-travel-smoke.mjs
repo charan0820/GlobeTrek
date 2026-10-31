@@ -100,7 +100,6 @@ try {
   }
   await page.goto(base);
   await page.getByRole("heading", { name: /A world to explore/ }).waitFor();
-  await page.getByRole("button", { name: "Japan", exact: true }).click();
   await page.waitForTimeout(2500);
   await capture("discovery-desktop");
   await writeFile(
@@ -119,7 +118,9 @@ try {
   await page.getByRole("button", { name: "Senso-ji", exact: true }).waitFor();
   await page.waitForTimeout(1500);
   await capture("country-desktop");
-  await page.getByRole("link", { name: "Plan a trip", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Build your trip", exact: true })
+    .click();
   await page.getByRole("button", { name: "Create my trip" }).click();
   await page.getByRole("heading", { name: "Your day, in order." }).waitFor();
   await page.getByRole("button", { name: "Add Senso-ji", exact: true }).click();
@@ -139,7 +140,10 @@ try {
   await page
     .getByRole("button", { name: "Add Tokyo House", exact: true })
     .click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Add stay', exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Add stay", exact: true })
+    .click();
   await page.getByRole("link", { name: "Log in to save" }).click();
   await page
     .getByRole("link", { name: "Create an account", exact: true })
@@ -198,7 +202,7 @@ try {
   await page.goto(`${base}/countries/JP`);
   await page.getByRole("button", { name: "Senso-ji", exact: true }).waitFor();
   await capture("country-mobile");
-  await page.getByRole("button", { name: "Map", exact: true }).click();
+  await page.getByRole("button", { name: "Detailed map", exact: true }).click();
   await page.waitForTimeout(1200);
   await capture("country-mobile-map");
   assert.equal(errors.length, 0, `Browser exceptions: ${errors.join("; ")}`);

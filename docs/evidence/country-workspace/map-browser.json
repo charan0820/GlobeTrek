@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "checks": [
+    "Desktop Model/Detailed map/List, URL Back, alphabetical city groups and bidirectional marker selection",
+    "Responsive view controls and mobile photo sheet → Show in list at all five widths",
+    "All-days routes, repeated-place occurrence selection, preview add, reload persistence and explicit stay picker",
+    "Thirty-day guest draft remains operable with all-days map and explicit day legend",
+    "Reduced-motion and Escape dismissal restore marker focus and preserve selection",
+    "Image failure preserves readable place details and preview actions"
+  ],
+  "errors": [],
+  "accessibility": [
+    {
+      "name": "country-preview-light",
+      "violations": []
+    },
+    {
+      "name": "country-preview-dark",
+      "violations": []
+    },
+    {
+      "name": "planner-overview",
+      "violations": []
+    },
+    {
+      "name": "planner-mobile-sheet",
+      "violations": []
+    }
+  ]
+}

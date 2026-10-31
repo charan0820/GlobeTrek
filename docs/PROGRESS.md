@@ -1,4 +1,36 @@
+# Country relief workspace verified locally — 31 October 2026
+
+Resumed and completed the pending country-relief/pricing verification. All ten countries have local desktop/mobile geographic relief, explicit insets, connected pins/previews and a canonical Explore/Plan workspace. Entry transitions, compatibility links, preserved drafts and read-only server estimates are implemented. A regression found and fixed desktop List previews and stale legacy presentation state.
+
+**81 tests passed across eight files.** Lint, production build/asset checks, catalog/model validation and strict premium static audit passed. Browser workspace, entry, estimate recovery, travel smoke/recovery, connected maps, globe and Atlas suites passed. Selected axe scans reported zero violations. Both themes and narrow layouts remain covered; these are scoped checks, not accessibility certification.
+
+The independent reviewer scored the three checkpoint findings resolved, then independently scored the additional List-preview fix resolved, both with disposition **ship at those scopes**. The documenter reconciled DESIGN.md and UX-CONTRACT.md and recorded pre-existing sidecar drift. Engine/detector/quality-bar artifacts remain unavailable. See [COUNTRY-WORKSPACE-REVIEW.md](COUNTRY-WORKSPACE-REVIEW.md) and [documentation review](COUNTRY-WORKSPACE-DOCUMENTATION-REVIEW.md).
+
+New local client observations and bundle/model budgets are in [PERFORMANCE.md](PERFORMANCE.md); raw selected evidence and screenshots are in docs/evidence/country-workspace. No new backend load test or hosted measurement is claimed. CI includes model validation and the new country/estimate browser checks but has not run remotely.
+
+The workspace Word journal is 28 rendered/visually checked pages, preserving its prior 220 paragraphs and 26 pages. The parent journal remains untouched. Local demo: http://localhost:3003 (temporary database). No staging, commit, push, account connection, deployment, publication or new source download was performed during this resume. The checkpoint below remains historical.
+
 # GlobeTrek progress
+
+## Globe interaction refinement — 30 October 2026
+
+Refined the living atlas with stronger Cormorant headings (72/42px desktop/mobile, Explore 76/44px, h2 34px), shared 200ms sliding/fading navigation and text-action hover/focus states with reduced-motion handling, and a top-right utility-header theme control that scrolls with the document. The centred globe fits 90% of the smaller available dimension with raised-country clearance. Supported polygons rise from .001 at rest to .025 on hover and .055 for persistent selection over 300ms, with contrasting side faces. Country links navigate directly; globe selection retains a preview with an explicit Explore link. Country labels follow the current camera with selection/hover collision priority, rear hiding and pointer transparency. A renderer-missed click/fast-tap fallback uses public Three.js ray/sphere intersection and the ten supported Natural Earth polygon checks, including holes, while excluding drag/cancel gestures. No API/database changes, new dependencies or downloads were introduced.
+
+Verification: **70 tests passed**; lint, catalog, production build, built-asset checks and strict premium audit (zero findings) passed. Atlas browser evidence passes seven widths in both themes, real country navigation, touch, hover, keyboard/focus, reduced motion and font fallback; four selected axe scans report zero violations. Globe evidence passes actual hover entry/exit, persistent click selection, oblique drag, theme/camera preservation and recovery. Full travel smoke/recovery and the final six-group connected-map interaction rerun passed after the shared changes.
+
+The independent reviewer returned **SHIP for the changed UI** after thirteen valid desktop/mobile/theme/fallback/raised-globe captures, with no material fixes requested. Motion review included code and browser evidence. The Impeccable engine/detector and an approved composition were unavailable; this is a scoped review, not whole-application accessibility or performance certification. See [GLOBE-INTERACTION-REVIEW.md](GLOBE-INTERACTION-REVIEW.md), `artifacts/atlas/browser.json` and `artifacts/globe/result.json`. The previous Atlas review remains historical.
+
+The workspace Word journal has a new interactive-geography chapter: 26 pages, all 206 prior nonempty paragraphs preserved, original 25 pages pixel-identical and new page 26 visually verified (`artifacts/atlas/globe-journal-qa.json`). The parent journal remains untouched. No staging, commit, push, deployment or account access was performed. Existing history follows unchanged.
+
+## Living atlas redesign — 30 October 2026
+
+Implemented the approved site-wide ivory/rust light and charcoal-green/copper dark identity. Allura owns the wordmark, Cormorant Garamond editorial headings and Source Sans 3 operational text; Sora is removed. New font subsets are served locally with OFL provenance and notices. Explore uses a left rail from 1100px, equal 312px side reservations for a viewport-centred globe, and a right country search/list/preview. Narrow screens stack in document flow with native details secondary navigation. Existing react-globe.gl/Natural Earth geography and API/database contracts remain intact.
+
+Verification: **66 tests passed**; lint, catalog, production build and built-asset checks passed. Atlas browser checks passed in both themes at six widths, covering selection/search, navigation, reduced motion, authentication links and font failure. Four selected axe scans found zero violations; strict premium audit found zero findings. Travel smoke, recovery, connected-map and final globe rendering/retry/recovery browser checks passed. These are scoped checks, not whole-application accessibility or performance certification.
+
+Independent review requested one change: reduce the selected-country left rule from 3px to 1px. All eight Atlas captures were refreshed; the reviewer scored that fix resolved and returned SHIP for it, with no visible regression attributable to the fix. The supplied composition, typography, palettes and fallback were accepted in the initial review. The Impeccable engine/detector and an approved composition were unavailable; the brief, DESIGN.md and UX-CONTRACT.md governed review. See [ATLAS-REVIEW.md](ATLAS-REVIEW.md) and `artifacts/atlas` for evidence and limits.
+
+The temporary port-3002 Mongo demo was started with approved process access for tests. The workspace Word journal includes an Atlas learning chapter: all 193 original nonempty paragraphs are preserved, the original 24 pages render pixel-identically, and new page 25 was visually inspected. Evidence is in `artifacts/atlas/journal-qa.json`; the parent journal remains untouched. No staging, commit, push, deployment or account access was performed. Existing documentation history follows unchanged.
 
 ## Distinguishable reservation summaries — 29 October 2026
 

@@ -1,0 +1,191 @@
+{
+  "passed": true,
+  "checks": [
+    "All ten country links open their destination page; Back returns to Explore",
+    "Country links support keyboard Enter and browser Back",
+    "Filtering, no results and clearing preserve destination selection",
+    "Shared hover surface slides/fades without moving or underlining navigation text",
+    "Both themes fit seven widths and desktop globe stays viewport-centred",
+    "Mobile navigation disclosure works by pointer and keyboard",
+    "Country navigation, Back and reduced-motion selection work",
+    "Login link opens the working authentication form",
+    "Touch tapping a real polygon selects and previews the country",
+    "Signed-in navigation uses Account",
+    "Font download failure retains readable navigation and layout"
+  ],
+  "layouts": [
+    {
+      "theme": "light",
+      "width": 320,
+      "midpoint": 160,
+      "canvasWidth": 280,
+      "containerWidth": 280,
+      "height": 272,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "midpoint": 195,
+      "canvasWidth": 350,
+      "containerWidth": 350,
+      "height": 331.5,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "light",
+      "width": 768,
+      "midpoint": 384,
+      "canvasWidth": 720,
+      "containerWidth": 720,
+      "height": 499.1875,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "light",
+      "width": 1024,
+      "midpoint": 512,
+      "canvasWidth": 976,
+      "containerWidth": 976,
+      "height": 580,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "light",
+      "width": 1100,
+      "midpoint": 550,
+      "canvasWidth": 476,
+      "containerWidth": 476,
+      "height": 790,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "light",
+      "width": 1440,
+      "midpoint": 720,
+      "canvasWidth": 816,
+      "containerWidth": 816,
+      "height": 769.453125,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "light",
+      "width": 1920,
+      "midpoint": 960,
+      "canvasWidth": 1296,
+      "containerWidth": 1296,
+      "height": 769.453125,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 320,
+      "midpoint": 160,
+      "canvasWidth": 280,
+      "containerWidth": 280,
+      "height": 272,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "midpoint": 195,
+      "canvasWidth": 350,
+      "containerWidth": 350,
+      "height": 331.5,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 768,
+      "midpoint": 384,
+      "canvasWidth": 720,
+      "containerWidth": 720,
+      "height": 499.1875,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 1024,
+      "midpoint": 512,
+      "canvasWidth": 976,
+      "containerWidth": 976,
+      "height": 580,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 1100,
+      "midpoint": 550,
+      "canvasWidth": 476,
+      "containerWidth": 476,
+      "height": 790,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "midpoint": 720,
+      "canvasWidth": 816,
+      "containerWidth": 816,
+      "height": 769.453125,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    },
+    {
+      "theme": "dark",
+      "width": 1920,
+      "midpoint": 960,
+      "canvasWidth": 1296,
+      "containerWidth": 1296,
+      "height": 769.453125,
+      "themeRight": 24,
+      "themeTop": 10,
+      "searchBelowToggle": true
+    }
+  ],
+  "accessibility": [
+    {
+      "name": "light-390",
+      "violations": []
+    },
+    {
+      "name": "light-1440",
+      "violations": []
+    },
+    {
+      "name": "dark-390",
+      "violations": []
+    },
+    {
+      "name": "dark-1440",
+      "violations": []
+    }
+  ],
+  "errors": []
+}

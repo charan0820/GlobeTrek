@@ -24,7 +24,9 @@ For a persistent local replica set, copy `.env.example` to `.env`, supply your o
 - Build a guest trip locally or copy an itinerary. Sign in to save it across devices.
 - Plan one country, 1–30 inclusive days, and 1–12 travelers. Selected stays use exclusive checkout dates. Lodging gaps are allowed and identified.
 - Reorder stops, select scheduled tours, choose stay dates and review planning checks. Map connections do not provide road routing or transport times.
-- Switch between List, Map and Split on desktop. City-grouped results, marker selection and photo previews stay connected; mobile previews provide Show in list. The planner also offers an All days map with labelled day colours and separate daily routes.
+- Enter a country through the globe approach transition, then switch between Explore and Build your trip in one workspace. Model, Detailed map and List are presentation choices; only the active geographic engine runs. City-grouped results, pins and photo previews stay connected.
+- All ten countries have local geographic relief, explicit distant-region insets, reset/fit/rotation controls and list alternatives. Heights are exaggerated eight times; inset spacing and stop connections do not represent travel distances. Ctrl/Command + wheel zooms the model while ordinary scrolling moves the page.
+- Unit prices appear beside products. Read-only selection estimates include the demo service fee, explain missing selections and can be retried without losing the draft. Only the final quote and hold check current availability.
 - Review the server-calculated destination-currency price. Optional ECB-based INR estimates are dated and informational; enable the public feed with `FX_REFRESH_ENABLED=true` only when network use is approved.
 - Request a ten-minute hold, then confirm a simulated reservation. Every selected item reserves together or the transaction rolls back.
 - Book fixed packages separately. They consume the same hotel/tour stock as other reservations.
@@ -37,6 +39,7 @@ The core exercise is preventing overselling across multiple stock types. Conditi
 ```sh
 npm run lint
 npm run verify:catalog
+npm run verify:models
 npm test
 npm run build
 ```
@@ -47,9 +50,14 @@ Browser checks use a running demo on port 3002 by default (`BASE_URL` can overri
 node scripts/browser-travel-smoke.mjs
 node scripts/browser-travel-recovery.mjs
 node scripts/browser-map-interactions.mjs
+BASE_URL=http://localhost:3002 node scripts/browser-country-workspace.mjs
+BASE_URL=http://localhost:3002 node scripts/browser-country-entry.mjs
+BASE_URL=http://localhost:3002 node scripts/browser-estimates.mjs
 ```
 
 Windows uses installed Edge; Linux uses Playwright Chromium (`npx playwright install --with-deps chromium`). k6 evidence comes from `scripts/travel-loadtest.mjs` against its own temporary database and localhost:3020; provide `K6_BIN` if k6 is not on PATH. Never run load fixtures against a persistent customer database.
+
+The three country/estimate scripts default to port 3003. On PowerShell set `$env:BASE_URL='http://localhost:3002'` before running them against a demo on port 3002. Ordinary builds copy the versioned relief assets and need no terrain-provider requests. Offline regeneration requires the separately approved source cache; see [country workspace engineering](docs/COUNTRY-WORKSPACE-IMPLEMENTATION.md).
 
 See [performance evidence](docs/PERFORMANCE.md), [progress](docs/PROGRESS.md), [architecture](docs/ARCHITECTURE.md), [travel API](docs/TRAVEL-API.md), [authentication and legacy API](docs/API.md), [service register](docs/SERVICES.md), [learning notes](docs/TRAVEL-LEARNING.md), and [deployment preparation](docs/DEPLOYMENT.md).
 

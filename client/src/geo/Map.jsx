@@ -184,7 +184,7 @@ export default function TravelMap({
         id: "route-halo",
         type: "line",
         source: "route",
-        paint: { "line-color": dark ? "#122c40" : "#ffffff", "line-width": 7 },
+        paint: { "line-color": dark ? "#1d2421" : "#fffdf7", "line-width": 7 },
       });
       map.current.addLayer({
         id: "route",

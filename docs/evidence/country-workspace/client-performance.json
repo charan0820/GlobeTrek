@@ -1,0 +1,229 @@
+{
+  "measuredAt": "2026-10-31T02:04:30.502Z",
+  "machine": {
+    "platform": "win32",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+    "logicalCpus": 12,
+    "memoryGiB": 15.648929595947266,
+    "node": "v24.14.0"
+  },
+  "limitations": "Headless Edge on one Windows developer machine, unthrottled localhost. Fresh browser contexts, warm OS/server cache. Mobile viewport is not mobile hardware. Timings cover button activation to next instrumented render, not continuous drag FPS or input-to-display latency. No hosted or scalability claim.",
+  "samples": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "readyMs": 689.3000000000466,
+      "pixelRatio": 1,
+      "resources": [
+        {
+          "path": "/assets/index-m6aLFaxe.js",
+          "durationMs": 16.5,
+          "transferBytes": 357662,
+          "encodedBytes": 357362
+        },
+        {
+          "path": "/assets/CountryWorkspace-D5iXSABD.js",
+          "durationMs": 4.7999999998137355,
+          "transferBytes": 4818,
+          "encodedBytes": 4518
+        },
+        {
+          "path": "/assets/GeoBoundary-Db5RZMR3.js",
+          "durationMs": 4.600000000093132,
+          "transferBytes": 11686,
+          "encodedBytes": 11386
+        },
+        {
+          "path": "/assets/discovery-BLiaJHBL.js",
+          "durationMs": 4.600000000093132,
+          "transferBytes": 15364,
+          "encodedBytes": 15064
+        },
+        {
+          "path": "/assets/planner-CtaWNxFf.js",
+          "durationMs": 4.599999999860302,
+          "transferBytes": 78481,
+          "encodedBytes": 78181
+        },
+        {
+          "path": "/assets/CountryModel-PsnkCvxU.js",
+          "durationMs": 4.600000000093132,
+          "transferBytes": 57387,
+          "encodedBytes": 57087
+        },
+        {
+          "path": "/assets/OrbitControls-DuRNXRz2.js",
+          "durationMs": 29.5999999998603,
+          "transferBytes": 669247,
+          "encodedBytes": 668947
+        },
+        {
+          "path": "/relief/manifest.json",
+          "durationMs": 3.300000000046566,
+          "transferBytes": 36008,
+          "encodedBytes": 35708
+        },
+        {
+          "path": "/relief/in.json",
+          "durationMs": 5.100000000093132,
+          "transferBytes": 76497,
+          "encodedBytes": 76197
+        },
+        {
+          "path": "/relief/in-desktop.glb",
+          "durationMs": 5.699999999953434,
+          "transferBytes": 865824,
+          "encodedBytes": 865524
+        }
+      ],
+      "idleFramesAdded": 0,
+      "interactionMs": [
+        2.3999999999068677,
+        2.1000000000931323,
+        4.599999999860302,
+        5.100000000093132,
+        5.800000000046566,
+        5.199999999953434,
+        5.5,
+        4.7999999998137355,
+        5.300000000046566,
+        5.199999999953434
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "readyMs": 558.3000000000466,
+      "pixelRatio": 1,
+      "resources": [
+        {
+          "path": "/assets/index-m6aLFaxe.js",
+          "durationMs": 13.600000000093132,
+          "transferBytes": 357662,
+          "encodedBytes": 357362
+        },
+        {
+          "path": "/assets/CountryWorkspace-D5iXSABD.js",
+          "durationMs": 3.8999999999068677,
+          "transferBytes": 4818,
+          "encodedBytes": 4518
+        },
+        {
+          "path": "/assets/GeoBoundary-Db5RZMR3.js",
+          "durationMs": 4.5,
+          "transferBytes": 11686,
+          "encodedBytes": 11386
+        },
+        {
+          "path": "/assets/discovery-BLiaJHBL.js",
+          "durationMs": 4.400000000139698,
+          "transferBytes": 15364,
+          "encodedBytes": 15064
+        },
+        {
+          "path": "/assets/planner-CtaWNxFf.js",
+          "durationMs": 4.300000000046566,
+          "transferBytes": 78481,
+          "encodedBytes": 78181
+        },
+        {
+          "path": "/assets/CountryModel-PsnkCvxU.js",
+          "durationMs": 3.800000000046566,
+          "transferBytes": 57387,
+          "encodedBytes": 57087
+        },
+        {
+          "path": "/assets/OrbitControls-DuRNXRz2.js",
+          "durationMs": 4.2000000001862645,
+          "transferBytes": 669247,
+          "encodedBytes": 668947
+        },
+        {
+          "path": "/relief/manifest.json",
+          "durationMs": 5.7999999998137355,
+          "transferBytes": 36008,
+          "encodedBytes": 35708
+        },
+        {
+          "path": "/relief/in.json",
+          "durationMs": 6.800000000046566,
+          "transferBytes": 76497,
+          "encodedBytes": 76197
+        },
+        {
+          "path": "/relief/in-mobile.glb",
+          "durationMs": 6.800000000046566,
+          "transferBytes": 263424,
+          "encodedBytes": 263124
+        }
+      ],
+      "idleFramesAdded": 0,
+      "interactionMs": [
+        2.800000000046566,
+        8.300000000046566,
+        4.2000000001862645,
+        5.399999999906868,
+        5.199999999953434,
+        4.699999999953434,
+        5.899999999906868,
+        4.800000000046566,
+        5.5,
+        4.7999999998137355
+      ]
+    }
+  ],
+  "bundles": [
+    {
+      "file": "index-m6aLFaxe.js",
+      "bytes": 357362
+    },
+    {
+      "file": "reservations-KZ1IIYaN.js",
+      "bytes": 13803
+    },
+    {
+      "file": "GeoBoundary-Db5RZMR3.js",
+      "bytes": 11386
+    },
+    {
+      "file": "planner-CtaWNxFf.js",
+      "bytes": 78181
+    },
+    {
+      "file": "CountryModel-PsnkCvxU.js",
+      "bytes": 57087
+    },
+    {
+      "file": "OrbitControls-DuRNXRz2.js",
+      "bytes": 668947
+    },
+    {
+      "file": "Map-CTxgiObV.js",
+      "bytes": 1083149
+    },
+    {
+      "file": "maplibre-gl-worker-Dro7GA4u.js",
+      "bytes": 517225
+    },
+    {
+      "file": "CountryWorkspace-D5iXSABD.js",
+      "bytes": 4518
+    },
+    {
+      "file": "discovery-BLiaJHBL.js",
+      "bytes": 15064
+    },
+    {
+      "file": "Globe-CBWD-Dp5.js",
+      "bytes": 1318490
+    },
+    {
+      "file": "index-CjVlFh40.js",
+      "bytes": 69568
+    }
+  ]
+}

@@ -12,6 +12,33 @@ GET /api/catalog/:kind/:id → detail. Attractions/templates use editorial IDs. 
 
 ## Trips
 
+### Read-only planning estimates
+
+`POST /api/estimates` is public, same-origin, validated, rate-limited independently from booking attempts (120 estimate requests per IP per minute) and always `Cache-Control: no-store`. It creates no quote, hold or reservation and makes no availability guarantee. Body:
+
+```json
+{
+  "travelers": 2,
+  "selections": [
+    {
+      "kind": "stays",
+      "id": "000000000000000000000001",
+      "roomTypeId": "000000000000000000000002",
+      "checkIn": "2026-11-06",
+      "checkOut": "2026-11-09"
+    }
+  ]
+}
+```
+
+The IDs above illustrate the format; use IDs returned by the catalog. `travelers` defaults to two and must be an integer from 1 to 12. `selections` contains 1–20 items; kind is attractions/stays/tours/templates/packages. Attraction and template IDs are editorial strings; other product, room and departure IDs are ObjectIds. Stay dates are optional as a pair; present dates must be valid future destination dates in the supported window. `roomTypeId` and `departureId` are optional. Tour departures must match the tour and be in the future. A package with no explicit departure uses its earliest published future departure and states that assumption.
+
+HTTP 200 returns rows in input order. A priced row contains `kind`, `id`, `estimated:true`, `country`, `currency`, `unitPrice` where applicable, `basis`, `assumptions`, `subtotal`, `fee`, `total`, `feeLabel`, optional dated `inrEstimate`, `missing:null` and `availabilityGuaranteed:false`. Stay assumptions identify the selected/cheapest room, enough rooms for the party, nights and dates. Tour assumptions identify party size and selected departure date when present. Package assumptions identify its departure, party and actual component basis; no discount is invented. All money uses native integer minor units, including zero-decimal JPY.
+
+A missing product or unresolved selection returns HTTP 200 with `total:null` and a `missing` explanation. A stay can still return its unit rate without dates. Informational rows identify unsold attraction tickets or free template copying; they do not claim free admission or travel. Legitimate zero amounts remain numeric zero. Invalid fields, dates or batch size return 400; the estimate limiter returns 429 with the standard error envelope and `ESTIMATE_RATE_LIMITED`.
+
+`POST /api/estimates/trip` accepts the same complete draft body as trip creation and is public so guests can compare their plan. It shares the independent estimate limiter and no-store policy. The response is an aggregate estimate for selected bookable items, with `incomplete` and `missing` where selections remain unresolved. It performs no trip persistence. `GET /api/trips` remains authenticated and adds `pricingSummary` from this same service to each owned draft. Empty plans have `total:null`, never a fabricated zero. Final quotes remain authoritative and retain their existing contract.
+
 GET /api/tour-departures?ids=id1,id2 returns up to 180 selected departure schedules (tour/date/startAt/endAt/timezone) for planner checks. This is public schedule metadata, not cached inventory availability.
 
 POST /api/trips (201), GET /api/trips, GET /api/trips/:id, PATCH /api/trips/:id and DELETE /api/trips/:id (200). Another owner's ID returns 404. Active reservations prevent deletion (409).

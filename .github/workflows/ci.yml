@@ -5,7 +5,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,6 +15,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run verify:catalog
+      - run: npm run verify:models
       - run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
@@ -26,6 +27,10 @@ jobs:
       - run: node scripts/browser-travel-recovery.mjs
       - run: node scripts/browser-map-interactions.mjs
       - run: node scripts/browser-globe.mjs
+      - run: node scripts/browser-atlas.mjs
+      - run: BASE_URL=http://localhost:3002 node scripts/browser-country-workspace.mjs
+      - run: BASE_URL=http://localhost:3002 node scripts/browser-country-entry.mjs
+      - run: BASE_URL=http://localhost:3002 node scripts/browser-estimates.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -35,3 +40,5 @@ jobs:
             artifacts/travel-recovery
             artifacts/connected-maps
             artifacts/globe
+            artifacts/atlas
+            artifacts/country-workspace

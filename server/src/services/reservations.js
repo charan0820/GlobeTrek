@@ -17,6 +17,8 @@ import {
   localInstant,
   priceTotal,
   estimateINR,
+  stayAmount,
+  tourAmount,
 } from "./travel-policy.js";
 import { AppError, missing } from "../utils/errors.js";
 
@@ -149,7 +151,12 @@ export async function createQuote(user, source, now = new Date()) {
       startAt,
       endAt,
       timezone: hotel.timezone,
-      amount: room.basePrice * dates.length * quantity,
+      amount: stayAmount(
+        room.basePrice,
+        dates.length,
+        travelers,
+        room.capacity,
+      ),
       unitPrice: room.basePrice,
       nights: dates.length,
     });
@@ -191,7 +198,7 @@ export async function createQuote(user, source, now = new Date()) {
       startAt: departure.startAt,
       endAt: departure.endAt,
       timezone: departure.timezone,
-      amount: tour.price * travelers,
+      amount: tourAmount(tour.price, travelers),
       unitPrice: tour.price,
     });
     demands.push({

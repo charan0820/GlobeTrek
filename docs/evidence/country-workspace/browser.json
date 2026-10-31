@@ -1,0 +1,59 @@
+{
+  "checks": [
+    "Marker preview, detail panel and Back",
+    "Inline guest setup, add stop, mode switch preserves draft"
+  ],
+  "models": [
+    {
+      "code": "IN",
+      "readyAfterNavigationMs": 880
+    },
+    {
+      "code": "JP",
+      "readyAfterNavigationMs": 876
+    },
+    {
+      "code": "TH",
+      "readyAfterNavigationMs": 897
+    },
+    {
+      "code": "ID",
+      "readyAfterNavigationMs": 888
+    },
+    {
+      "code": "FR",
+      "readyAfterNavigationMs": 898
+    },
+    {
+      "code": "IT",
+      "readyAfterNavigationMs": 888
+    },
+    {
+      "code": "ES",
+      "readyAfterNavigationMs": 886
+    },
+    {
+      "code": "GR",
+      "readyAfterNavigationMs": 893
+    },
+    {
+      "code": "TR",
+      "readyAfterNavigationMs": 878
+    },
+    {
+      "code": "US",
+      "readyAfterNavigationMs": 873
+    }
+  ],
+  "accessibility": [
+    {
+      "theme": "light",
+      "violations": []
+    },
+    {
+      "theme": "dark",
+      "violations": []
+    }
+  ],
+  "errors": []
+}

@@ -155,8 +155,10 @@ try {
         .click();
       await page.waitForURL(
         (url) =>
-          url.pathname.startsWith("/planner/") &&
-          !url.pathname.endsWith(trip._id),
+          url.pathname.startsWith("/countries/") &&
+          url.searchParams.get("trip") &&
+          url.searchParams.get("trip") !== "local" &&
+          url.searchParams.get("trip") !== trip._id,
       );
       assert.equal(
         await page.getByLabel("Trip name", { exact: true }).inputValue(),
@@ -301,8 +303,8 @@ try {
       const unchanged = await request(`/catalog/templates/${original.id}`);
       assert.deepEqual(unchanged.days, original.days);
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.getByRole("button", { name: "Map", exact: true }).click();
-      await page.getByRole("button", { name: "Day plan", exact: true }).click();
+      await page.getByRole("button", { name: "Model", exact: true }).click();
+      await page.getByRole("button", { name: "List", exact: true }).click();
       assert.equal(await page.locator(".stop-row").count(), 1);
       assert(
         await page.evaluate(
@@ -323,7 +325,7 @@ try {
     });
     await card.getByRole("button", { name: "Copy trip", exact: true }).click();
     await page.getByLabel("Trip name", { exact: true }).waitFor();
-    const copied = page.url().split("/").at(-1);
+    const copied = new URL(page.url()).searchParams.get("trip");
     assert.notEqual(copied, trip._id);
     await page.goto(`${base}/trips`);
     const copyCard = page.locator("article.trip-row").filter({
@@ -354,7 +356,9 @@ try {
       await page
         .getByRole("button", { name: "Clear search this collection" })
         .click();
-      await page.getByRole("button", { name: "Senso-ji", exact: true }).waitFor();
+      await page
+        .getByRole("button", { name: "Senso-ji", exact: true })
+        .waitFor();
       await page.getByLabel("City", { exact: true }).selectOption("jp-kyoto");
       await page
         .getByRole("button", { name: "Fushimi Inari Taisha", exact: true })
@@ -387,12 +391,7 @@ try {
       );
       const fallback = await fallbackContext.newPage();
       await fallback.goto(base);
-      await fallback
-        .getByRole("button", { name: "Japan", exact: true })
-        .click();
-      await fallback
-        .getByRole("link", { name: "Explore Japan", exact: true })
-        .click();
+      await fallback.getByRole("link", { name: "Japan", exact: true }).click();
       await fallback
         .getByRole("button", { name: "Senso-ji", exact: true })
         .waitFor();

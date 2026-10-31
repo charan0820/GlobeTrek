@@ -23,6 +23,7 @@ import {
   quoteInput,
   holdInput,
   departureLookup,
+  estimateInput,
 } from "./validators/travel.js";
 import {
   validate,
@@ -151,6 +152,20 @@ export function createApp(
   app.get("/api/bookings/:id", requireAuth, bookings.detail);
   app.delete("/api/bookings/:id", requireAuth, bookings.cancel);
   const travel = travelController(config);
+  const estimateLimit = rateLimit({
+    windowMs: 60000,
+    limit: 120,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    handler: (_req, _res, next) =>
+      next(
+        new AppError(
+          429,
+          "ESTIMATE_RATE_LIMITED",
+          "Too many estimate requests. Wait a moment and retry.",
+        ),
+      ),
+  });
   const reserveLimit = rateLimit({
     windowMs: 60000,
     limit: reservationLimit,
@@ -165,6 +180,18 @@ export function createApp(
     standardHeaders: "draft-8",
     legacyHeaders: false,
   });
+  app.post(
+    "/api/estimates",
+    estimateLimit,
+    validate(estimateInput),
+    travel.estimates,
+  );
+  app.post(
+    "/api/estimates/trip",
+    estimateLimit,
+    validate(tripInput),
+    travel.estimateTrip,
+  );
   app.get("/api/countries", travel.countries);
   app.get(
     "/api/tour-departures",

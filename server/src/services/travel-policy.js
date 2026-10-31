@@ -78,6 +78,9 @@ export function priceTotal(items, currency) {
     feeLabel: "Demo service fee (12%)",
   };
 }
+export const stayAmount = (unitPrice, nights, travelers, capacity) =>
+  unitPrice * nights * Math.ceil(travelers / capacity);
+export const tourAmount = (unitPrice, travelers) => unitPrice * travelers;
 export function estimateINR(amount, currency, snapshot, now = new Date()) {
   if (
     !snapshot ||

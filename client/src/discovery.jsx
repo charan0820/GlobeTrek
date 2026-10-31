@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   Link,
+  Navigate,
   useNavigate,
   useParams,
   useSearchParams,
@@ -18,21 +19,64 @@ import {
 import { useAuth } from "./auth.jsx";
 import { dateOffset } from "./api.js";
 import DestinationPhoto from "./DestinationPhoto.jsx";
-import { PlacePhoto, PlacePreview, Duration, useNarrow } from "./place-ui.jsx";
-import { groupPlaces, revealInContainer } from "./geo/presentation.js";
+import { PlacePhoto } from "./place-ui.jsx";
 import GeoBoundary from "./geo/GeoBoundary.jsx";
 import { addDays, formatMoney } from "../../shared/travel.js";
+import { Price, PriceCollection } from "./pricing.jsx";
 const WorldGlobe = lazy(() => import("./geo/Globe.jsx"));
 const TravelMap = lazy(() => import("./geo/Map.jsx"));
-const kinds = [
-  ["attractions", "Places"],
-  ["stays", "Stays"],
-  ["tours", "Tours"],
-  ["templates", "Itineraries"],
-  ["packages", "Packages"],
-];
 export const recordId = (r) => r.id || r._id;
 export function Discovery() {
+  const navigate = useNavigate();
+  const [entry, setEntry] = useState(null);
+  const sequence = useRef(0);
+  function enter(country, event) {
+    if (
+      event &&
+      (event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey)
+    )
+      return;
+    const ready = document.querySelector('[data-globe-state="ready"]');
+    if (!ready || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      if (!event) navigate(`/countries/${country.code}`);
+      return;
+    }
+    event?.preventDefault();
+    if (entry?.country.code === country.code) return;
+    setSelected(country);
+    setEntry({ country, token: ++sequence.current });
+  }
+  useEffect(() => {
+    if (!entry) return;
+    const controller = new AbortController(),
+      code = entry.country.code;
+    fetch(`/api/countries/${code}`, { signal: controller.signal }).catch(
+      () => {},
+    );
+    fetch("/relief/manifest.json", { signal: controller.signal })
+      .then((r) => r.json())
+      .then((manifest) => {
+        const model = manifest.countries.find((c) => c.code === code);
+        if (model)
+          return fetch(
+            (matchMedia("(max-width:759px)").matches
+              ? model.mobile
+              : model.desktop
+            ).file,
+            { signal: controller.signal },
+          );
+      })
+      .catch(() => {});
+    const timer = setTimeout(() => navigate(`/countries/${code}`), 600);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [entry, navigate]);
   const query = useApi("/countries");
   const [selected, setSelected] = useState(null),
     [search, setSearch] = useState("");
@@ -51,72 +95,9 @@ export function Discovery() {
       {(countries) => {
         const active = selected || countries.find((c) => c.code === "JP");
         return (
-          <>
-            <section className="discovery-hero">
-              <div className="discovery-copy">
-                <h1>
-                  A world to explore.
-                  <br />
-                  <span>A journey of your own.</span>
-                </h1>
-                <p>
-                  Find the places that move you. Bring them together into a trip
-                  that feels like yours.
-                </p>
-                <SearchField
-                  value={search}
-                  onChange={(value) => {
-                    setSearch(value);
-                    if (!value) setCommitted("");
-                  }}
-                  label="Find your country"
-                  placeholder="Where are you curious about?"
-                  onCompositionChange={setComposing}
-                />
-                <div className="country-picks">
-                  {countries
-                    .filter((c) =>
-                      c.name.toLowerCase().includes(search.toLowerCase()),
-                    )
-                    .map((c) => (
-                      <button
-                        key={c.code}
-                        aria-pressed={active?.code === c.code}
-                        onClick={() => setSelected(c)}
-                      >
-                        {c.name}
-                        <ArrowUpRight size={15} />
-                      </button>
-                    ))}
-                  {!countries.some((c) =>
-                    c.name.toLowerCase().includes(search.toLowerCase()),
-                  ) && (
-                    <p>
-                      No match in our ten-country collection. Clear your search
-                      to explore.
-                    </p>
-                  )}
-                </div>
-                {committed.length >= 2 && suggestions.data?.length > 0 && (
-                  <div
-                    className="search-suggestions"
-                    role="region"
-                    aria-label="Matching destinations and experiences"
-                  >
-                    {suggestions.data.map((s) => (
-                      <Link
-                        key={`${s.kind}-${s.id}`}
-                        to={`/discover/${s.kind}/${s.id}`}
-                      >
-                        {s.name}
-                        <small>
-                          {s.kind} · {s.country}
-                        </small>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
+          <section className="atlas-discovery" aria-label="Explore the world">
+            <div className="atlas-world">
+              <h1>A world to explore.</h1>
               <div className="globe-stage">
                 <GeoBoundary>
                   <Suspense
@@ -130,362 +111,136 @@ export function Discovery() {
                       countries={countries}
                       selected={active}
                       onSelect={setSelected}
+                      onEnter={enter}
+                      entry={entry}
                     />
                   </Suspense>
                 </GeoBoundary>
-                {active && (
-                  <div className="country-dossier">
-                    <div>
-                      <h2>{active.name}</h2>
-                      <p>{active.description}</p>
-                    </div>
-                    <Link className="button" to={`/countries/${active.code}`}>
-                      Explore {active.name}
-                      <ArrowRight size={18} />
+              </div>
+              <p className="atlas-guidance">
+                Drag to explore. Click to preview; double-click to enter.
+              </p>
+            </div>
+            <aside
+              className="atlas-countries"
+              aria-label="Choose your destination"
+            >
+              <SearchField
+                value={search}
+                onChange={(value) => {
+                  setSearch(value);
+                  if (!value) setCommitted("");
+                }}
+                label="Find your country"
+                placeholder="Where are you curious about?"
+                onCompositionChange={setComposing}
+              />
+              <div
+                className="country-picks"
+                role="group"
+                aria-label="Available countries"
+              >
+                {[...countries]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .filter((c) =>
+                    c.name.toLowerCase().includes(search.toLowerCase()),
+                  )
+                  .map((c) => (
+                    <Link
+                      key={c.code}
+                      to={`/countries/${c.code}`}
+                      onClick={(event) => enter(c, event)}
+                      data-selected={active?.code === c.code}
+                    >
+                      {c.name}
+                      <ArrowRight size={15} aria-hidden="true" />
                     </Link>
-                  </div>
+                  ))}
+                {!countries.some((c) =>
+                  c.name.toLowerCase().includes(search.toLowerCase()),
+                ) && (
+                  <p>
+                    No match in our ten-country collection. Clear your search to
+                    explore.
+                  </p>
                 )}
               </div>
-            </section>
-            <section className="discovery-note">
-              <h2>
-                Start with curiosity.
-                <br />
-                Leave with a plan.
-              </h2>
-              <p>
-                Explore real places across ten countries, arrange your days on a
-                map, and try reserving demo stays and guided tours. Your
-                itinerary stays yours to shape.
-              </p>
-              <Link to="/planner/new">
-                Build a trip from scratch <ArrowRight size={17} />
-              </Link>
-            </section>
-          </>
+              {committed.length >= 2 && suggestions.data?.length > 0 && (
+                <div
+                  className="search-suggestions"
+                  role="region"
+                  aria-label="Matching destinations and experiences"
+                >
+                  {suggestions.data.map((s) => (
+                    <Link
+                      key={`${s.kind}-${s.id}`}
+                      to={`/discover/${s.kind}/${s.id}`}
+                    >
+                      {s.name}
+                      <small>
+                        {s.kind} · {s.country}
+                      </small>
+                    </Link>
+                  ))}
+                </div>
+              )}
+              {committed.length >= 2 && suggestions.isFetching && (
+                <p role="status" className="fine-print">
+                  Finding matching places…
+                </p>
+              )}
+              {committed.length >= 2 && suggestions.error && (
+                <ErrorMessage error={suggestions.error} />
+              )}
+              {committed.length >= 2 && suggestions.data?.length === 0 && (
+                <p role="status" className="fine-print">
+                  No matching places or experiences.
+                </p>
+              )}
+              {active && (
+                <section
+                  className="country-dossier"
+                  aria-label="Selected country"
+                >
+                  <DestinationPhoto country={active.code} />
+                  <div>
+                    <h2>{active.name}</h2>
+                    <p>{active.description}</p>
+                  </div>
+                  <Link
+                    className="atlas-explore"
+                    to={`/countries/${active.code}`}
+                    onClick={(event) => enter(active, event)}
+                  >
+                    Explore {active.name}
+                    <ArrowRight size={18} />
+                  </Link>
+                </section>
+              )}
+            </aside>
+          </section>
         );
       }}
     </QueryState>
   );
 }
-export function CountryExplorer() {
-  const { code } = useParams();
-  const [params, setParams] = useSearchParams();
-  const kind = kinds.some(([k]) => k === params.get("kind"))
-    ? params.get("kind")
-    : "attractions";
-  const country = useApi(`/countries/${code}`);
-  const [composing, setComposing] = useState(false);
-  const [search, setSearch] = useState(params.get("q") || ""),
-    [selected, setSelected] = useState(null),
-    [preview, setPreview] = useState(false);
-  const narrow = useNarrow(),
-    listRef = useRef(null),
-    previewOrigin = useRef(null);
-  const preferredView = ["list", "map", "split"].includes(params.get("view"))
-    ? params.get("view")
-    : "split";
-  const view = narrow && preferredView === "split" ? "list" : preferredView;
-  function setView(value) {
-    setParams((old) => {
-      const next = new URLSearchParams(old);
-      next.set("view", value);
-      return next;
-    });
-  }
-  const q = params.get("q") || "",
-    cityId = params.get("cityId") || "";
-  useEffect(() => setSearch(q), [q]);
-  useEffect(() => {
-    if (search === q || composing) return;
-    const timer = setTimeout(
-      () =>
-        setParams(
-          (old) => {
-            const next = new URLSearchParams(old);
-            if (search) next.set("q", search);
-            else next.delete("q");
-            return next;
-          },
-          { replace: true },
-        ),
-      300,
-    );
-    return () => clearTimeout(timer);
-  }, [search, q, setParams, composing]);
-  const path = `/catalog?${new URLSearchParams({ country: code, kind, limit: "50", ...(q && { q }), ...(cityId && { cityId }) })}`;
-  const catalog = useApi(path);
-  const active = groupPlaces(catalog.data || [], country.data?.cities)
-    .flatMap((group) => group.items)
-    .find((item) => recordId(item) === selected);
-  useEffect(() => {
-    if (
-      catalog.data &&
-      !catalog.data.some((item) => recordId(item) === selected)
-    ) {
-      setSelected(null);
-      setPreview(false);
-    }
-  }, [catalog.data, selected]);
-  useEffect(() => {
-    if (view !== "map" && selected)
-      revealInContainer(
-        listRef.current,
-        listRef.current?.querySelector(`[data-place-id="${selected}"]`),
-      );
-  }, [view, selected]);
-  function select(item, trigger = document.activeElement) {
-    previewOrigin.current = trigger;
-    setSelected(recordId(item));
-    setPreview(true);
-  }
-  function showList() {
-    setPreview(false);
-    setView(narrow ? "list" : "split");
-    requestAnimationFrame(() =>
-      revealInContainer(
-        listRef.current,
-        listRef.current?.querySelector(`[data-place-id="${selected}"]`),
-      ),
-    );
-  }
-  function filter(key, value) {
-    setSelected(null);
-    setParams((old) => {
-      const next = new URLSearchParams(old);
-      if (value) next.set(key, value);
-      else next.delete(key);
-      return next;
-    });
-  }
-  return (
-    <QueryState query={country}>
-      {(c) => (
-        <>
-          <div className="country-heading">
-            <div>
-              <Link className="back-link" to="/">
-                Explore the world
-              </Link>
-              <h1>{c.name}</h1>
-              <p>{c.description}</p>
-            </div>
-            <Link className="button" to={`/planner/new?country=${c.code}`}>
-              Plan a trip <ArrowRight size={18} />
-            </Link>
-            <DestinationPhoto country={c.code} />
-          </div>
-          <nav className="tabs" aria-label="Explore categories">
-            {kinds.map(([k, label]) => (
-              <button
-                key={k}
-                aria-current={kind === k ? "page" : undefined}
-                onClick={() => filter("kind", k)}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
-          <div className="explorer-controls">
-            <SearchField
-              value={search}
-              onChange={setSearch}
-              label="Search this collection"
-              onCompositionChange={setComposing}
-              placeholder="Search by name"
-            />
-            <Field label="City">
-              {(id) => (
-                <select
-                  id={id}
-                  value={cityId}
-                  onChange={(e) => filter("cityId", e.target.value)}
-                >
-                  <option value="">All cities</option>
-                  {c.cities.map((city) => (
-                    <option key={city.id} value={city.id}>
-                      {city.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </Field>
-            <div className="view-switch">
-              <button
-                aria-pressed={view === "list"}
-                onClick={() => setView("list")}
-              >
-                List
-              </button>
-              <button
-                aria-pressed={view === "map"}
-                onClick={() => setView("map")}
-              >
-                Map
-              </button>
-              {!narrow && (
-                <button
-                  aria-pressed={view === "split"}
-                  onClick={() => setView("split")}
-                >
-                  Split
-                </button>
-              )}
-            </div>
-          </div>
-          <QueryState query={catalog}>
-            {(records) => (
-              <div className={`explorer-layout view-${view}`}>
-                <div
-                  className="place-list"
-                  ref={listRef}
-                  tabIndex={0}
-                  aria-label="Places grouped by city"
-                >
-                  {!records.length && (
-                    <div className="empty">
-                      <h2>No places match yet.</h2>
-                      <p>Try another city or clear your search.</p>
-                    </div>
-                  )}
-                  {groupPlaces(records, c.cities).map((group) => (
-                    <section className="city-group" key={group.name}>
-                      <h2>
-                        {group.name}{" "}
-                        <small>
-                          {group.items.length}{" "}
-                          {group.items.length === 1 ? "result" : "results"}
-                        </small>
-                      </h2>
-                      {group.items.map((r) => (
-                        <PlaceCard
-                          key={recordId(r)}
-                          record={r}
-                          kind={kind}
-                          selected={selected === recordId(r)}
-                          onSelect={() => select(r)}
-                        />
-                      ))}
-                    </section>
-                  ))}
-                </div>
-                <div className="explorer-map">
-                  <GeoBoundary>
-                    <Suspense
-                      fallback={<p>Loading map. The place list is ready.</p>}
-                    >
-                      <TravelMap
-                        items={records.map((record) => {
-                          const city = c.cities.find(
-                            (candidate) =>
-                              candidate.id === record.days?.[0]?.cityId,
-                          );
-                          return !Number.isFinite(record.lat) && city
-                            ? { ...record, lat: city.lat, lng: city.lng }
-                            : record;
-                        })}
-                        selected={selected}
-                        onSelect={select}
-                        center={c.cities[0]}
-                      >
-                        {view !== "list" && preview && active && (
-                          <PlacePreview
-                            trigger={previewOrigin.current}
-                            record={active}
-                            kind={kind}
-                            onClose={() => setPreview(false)}
-                            onShowList={showList}
-                          />
-                        )}
-                      </TravelMap>
-                    </Suspense>
-                  </GeoBoundary>
-                </div>
-                {view === "list" && preview && active && (
-                  <PlacePreview
-                    trigger={previewOrigin.current}
-                    record={active}
-                    kind={kind}
-                    onClose={() => setPreview(false)}
-                  />
-                )}
-              </div>
-            )}
-          </QueryState>
-          <p className="fine-print">
-            Real destination information · Fictional stays, tours, packages and
-            prices ·{" "}
-            <a href={c.source} target="_blank" rel="noreferrer">
-              Official destination guide
-            </a>
-          </p>
-        </>
-      )}
-    </QueryState>
-  );
-}
-function PlaceCard({ record: r, kind, selected, onSelect }) {
-  return (
-    <article
-      data-place-id={recordId(r)}
-      className={`place-row ${selected ? "is-selected" : ""}`}
-    >
-      <button
-        className="photo-select"
-        onClick={onSelect}
-        aria-label={`Preview ${r.name}`}
-      >
-        <PlacePhoto record={r} compact />
-      </button>
-      <div className="place-copy">
-        <span className="place-city">
-          {r.city ||
-            (kind === "templates"
-              ? "Editable itinerary"
-              : kind === "packages"
-                ? "Fixed demo package"
-                : "")}
-        </span>
-        <h2>
-          <button className="text-button" onClick={onSelect}>
-            {r.name}
-          </button>
-        </h2>
-        <p>{r.description}</p>
-        <div className="place-meta">
-          {r.durationMinutes && <Duration record={r} kind={kind} />}
-          {(r.minPrice || r.price) && (
-            <span>
-              {formatMoney(r.minPrice ?? r.price, r.currency)}{" "}
-              {kind === "stays" ? "/ room / night" : "/ traveler"}
-            </span>
-          )}
-          {r.demo && <span className="demo-label">Demo</span>}
-        </div>
-      </div>
-      {Number.isFinite(r.lat) && (
-        <button
-          className="icon-button"
-          aria-label={`Show ${r.name} on map`}
-          onClick={onSelect}
-        >
-          <MapPin size={19} />
-        </button>
-      )}
-    </article>
-  );
-}
+export { default as CountryCatalog } from "./CountryCatalog.jsx";
 export function ProductDetail({ fixedKind }) {
   const { kind: routeKind, id } = useParams(),
     kind = fixedKind || routeKind;
   const query = useApi(`/catalog/${kind}/${id}`);
   return (
     <QueryState query={query}>
-      {(item) => <DetailContent key={id} item={item} kind={kind} />}
+      {(item) => (
+        <Navigate
+          replace
+          to={`/countries/${item.country}?${new URLSearchParams({ kind, item: id })}`}
+        />
+      )}
     </QueryState>
   );
 }
-function DetailContent({ item, kind }) {
+export function DetailContent({ item, kind, embedded = false }) {
   const navigate = useNavigate(),
     { user } = useAuth();
   const [params, setParams] = useSearchParams();
@@ -554,23 +309,35 @@ function DetailContent({ item, kind }) {
       <div className="detail-layout">
         <section>
           <PlacePhoto record={item} />
-          {Number.isFinite(item.lat) ? (
-            <GeoBoundary>
-              <Suspense
-                fallback={
-                  <p className="status">Loading the destination map…</p>
-                }
-              >
-                <TravelMap items={[item]} center={item} />
-              </Suspense>
-            </GeoBoundary>
-          ) : (
-            <div className="destination-visual">
-              <MapPin size={70} strokeWidth={1} />
-              <span>{item.city || item.country}</span>
-            </div>
-          )}
+          {!embedded &&
+            (Number.isFinite(item.lat) ? (
+              <GeoBoundary>
+                <Suspense
+                  fallback={
+                    <p className="status">Loading the destination map…</p>
+                  }
+                >
+                  <TravelMap items={[item]} center={item} />
+                </Suspense>
+              </GeoBoundary>
+            ) : (
+              <div className="destination-visual">
+                <MapPin size={70} strokeWidth={1} />
+                <span>{item.city || item.country}</span>
+              </div>
+            ))}
           <h1>{item.name}</h1>
+          <PriceCollection
+            records={[item]}
+            kind={kind}
+            travelers={travelers}
+            roomTypeId={roomTypeId}
+            departureId={departureId}
+            from={from}
+            to={to}
+          >
+            <Price record={item} kind={kind} />
+          </PriceCollection>
           <p className="lead">{item.description}</p>
           {item.demo && (
             <p className="notice">

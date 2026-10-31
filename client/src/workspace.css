@@ -1,0 +1,633 @@
+.app-shell {
+  position: relative;
+}
+.app-shell > .demo-bar {
+  min-height: 28px;
+  padding: 5px 70px 5px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+.theme-header-slot {
+  position: absolute;
+  z-index: 10;
+  top: 33px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+}
+.theme-header-slot .theme-toggle {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  color: var(--ink);
+  background: var(--surface);
+}
+.app-shell:not(.discovery-shell) > .header {
+  padding-right: 68px;
+}
+.country-main {
+  padding: 12px 24px;
+  width: 100%;
+}
+.country-workspace {
+  position: relative;
+  animation: country-reveal 200ms ease-out;
+}
+.country-workspace-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0 0 12px;
+}
+.country-workspace-heading h1 {
+  font-size: clamp(42px, 4vw, 64px);
+  margin: 0;
+  line-height: 1.05;
+}
+.country-workspace-heading p {
+  max-width: 62ch;
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.workspace-modes {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.workspace-modes button,
+.terrain-controls button,
+.region-shortcuts button {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink);
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.workspace-modes button[aria-pressed="true"] {
+  background: var(--action);
+  color: var(--on-action);
+  border-color: var(--action);
+}
+.workspace-explore-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.workspace-explore-tools .tabs {
+  margin-bottom: 12px;
+}
+.country-explore-layout,
+.workspace-setup {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 330px;
+  gap: 20px;
+  align-items: start;
+  position: relative;
+}
+.country-context h2,
+.workspace-setup > aside h2 {
+  font-size: 30px;
+  margin: 8px 0 12px;
+}
+.country-context p,
+.workspace-setup > aside p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.country-geography {
+  position: sticky;
+  top: 12px;
+  min-width: 0;
+}
+.country-model {
+  position: relative;
+  width: 100%;
+  height: clamp(380px, 65vh, 800px);
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--soft) 55%, transparent);
+}
+.country-model canvas {
+  display: block;
+  max-width: 100%;
+}
+.country-geography .map-panel {
+  height: clamp(380px, 65vh, 800px);
+}
+.terrain-status {
+  position: absolute;
+  inset: 40% 20px auto;
+  text-align: center;
+  color: var(--muted);
+}
+.terrain-controls {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+.terrain-controls button {
+  pointer-events: auto;
+  font-size: 12px;
+  min-height: 32px;
+  padding: 5px 8px;
+}
+.region-shortcuts {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 52px;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+.region-shortcuts button {
+  pointer-events: auto;
+  min-height: 30px;
+  font-size: 11px;
+  padding: 4px 7px;
+}
+.terrain-note {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  font-size: 10px;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--muted);
+  background: var(--canvas);
+  padding: 4px;
+}
+.relief-pins {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.relief-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  pointer-events: auto;
+  border: 2px solid var(--surface);
+  border-radius: 50% 50% 50% 4px;
+  min-width: 34px;
+  height: 34px;
+  background: var(--pin-color, var(--action));
+  color: var(--canvas);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 3px 8px #0004;
+}
+.relief-pin.selected {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  z-index: 3;
+}
+.inset-label {
+  position: absolute;
+  transform: translate(-50%, 0);
+  font-size: 10px;
+  padding: 2px 4px;
+  background: var(--canvas);
+  color: var(--ink);
+  pointer-events: none;
+  max-width: 150px;
+  white-space: normal;
+  text-align: center;
+}
+.relief-overlap {
+  position: absolute;
+  z-index: 5;
+  left: 20px;
+  right: 20px;
+  top: 100px;
+  max-height: 60%;
+  overflow: auto;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 24px #0003;
+}
+.relief-overlap h3 {
+  margin-top: 0;
+}
+.relief-overlap button {
+  display: block;
+  min-height: 44px;
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+.country-collection.place-list {
+  max-height: 68vh;
+  height: auto;
+  overflow-y: auto;
+  padding: 0 6px;
+  min-width: 0;
+}
+.country-collection .city-group > h2 {
+  font:
+    600 20px/1.3 "Source Sans 3",
+    sans-serif;
+  margin: 14px 0;
+}
+.country-collection .place-row {
+  grid-template-columns: 62px minmax(0, 1fr) 32px;
+  gap: 10px;
+  padding: 14px 0;
+}
+.country-collection .place-photo.compact {
+  width: 62px;
+  height: 70px;
+}
+.country-collection h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.country-collection .place-city {
+  margin: 4px 0;
+  font-size: 12px;
+}
+.country-collection .place-copy > span {
+  font-size: 12px;
+}
+.country-explore-layout.view-list {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+.country-explore-layout.view-list .country-collection {
+  max-height: none;
+  columns: 2;
+  column-gap: 32px;
+}
+.country-explore-layout.view-list .city-group {
+  break-inside: avoid;
+}
+.country-explore-layout > .place-preview {
+  position: fixed;
+  top: 160px;
+  right: 28px;
+  bottom: 24px;
+  max-height: calc(100vh - 184px);
+  width: 350px;
+  z-index: 9;
+  overflow-y: auto;
+}
+.product-price {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--ink);
+  margin: 6px 0;
+}
+.product-price strong {
+  font-weight: 600;
+}
+.product-price small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.workspace-product {
+  position: fixed;
+  z-index: 11;
+  right: 20px;
+  top: 100px;
+  bottom: 20px;
+  width: min(440px, calc(100vw - 40px));
+  overflow-y: auto;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 12px 40px #0003;
+}
+.workspace-product > .button {
+  margin-bottom: 20px;
+}
+.workspace-product .detail-layout,
+.modal .detail-layout {
+  display: block;
+}
+.workspace-product h1,
+.modal .detail-layout h1 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 38px;
+}
+.workspace-product .booking-panel {
+  position: static;
+  padding: 16px 0;
+  border: 0;
+}
+.inline-trip-setup.setup-layout {
+  display: block;
+}
+.inline-trip-setup > section {
+  display: none;
+}
+.inline-trip-setup .panel {
+  padding: 20px;
+}
+.embedded-planner .planner-workspace {
+  grid-template-columns: 250px minmax(0, 1fr) 330px;
+  gap: 20px;
+}
+.embedded-planner .planner-collection {
+  grid-column: 3;
+  grid-row: 1;
+  max-height: 72vh;
+  overflow-y: auto;
+  padding: 0 6px;
+}
+.embedded-planner .day-panel {
+  grid-column: 1;
+  grid-row: 1;
+  max-height: 72vh;
+  overflow-y: auto;
+}
+.embedded-planner .planner-map {
+  grid-column: 2;
+  grid-row: 1;
+  display: block;
+  min-width: 0;
+}
+.embedded-planner .planner-heading {
+  align-items: start;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+.embedded-planner .planner-heading > div:first-child {
+  flex: 1;
+}
+.trip-settings {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.trip-settings .field {
+  flex: 1;
+  min-width: 125px;
+  max-width: 210px;
+  margin: 0;
+}
+.trip-settings .button {
+  min-height: 44px;
+}
+.embedded-planner .planning-budget {
+  padding: 10px 0;
+  margin-bottom: 12px;
+}
+.embedded-planner .day-tabs {
+  margin-bottom: 12px;
+}
+.embedded-planner .planner-collection h3 {
+  margin: 0 0 12px;
+}
+.embedded-planner .planning-checks {
+  padding: 12px;
+  margin: 8px 0;
+}
+.embedded-planner .planning-checks ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+  padding-left: 18px;
+}
+.embedded-planner .add-place-preview {
+  align-items: start;
+}
+.embedded-planner .mobile-view {
+  display: none;
+}
+.embedded-planner .planner-map .map-panel {
+  height: clamp(380px, 65vh, 800px);
+}
+.country-workspace-source {
+  margin: 16px 0 0;
+}
+.relief-view {
+  position: relative;
+  min-width: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--soft) 55%, transparent);
+}
+.relief-view .terrain-controls {
+  position: static;
+  padding: 8px;
+  pointer-events: auto;
+}
+.relief-view .region-shortcuts {
+  position: static;
+  padding: 8px;
+  pointer-events: auto;
+}
+.relief-view .terrain-note {
+  position: static;
+  padding: 6px 10px;
+  background: transparent;
+}
+.relief-view .country-model {
+  background: transparent;
+  height: clamp(360px, 54vh, 700px);
+}
+.country-collection .text-button {
+  text-decoration: none;
+}
+.embedded-planner .day-panel .planner-heading {
+  display: block;
+}
+.embedded-planner .day-panel .planner-heading .actions {
+  margin: 12px 0;
+}
+.embedded-planner .day-panel .trip-settings {
+  display: block;
+}
+.embedded-planner .day-panel .trip-settings .field {
+  max-width: none;
+  margin-bottom: 10px;
+}
+.embedded-planner .day-panel .planner-heading input {
+  font-size: 16px;
+}
+.embedded-planner .day-panel .planner-heading .back-link {
+  display: none;
+}
+.discovery-shell .atlas-main {
+  padding-top: 50px;
+}
+@keyframes country-reveal {
+  from {
+    opacity: 0.4;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 1099px) {
+  .country-main {
+    padding: 12px 16px;
+  }
+  .country-explore-layout,
+  .workspace-setup {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 16px;
+  }
+  .country-context {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 20px;
+  }
+  .country-context h2,
+  .country-context > p {
+    display: none;
+  }
+  .country-geography {
+    grid-column: 1;
+  }
+  .country-collection {
+    grid-column: 2;
+  }
+  .workspace-setup > aside {
+    display: none;
+  }
+  .embedded-planner .planner-workspace {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .embedded-planner .planner-collection {
+    grid-column: 1/-1;
+    grid-row: 2;
+    max-height: none;
+  }
+  .embedded-planner .planner-collection .add-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+@media (max-width: 759px) {
+  .theme-header-slot {
+    right: 12px;
+    top: 37px;
+  }
+  .country-workspace-heading {
+    display: block;
+  }
+  .country-workspace-heading p {
+    font-size: 13px;
+  }
+  .workspace-modes {
+    margin-top: 12px;
+  }
+  .workspace-explore-tools .tabs {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .country-explore-layout,
+  .country-explore-layout.view-list,
+  .workspace-setup {
+    display: flex;
+    flex-direction: column;
+  }
+  .country-context {
+    display: grid;
+    width: 100%;
+  }
+  .country-geography {
+    position: relative;
+    width: 100%;
+    order: 0;
+  }
+  .country-context {
+    order: 1;
+  }
+  .country-collection.place-list {
+    order: 2;
+    max-height: none;
+    width: 100%;
+    overflow: visible;
+  }
+  .country-explore-layout.view-list .country-collection {
+    columns: auto;
+  }
+  .country-model,
+  .country-geography .map-panel {
+    height: 440px;
+    min-height: 360px;
+  }
+  .workspace-setup > .country-model {
+    width: 100%;
+  }
+  .workspace-setup .inline-trip-setup {
+    width: 100%;
+  }
+  .terrain-controls button {
+    min-height: 34px;
+  }
+  .embedded-planner .planner-workspace {
+    display: flex;
+    flex-direction: column;
+  }
+  .embedded-planner .planner-map {
+    width: 100%;
+    position: relative;
+    top: auto;
+    order: 0;
+  }
+  .embedded-planner .day-panel {
+    display: block;
+    width: 100%;
+    max-height: none;
+    order: 1;
+  }
+  .embedded-planner .planner-collection {
+    width: 100%;
+    order: 2;
+  }
+  .embedded-planner .planner-collection .add-list {
+    display: block;
+  }
+  .embedded-planner .planner-heading {
+    display: block;
+  }
+  .embedded-planner .planner-heading .actions {
+    margin-top: 12px;
+  }
+  .trip-settings .field {
+    min-width: 110px;
+  }
+  .country-explore-layout > .place-preview {
+    position: fixed;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .country-workspace {
+    animation: none;
+  }
+}
+.embedded-planner .planner-map > .place-preview {
+  position: relative;
+  inset: auto;
+  width: min(100%, 380px);
+  margin-top: 16px;
+}
