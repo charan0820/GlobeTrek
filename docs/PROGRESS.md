@@ -126,3 +126,43 @@ On 29 October 2026 the user restored the original GlobeTrek tourism-discovery sc
 ## Remaining external steps
 
 Obtain explicit approvals for persistent database/account configuration, Git commits/pushes, and public deployment. The user has already created a repository; verify its configured remote before any approved push. Run hosted smoke tests after approved deployment. Record a demo video with the student after the walkthrough. Word journal visual QA is now complete for the current 21-page edition.
+
+## 31 October 2026 - Motion destination-selection slice
+
+Implemented Motion previews, workspace reveal and destination-entry text swap while preserving the atlas direction and existing camera/navigation state machine. Added truthful country-list scroll progress. Japan is the first verified end-to-end destination; shared components apply to the existing country collection.
+
+Validation: npm run lint; npm run build including asset verification; browser-discovery-motion.mjs (320/390/768/1440px keyboard entry, reduced motion, no horizontal overflow, list engine disposal, loading then failed catalog, light/dark captures); browser-country-entry.mjs (actual polygon clicks, double click, superseding destination, native new tab, reduced motion, failed terrain and zero idle model frames). Passed. One test-only Unicode loading-text mismatch was replaced with a stable regex before the final passing run. Screenshots/checks: artifacts/discovery-motion; existing entry checks: artifacts/country-workspace/entry.json.
+
+Build discovery chunk: 150.64kB raw / 51.30kB gzip. Large lazy globe/map/Three chunks remain an existing limitation. No new hardware FPS or hosted performance claims; backend suite not rerun for presentation-only changes. No commit/push/deploy or parent-folder journal write.
+
+## 31 October 2026 - Fluid atlas panels and contextual island
+
+Implemented equal reserved desktop tracks, collapsible session-persistent panels, tablet/mobile sheets, one route-scoped contextual island, editorial title reveals, route fades and moving tab indicators. Existing palette, assets, draft/pricing and reservation services are retained. Japan booking was exercised end to end; shared presentation applies across the ten-country collection.
+
+Passed: lint; production build/asset verification; 81 tests across eight files; catalog/model validation; strict premium static audit (zero findings); seven-width fluid-atlas checks in both themes; keyboard/reduced-motion, sheet-to-preview handoff and focus; full guest-auth-save-hold-confirm-cancel smoke; full recovery suite; globe entry/failure regression; short 1440x650 centring and exact 220px panel-scroll restoration. Four country List theme/viewport axe scans passed, as did the smoke/recovery accessibility checks. No independent whole-product certification is claimed.
+
+Final local rendering observation: 1440px: ready 581.8ms, median control-to-frame 5.45ms, idle added frames 0; 390px: ready 495.5ms, median control-to-frame 5.60ms, idle added frames 0. Headless Edge, localhost, unthrottled developer machine; mobile viewport is not mobile hardware. Geographic engines remain lazy and are disposed in List mode. Shared Motion moves code into the initial entry: approximately 497.65kB raw / 161.1kB gzip versus 357.40kB / 114.18kB before the shared shell; the discovery chunk shrinks from 150.64kB to roughly 17.2kB. This is a loading tradeoff, not a performance improvement claim.
+
+Fixed during verification: legacy setup-panel hiding; tablet sheet breakpoint mismatch; tab colour crossfade contrast; collapse scroll restoration via sticky toggles. Updated browser checks to explicitly use new mobile List/sheet entry points. Evidence: docs/evidence/fluid-atlas, with full local captures under artifacts.
+
+Learning notes: docs/FLUID-ATLAS-LEARNING.md and appended workspace Word journal. Word visual QA remains incomplete: bundled renderer lacked LibreOffice, and approved hidden Word automation did not complete; its command was cancelled. Do not call the Word artifact layout-verified. Parent folder untouched. No commit, push, deployment, new service, dependency or asset download in this implementation.
+
+## 1 November 2026 - Planner controls and panel height
+
+Grouped central presentation/route controls under View and Show route; kept day selection below and split camera controls into Frame/Zoom/Pan/Rotate groups. Extended desktop planner side panels to calc(100dvh - 48px) with 24px sticky offset; collapse and mobile sheets remain available. Passed lint, client build/asset verification, diff whitespace check, and focused Edge checks at 390/1440/1920px, both theme captures, route toggles, keyboard zoom and collapse. Verified 852px side panels at a 900px viewport. Local evidence: artifacts/planner-controls. No booking/domain changes, downloads, commits or deployment.
+
+## 1 November 2026 - Remove duplicate day controls
+
+Removed the second day-selector row from the planner. Kept dated colour-coded Trip days tabs and changed the ten relief controls to Lucide symbols, preserving aria-labels, titles, grouping and 44px targets. Updated the existing 30-day browser assertion to target the canonical tabs. Lint/build/asset verification and focused Edge checks at 390/1440/1920px passed, including no duplicate day row, four dated tabs, ten control icons and keyboard zoom. No downloads, commits or domain changes.
+
+## 1 November 2026 - List toolbar overlap fix
+
+The embedded planner assigned its toolbar and collection to column 2, row 1 in List view. Explicit named grid areas now place controls above the collection while the day panel spans both rows. Model/map layouts and mobile flow remain unchanged. Lint, build/assets and focused Edge bounds checks at 390/1440/1920px passed; Model/List switching verified. Evidence: artifacts/list-layout.
+
+## 1 November 2026 - Larger discovery globe and central brand
+
+Moved GlobeTrek to the central headline, demoted A world to explore to a secondary heading, narrowed desktop navigation to 200px and expanded globe space toward a 50% increase subject to responsive fitting. Passed lint/build/assets, five viewport layout checks (320/390/1100/1440/1920), heading hierarchy/centred canvas checks, and country-entry/rendering recovery regression. Screenshots: artifacts/discovery-scale. No new assets, dependencies, commits or deployment.
+
+## 1 November 2026 - Sticky discovery side panels
+
+Kept desktop navigation and destinations visible during page scrolling with 24px sticky offsets and independent bounded content scrolling. Removed grid-item stretching from the left rail. Mobile retains normal flow/sheets. Passed lint/build and a focused Edge check measuring both panels at 24px after a 250px document scroll, viewport containment and mobile static positioning. Evidence: artifacts/sticky-discovery/scrolled.png.

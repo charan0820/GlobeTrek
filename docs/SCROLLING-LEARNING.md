@@ -23,3 +23,13 @@ The real-browser check records frame positions after a wheel step and confirms a
 Smooth navigation and wheel momentum are different: CSS scroll-behavior affects deliberate scroll operations, while this feature eases discrete wheel input. The engineering work is preserving cancellation, scroll ownership and accessibility rather than adding animation everywhere.
 
 Questions: Why use elapsed-time damping instead of a fixed percentage per frame? Why keep frame values outside React state? How do you avoid a runaway scroll queue? What should immediately cancel the animation?
+
+## Motion and truthful progress - 31 October 2026
+
+What: Motion animates finite UI state changes; a separate DOM-derived progress indicator reports country-list scroll position. Why: the transition explains a selected destination, while progress explains what the traveler has actually scrolled. Neither substitutes for server loading or confirmation.
+
+Where: client/src/discovery-motion.jsx, Discovery and CountryWorkspace. Panel content remains mounted to preserve focus; navigation owns its own deadline, so animation completion cannot block entry. Reduced-motion preferences remove displacement/duration. ResizeObserver and passive scroll listeners recalculate progress and are cleaned up on unmount.
+
+Verification: mobile/desktop keyboard and failure checks, reduced motion, layout captures and existing actual-globe-entry tests passed. The terrain renderer remained idle with zero extra frames in the existing 500ms idle check.
+
+Interview explanation: I animate the presentation of state rather than make animation the source of truth. Scroll progress comes from actual geometry, and loading remains an independent network state. This keeps motion optional and the journey usable when animation or WebGL is unavailable. This new learning entry is in workspace Markdown; the existing Word journal has not been regenerated for this slice.

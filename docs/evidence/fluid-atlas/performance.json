@@ -1,0 +1,229 @@
+{
+  "measuredAt": "2026-10-31T15:58:33.282Z",
+  "machine": {
+    "platform": "win32",
+    "cpu": "13th Gen Intel(R) Core(TM) i5-13420H",
+    "logicalCpus": 12,
+    "memoryGiB": 15.648929595947266,
+    "node": "v24.14.0"
+  },
+  "limitations": "Headless Edge on one Windows developer machine, unthrottled localhost. Fresh browser contexts, warm OS/server cache. Mobile viewport is not mobile hardware. Timings cover button activation to next instrumented render, not continuous drag FPS or input-to-display latency. No hosted or scalability claim.",
+  "samples": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "readyMs": 581.7999999970198,
+      "pixelRatio": 1,
+      "resources": [
+        {
+          "path": "/assets/index-uWdMBUom.js",
+          "durationMs": 16.900000005960464,
+          "transferBytes": 497952,
+          "encodedBytes": 497652
+        },
+        {
+          "path": "/assets/CountryWorkspace-D3PzRMHu.js",
+          "durationMs": 3.5,
+          "transferBytes": 5548,
+          "encodedBytes": 5248
+        },
+        {
+          "path": "/assets/GeoBoundary-C-fpyoev.js",
+          "durationMs": 4.200000002980232,
+          "transferBytes": 11688,
+          "encodedBytes": 11388
+        },
+        {
+          "path": "/assets/discovery-BbvaH9SP.js",
+          "durationMs": 4.100000001490116,
+          "transferBytes": 17494,
+          "encodedBytes": 17194
+        },
+        {
+          "path": "/assets/planner-DZVPm_HC.js",
+          "durationMs": 4.0999999940395355,
+          "transferBytes": 79440,
+          "encodedBytes": 79140
+        },
+        {
+          "path": "/assets/CountryModel-NrkdTgnn.js",
+          "durationMs": 3.2999999970197678,
+          "transferBytes": 57387,
+          "encodedBytes": 57087
+        },
+        {
+          "path": "/assets/OrbitControls-DuRNXRz2.js",
+          "durationMs": 5.700000002980232,
+          "transferBytes": 669247,
+          "encodedBytes": 668947
+        },
+        {
+          "path": "/relief/manifest.json",
+          "durationMs": 3.8000000044703484,
+          "transferBytes": 36008,
+          "encodedBytes": 35708
+        },
+        {
+          "path": "/relief/in.json",
+          "durationMs": 2.5,
+          "transferBytes": 76497,
+          "encodedBytes": 76197
+        },
+        {
+          "path": "/relief/in-desktop.glb",
+          "durationMs": 3,
+          "transferBytes": 865824,
+          "encodedBytes": 865524
+        }
+      ],
+      "idleFramesAdded": 0,
+      "interactionMs": [
+        2.5999999940395355,
+        1.6999999955296516,
+        4.200000002980232,
+        5.200000002980232,
+        5.300000004470348,
+        5.700000002980232,
+        5.9000000059604645,
+        5.600000001490116,
+        6,
+        5.799999997019768
+      ]
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "readyMs": 495.5,
+      "pixelRatio": 1,
+      "resources": [
+        {
+          "path": "/assets/index-uWdMBUom.js",
+          "durationMs": 12.299999997019768,
+          "transferBytes": 497952,
+          "encodedBytes": 497652
+        },
+        {
+          "path": "/assets/CountryWorkspace-D3PzRMHu.js",
+          "durationMs": 3.4000000059604645,
+          "transferBytes": 5548,
+          "encodedBytes": 5248
+        },
+        {
+          "path": "/assets/GeoBoundary-C-fpyoev.js",
+          "durationMs": 4.699999995529652,
+          "transferBytes": 11688,
+          "encodedBytes": 11388
+        },
+        {
+          "path": "/assets/discovery-BbvaH9SP.js",
+          "durationMs": 4.5999999940395355,
+          "transferBytes": 17494,
+          "encodedBytes": 17194
+        },
+        {
+          "path": "/assets/planner-DZVPm_HC.js",
+          "durationMs": 4.600000001490116,
+          "transferBytes": 79440,
+          "encodedBytes": 79140
+        },
+        {
+          "path": "/assets/CountryModel-NrkdTgnn.js",
+          "durationMs": 3.2000000029802322,
+          "transferBytes": 57387,
+          "encodedBytes": 57087
+        },
+        {
+          "path": "/assets/OrbitControls-DuRNXRz2.js",
+          "durationMs": 5,
+          "transferBytes": 669247,
+          "encodedBytes": 668947
+        },
+        {
+          "path": "/relief/manifest.json",
+          "durationMs": 3.600000001490116,
+          "transferBytes": 36008,
+          "encodedBytes": 35708
+        },
+        {
+          "path": "/relief/in.json",
+          "durationMs": 2.399999998509884,
+          "transferBytes": 76497,
+          "encodedBytes": 76197
+        },
+        {
+          "path": "/relief/in-mobile.glb",
+          "durationMs": 2.5,
+          "transferBytes": 263424,
+          "encodedBytes": 263124
+        }
+      ],
+      "idleFramesAdded": 0,
+      "interactionMs": [
+        2,
+        2.399999998509884,
+        5.9000000059604645,
+        5.5,
+        5.600000001490116,
+        5.899999998509884,
+        5.799999997019768,
+        5.699999995529652,
+        5.5999999940395355,
+        5.600000001490116
+      ]
+    }
+  ],
+  "bundles": [
+    {
+      "file": "index-uWdMBUom.js",
+      "bytes": 497652
+    },
+    {
+      "file": "reservations-YSLTuasS.js",
+      "bytes": 14339
+    },
+    {
+      "file": "GeoBoundary-C-fpyoev.js",
+      "bytes": 11388
+    },
+    {
+      "file": "planner-DZVPm_HC.js",
+      "bytes": 79140
+    },
+    {
+      "file": "CountryModel-NrkdTgnn.js",
+      "bytes": 57087
+    },
+    {
+      "file": "OrbitControls-DuRNXRz2.js",
+      "bytes": 668947
+    },
+    {
+      "file": "Map-auulKBrA.js",
+      "bytes": 1083149
+    },
+    {
+      "file": "maplibre-gl-worker-Dro7GA4u.js",
+      "bytes": 517225
+    },
+    {
+      "file": "CountryWorkspace-D3PzRMHu.js",
+      "bytes": 5248
+    },
+    {
+      "file": "discovery-BbvaH9SP.js",
+      "bytes": 17194
+    },
+    {
+      "file": "Globe-DdofCfgu.js",
+      "bytes": 1318490
+    },
+    {
+      "file": "index-C200lrIz.js",
+      "bytes": 69568
+    }
+  ]
+}

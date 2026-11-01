@@ -1,0 +1,12 @@
+[
+  {
+    "shortDesktop": true,
+    "globeCentred": true,
+    "scrollBefore": 220,
+    "scrollAfter": 220
+  },
+  {
+    "islandFocusRestored": true,
+    "mobileSheet": true
+  }
+]

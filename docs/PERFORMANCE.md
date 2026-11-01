@@ -44,3 +44,9 @@ Raw metrics and machine details are in evidence/travel. Reproduce using scripts/
 ## Client observation
 
 The final local headless browser capture recorded an observed LCP of 628 ms, CLS of 0.0508 and navigation duration of 372.7 ms. This was an unthrottled synthetic developer-machine run, not mobile field data or a Core Web Vitals guarantee. The LCP observer ends at the first interaction. Raw values are in evidence/travel/client-performance.json. Globe and detailed map engines are lazy-loaded; the production build still reports large geographic chunks, so representative throttled-device measurements remain useful before making loading-performance claims.
+
+## Fluid atlas local measurements - 31 October 2026
+
+1440px: ready 581.8ms, median control-to-frame 5.45ms, idle added frames 0; 390px: ready 495.5ms, median control-to-frame 5.60ms, idle added frames 0.
+
+Raw evidence: docs/evidence/fluid-atlas/performance.json. These are local headless observations, not device FPS or hosted throughput. Shared Motion shifts approximately 47kB gzip into the initial bundle while reducing the lazy discovery chunk; large geographic chunks remain.

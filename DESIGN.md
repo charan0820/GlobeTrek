@@ -104,6 +104,21 @@ Discovery is an Experience surface; planning and reservations remain Operate sur
 - Ivory/rust light and charcoal-green/copper dark themes.
 - Thin rules, clear actions, readable data and visible demo labels.
 
+## Approved visual references and authority
+
+The user-supplied references and subsequent approved plans establish this direction:
+
+| Reference | Adopted decision | Boundary |
+|---|---|---|
+| Psyche cartography article screenshot, attachment `codex-clipboard-b214e7f4-5598-4dc5-a22d-858a651a0d39.png` | Ivory paper, rust accents, editorial typography and quiet spacing | Reference for character; no copied article text, logo or map artwork |
+| Google Earth screenshot, attachment `codex-clipboard-4d6c32b8-55aa-454c-b58d-59821a7fb8bb.png` | Viewport-centred interactive globe, left navigation and right country collection | Keep GlobeTrek's atlas palette, not a space/satellite skin |
+| Country-model reference, attachment `codex-clipboard-ec9a4cf8-5580-4078-998e-279b2108ee69.png` | Isolated, dimensional country geography with interactive pins | Approved implementation uses real relief; no fictional mountains, buildings or decorative settlements |
+| Approved Atlas, raised-globe and Country Relief Workspace plans | Both themes, open-license typography, raised selection, connected entry transition, shared Explore/Plan workspace and clear prices | These decisions supersede the earlier ocean/cobalt identity, flat geography and List/Map/Split country layout |
+
+The attachments identify conversation references, not application assets or stable repository paths. Current implementation captures are in `docs/evidence/country-workspace/`, with earlier Atlas/globe captures retained separately. Allura, Cormorant Garamond and Source Sans 3 are the approved open-license typography; the initially suggested decorative font names are not implementation requirements.
+
+`DESIGN.md` owns visual decisions; `UX-CONTRACT.md` owns behavior; `HANDOFF.md` owns the dated implementation snapshot, versions and next task; `AGENTS.md` owns durable coding/permission instructions. Runtime tokens remain in `client/src/travel.css`. The stale country-layout prose in `.impeccable/design.json` is a known issue, not authority to restore Split or the old banner.
+
 ## Colors
 
 `client/src/travel.css` owns runtime tokens. Frontmatter records light primitives under their runtime role names; `dark-*` records the matching `[data-theme="dark"]` overrides. Runtime components consume the unprefixed CSS variables in both themes.
@@ -150,9 +165,9 @@ Runtime owners: ui.jsx Field/DateField/Modal/ErrorMessage/Status; travel.css the
 - **Day routes:** Selected day and All days scopes preserve the draft. Selection identifies stop occurrences, including repeated visits to the same place. Route features group by day and never connect separate days; retain explicit day/stop numbers alongside the stable day colours.
 - **Duration and media:** attractions say Suggested visit and explain the planning estimate; tours say Tour duration with separate destination-local schedules. Use local attributed photographs and keep source, title, creator, license and modification notes accessible. Fictional products explicitly use representative destination imagery. Image failure preserves readable content and actions. The Nea Chora Beach image is CC BY-NC-SA 2.0 for this noncommercial demo; preserve that restriction and the record in `client/public/destinations/README.md`.
 
-Saved journey rows include their country's credited destination photo at 180px high. Reservation headings pair the summary with a country photo capped at 420px wide and 220px high, stacking at 180px high on mobile. Place previews use an auto-height cover crop within their bounded frame, without grey letterboxing. Page navigation and deliberate list scrolling are smooth, with reduced-motion overrides; native wheel behavior remains unchanged.
+Saved journey rows include their country's credited destination photo at 180px high. Reservation headings pair the summary with a country photo capped at 420px wide and 220px high, stacking at 180px high on mobile. Place previews use an auto-height cover crop within their bounded frame, without grey letterboxing. Page navigation and deliberate list scrolling are smooth, with reduced-motion overrides.
 
-The subsequent user-approved momentum refinement supersedes the native-wheel sentence above: discrete vertical wheel steps ease toward a bounded target with an 85ms exponential time constant and an approximately 400ms visible tail. Reverse input resets queued travel. Touch and fine trackpad deltas stay native; controls, maps and reduced motion bypass the effect. No page wrapper transforms or animation dependency are introduced.
+The user-approved momentum refinement eases discrete vertical wheel steps toward a bounded target with an 85ms exponential time constant and an approximately 400ms visible tail. Reverse input resets queued travel. Touch and fine trackpad deltas stay native; controls, maps and reduced motion bypass the effect. No page wrapper transforms or animation dependency are introduced.
 
 - **Reservation summaries:** item rows and totals are separated by rules, with explicit demo payment, dated INR estimate and whole-reservation cancellation language.
 - **Country workspace controls:** Explore and Build your trip select modes; Model, Detailed map and List select presentations. There is no Split presentation. Mode buttons use action/on-action when pressed, while presentation switches retain the existing ink/canvas treatment. Relief control groups sit outside the canvas; the relief frame uses the established stop corner size. These compact controls are distinct from ordinary primary actions.
@@ -175,3 +190,41 @@ Reservation list rows prioritize destination and booked dates, with status/refer
 The camera fits the raised outer sphere to 90% of the smaller available dimension using the vertical field of view and aspect ratio. Resizing changes distance while preserving orientation. Supported country names use local HTML labels projected into the globe host, with selected then hovered priority, collision handling and rear-surface suppression. Labels ignore pointer events so polygons and dragging remain operable. Projection uses the current camera matrices; camera changes schedule DOM position updates through requestAnimationFrame rather than putting continuous coordinates in React state.
 
 Navigation and textual actions share a soft-background pseudo-element that translates 8px and fades over 200ms. Text stays still. Keyboard focus uses the same surface and a visible outline; reduced motion removes the transition. Plain reading text does not animate. Source and attribution links retain persistent underlines.
+
+## Asset ownership, licenses and performance limits
+
+| Asset | Repository location and provenance | Constraint |
+|---|---|---|
+| Typography | `client/public/fonts/`, `fonts.css` and font README/OFL notices; Source Sans 3 also comes from its Fontsource package | Self-host; preserve OFL notices, role separation and readable fallbacks |
+| Country photographs | `client/public/destinations/{CODE}.jpg`, `attribution.json` and `README.md` | Individual licenses/credits apply; never imply a fictional property is photographed |
+| 120 attraction photographs | `client/public/destinations/places/`, `places.json` and attribution README | Two local WebP variants per place, 240 files / 14,403,178 bytes; retain dimensions, alt text, credits and honest failure states |
+| Nea Chora photograph | `destinations/places/gr-nea-chora-beach.webp` and its manifest entry | CC BY-NC-SA 2.0; current use is a noncommercial demo. Resolve this restriction before commercial use |
+| Globe boundaries | `client/public/countries.geojson` and `countries.meta.json` | Natural Earth public-domain snapshot; preserve source/hash records |
+| Relief assets | `client/public/relief/`: twenty GLBs, ten country metadata files, `manifest.json`, `TERRAIN-ATTRIBUTION.md` | Natural Earth finer boundaries plus Mapzen/Terrain Tiles elevation; preserve all provider-specific notices and source hashes |
+| Reference/evidence captures | `docs/evidence/atlas/`, `globe-interaction/`, `country-workspace/` | Evidence of actual builds, not substitute product imagery or a generated comp |
+
+Per-country GLB targets: desktop below 100,000 triangles / approximately 3MB; mobile below 25,000 triangles / approximately 1MB. Metadata is measured separately. Current largest assets are France desktop (77,359 triangles; 2,444,372 bytes) and US mobile (24,220 triangles; 893,860 bytes). Relief uses coarse zoom-5 samples and explicitly declared eight-times height exaggeration, not survey or hiking accuracy.
+
+Lazy-load geographic engines; mount only the active engine; cap relief pixel density at 1.5 and render on demand while idle. Preserve camera/selection during theme changes, lists during renderer/provider failure, and native scroll access. Do not add a second runtime graphics framework or continuous terrain downloads without a concrete approved need. Large geography chunks remain a measured limitation; `docs/PERFORMANCE.md` and its raw evidence own observed values, not scalability promises.
+
+## Destination motion checkpoint - 31 October 2026
+
+The atlas identity remains unchanged. `discovery-motion.jsx` owns restrained Motion 14.9.0 (MIT) reveals: selected-country panel and country workspace use a 6px/200ms opacity-and-position reveal; entry status uses a 3px/180ms text swap. These adapt the publicly listed free Panel reveal and Text states swap patterns at https://transitions.dev/; no source, paid component, blur effect or asset was copied. Existing globe approach remains 600ms, with native modified links and immediate reduced-motion/failure entry. Content is not remounted on preview changes, preserving focused actions.
+
+Country-list progress describes actual scrollTop divided by scrollable height, not loading, booking completion or a fabricated travel stage. With no overflow, it says All matching countries visible. No extra scroll interception, pinned scene or continuous animation loop is introduced.
+
+## Fluid atlas implementation - 31 October 2026
+
+`atlas-presentation.jsx` and its stylesheet own floating panels, contextual island, page entry, editorial title reveal and moving tab indicators. The existing atlas palette/assets remain unchanged. Wide geographic workspaces reserve equal clamp(260px,22vw,340px) tracks and 20px gutters. Panels use paper surfaces, 12px corners and restrained borders/shadows; collapsed tracks remain reserved. Below 1100px, panel and place/product detail journeys use accessible sheets, with List as the inline alternative. Main navigation remains directly accessible on mobile.
+
+The island is bottom-centre, maximum 420px collapsed / 480px expanded, with a 56px trigger and safe-area clearance. It reflects route state only: selected destination, trip save status/estimate, or pending reservation deadline. Lists/auth/account have no island. Other dialogs and the mobile keyboard suppress it. Page fades are 200ms, panels 240ms, island 280ms and title staggering at most 450ms. Reduced motion removes displacement and duration. Selected tab foreground/background change immediately to avoid low-contrast intermediate colours; the indicator supplies movement.
+
+## Planner control refinement - 1 November 2026
+
+Planner presentation and route scope are grouped in a compact labelled toolbar (View / Show route), with a single dated, colour-coded day tab row above the workspace. The duplicate map day row is removed. Camera actions use 44px Lucide icon buttons grouped by Frame, Zoom, Pan and Rotate, with accessible names and native hover titles. On desktop, both planner side panels use viewport height minus 48px, stay 24px below the viewport top while scrolling, and retain internal scrolling/collapse. Mobile sheet heights are unchanged.
+
+## Discovery scale and heading - 1 November 2026
+
+Explore now places the Allura GlobeTrek wordmark in the central h1 and uses A world to explore as a smaller Cormorant h2. The duplicate navigation wordmark is removed. Desktop navigation is 200px wide, with equal reserved discovery side tracks preserving viewport centring. Globe space targets approximately 1.5 times the earlier vertical allocation; responsive width and existing camera fitting prevent canvas clipping. Taller scenes use document scrolling. Other page navigation and country workspace sizing remain unchanged.
+
+Discovery desktop navigation and destination panels use sticky positioning at a 24px viewport offset. The left grid item aligns to its content rather than stretching to page height; destinations retain bounded internal scrolling. Below 1100px, normal document flow and sheets remain unchanged.

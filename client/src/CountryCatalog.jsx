@@ -1,3 +1,4 @@
+import { FloatingPanel, TabIndicator } from "./atlas-presentation.jsx";
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { MapPin } from "lucide-react";
@@ -121,6 +122,7 @@ export default function CountryCatalog({
               aria-current={kind === key ? "page" : undefined}
               onClick={() => update("kind", key)}
             >
+              <TabIndicator active={kind === key} group="catalog-kind" />
               {label}
             </button>
           ))}
@@ -145,7 +147,12 @@ export default function CountryCatalog({
         {(records) => (
           <PriceCollection records={records} kind={kind}>
             <div className={`country-explore-layout view-${view}`}>
-              <aside className="country-context">
+              <FloatingPanel
+                title="Explore filters"
+                storageKey="planning-left"
+                className="country-context"
+                inline={view === "list"}
+              >
                 <h2>Follow your curiosity.</h2>
                 <p>
                   Choose places to inspect, then build a dated trip beside this
@@ -180,7 +187,7 @@ export default function CountryCatalog({
                   {records.length} results · Select a pin or a name for
                   photographs and information.
                 </p>
-              </aside>
+              </FloatingPanel>
               {view !== "list" && (
                 <div className="country-geography">
                   <GeoBoundary>
@@ -212,7 +219,10 @@ export default function CountryCatalog({
                   </GeoBoundary>
                 </div>
               )}
-              <div
+              <FloatingPanel
+                title="Places and experiences"
+                storageKey="planning-right"
+                inline={view === "list"}
                 className="place-list country-collection"
                 ref={listRef}
                 tabIndex={0}
@@ -269,7 +279,7 @@ export default function CountryCatalog({
                     ))}
                   </section>
                 ))}
-              </div>
+              </FloatingPanel>
               {active && closed !== selected && activeWorkspace && (
                 <PlacePreview
                   trigger={origin.current}

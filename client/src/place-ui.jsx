@@ -8,10 +8,10 @@ import { Price } from "./pricing.jsx";
 
 export function useNarrow() {
   const [narrow, setNarrow] = useState(
-    () => matchMedia("(max-width: 759px)").matches,
+    () => matchMedia("(max-width: 1099px)").matches,
   );
   useEffect(() => {
-    const media = matchMedia("(max-width: 759px)");
+    const media = matchMedia("(max-width: 1099px)");
     const update = () => setNarrow(media.matches);
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);

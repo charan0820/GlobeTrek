@@ -1,3 +1,8 @@
+import {
+  EditorialTitle,
+  FloatingPanel,
+  IslandContent,
+} from "./atlas-presentation.jsx";
 import React, {
   lazy,
   Suspense,
@@ -919,6 +924,53 @@ function TripEditor({
     >
       <div className={workspace ? "embedded-planner" : ""}>
         <h1 className="sr-only">Trip planner</h1>
+        <IslandContent
+          id="trip"
+          priority={10}
+          active={!workspace || workspace.active}
+          title={`${draft.name} · ${saveStatus}`}
+        >
+          <p>
+            {draft.startDate} — {draft.endDate} · {draft.travelers} travelers
+          </p>
+          <p>
+            {estimated.error
+              ? "Estimate unavailable"
+              : estimated.isFetching
+                ? "Updating estimate…"
+                : budget?.total != null
+                  ? formatMoney(budget.total, budget.currency)
+                  : "Select stays or tours for an estimate"}
+          </p>
+          <p className="fine-print">
+            Estimated selected bookings. Final price is calculated at review.
+          </p>
+          {user && !tripId ? (
+            <button className="button" disabled={busy} onClick={saveCopy}>
+              Save trip to account
+            </button>
+          ) : user ? (
+            <button
+              className="button"
+              disabled={
+                busy ||
+                generation !== savedGeneration ||
+                conflict ||
+                issues.some((i) => i.severity === "error")
+              }
+              onClick={review}
+            >
+              Review trip
+            </button>
+          ) : (
+            <Link
+              className="button"
+              to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`}
+            >
+              Sign in to save and review
+            </Link>
+          )}
+        </IslandContent>
         {!workspace && heading}
         <ErrorMessage error={error} />
         {estimated.enabled ? (
@@ -1039,7 +1091,10 @@ function TripEditor({
           </button>
         </div>
         <div className={`planner-workspace view-${view}`}>
-          <section
+          <FloatingPanel
+            title="Your day plan"
+            storageKey="planning-left"
+            inline={view === "list"}
             className="day-panel"
             ref={dayPanel}
             tabIndex={0}
@@ -1106,8 +1161,13 @@ function TripEditor({
                 <p>Add a place or a tour below to begin this day.</p>
               </div>
             )}
-          </section>
-          <aside className="planner-collection">
+          </FloatingPanel>
+          <FloatingPanel
+            title="Add to your trip"
+            storageKey="planning-right"
+            className="planner-collection"
+            inline={view === "list"}
+          >
             <h3>Add to this day</h3>
             <div className="tabs compact-tabs">
               {[
@@ -1227,59 +1287,60 @@ function TripEditor({
                 )}
               </QueryState>
             )}
-          </aside>
+          </FloatingPanel>
           <section className="planner-map">
-            {workspace && (
-              <div className="view-switch" aria-label="Presentation">
-                {[
-                  ["model", "Model"],
-                  ["map", "Detailed map"],
-                  ["list", "List"],
-                ].map(([key, label]) => (
-                  <button
-                    key={key}
-                    aria-pressed={geoView === key}
-                    onClick={() =>
-                      setWorkspaceParams((old) => {
-                        const p = new URLSearchParams(old);
-                        p.set("view", key);
-                        return p;
-                      })
-                    }
+            <div className="planner-map-toolbar">
+              {workspace && (
+                <div className="planner-tool-group">
+                  <span className="planner-tool-label">View</span>
+                  <div
+                    className="view-switch"
+                    role="group"
+                    aria-label="Presentation"
                   >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
-            <div className="map-scope">
-              <button
-                aria-pressed={mapScope === "day"}
-                onClick={() => setMapScope("day")}
-              >
-                Selected day
-              </button>
-              <button
-                aria-pressed={mapScope === "all"}
-                onClick={() => setMapScope("all")}
-              >
-                All days
-              </button>
-            </div>
-            <div className="day-legend" aria-label="Map day colours">
-              {draft.days.map((d, index) => (
-                <button
-                  key={d.date}
-                  style={dayStyle(index)}
-                  aria-pressed={date === d.date}
-                  onClick={() => {
-                    setDate(d.date);
-                    setPreviewOpen(false);
-                  }}
+                    {[
+                      ["model", "Model"],
+                      ["map", "Detailed map"],
+                      ["list", "List"],
+                    ].map(([key, label]) => (
+                      <button
+                        key={key}
+                        aria-pressed={geoView === key}
+                        onClick={() =>
+                          setWorkspaceParams((old) => {
+                            const p = new URLSearchParams(old);
+                            p.set("view", key);
+                            return p;
+                          })
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="planner-tool-group">
+                <span className="planner-tool-label">Show route</span>
+                <div
+                  className="map-scope"
+                  role="group"
+                  aria-label="Route scope"
                 >
-                  Day {index + 1}
-                </button>
-              ))}
+                  <button
+                    aria-pressed={mapScope === "day"}
+                    onClick={() => setMapScope("day")}
+                  >
+                    Selected day
+                  </button>
+                  <button
+                    aria-pressed={mapScope === "all"}
+                    onClick={() => setMapScope("all")}
+                  >
+                    All days
+                  </button>
+                </div>
+              </div>
             </div>
             <GeoBoundary>
               {(!workspace || (workspace.active && geoView !== "list")) && (
@@ -1651,7 +1712,7 @@ export function MyTrips() {
     <>
       <div className="page-heading">
         <div>
-          <h1>Your journeys</h1>
+          <EditorialTitle>Your journeys</EditorialTitle>
           <p>A little structure. Plenty of possibility.</p>
         </div>
         <Link className="button" to="/planner/new">

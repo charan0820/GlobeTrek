@@ -324,6 +324,9 @@ try {
       has: page.getByRole("link", { name: "Other tab version", exact: true }),
     });
     await card.getByRole("button", { name: "Copy trip", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Your day plan", exact: true })
+      .click();
     await page.getByLabel("Trip name", { exact: true }).waitFor();
     const copied = new URL(page.url()).searchParams.get("trip");
     assert.notEqual(copied, trip._id);
@@ -349,6 +352,7 @@ try {
     "country filters, clear and browser navigation remain synchronized",
     async () => {
       await page.goto(`${base}/countries/JP`);
+      await page.getByRole("button", { name: "List", exact: true }).click();
       await page.getByLabel("Search this collection").fill("zzznomatch");
       await page
         .getByRole("heading", { name: "No places match yet." })
@@ -391,7 +395,11 @@ try {
       );
       const fallback = await fallbackContext.newPage();
       await fallback.goto(base);
+      await fallback
+        .getByRole("button", { name: "Destinations", exact: true })
+        .click();
       await fallback.getByRole("link", { name: "Japan", exact: true }).click();
+      await fallback.getByRole("button", { name: "List", exact: true }).click();
       await fallback
         .getByRole("button", { name: "Senso-ji", exact: true })
         .waitFor();

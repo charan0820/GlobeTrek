@@ -1,9 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
+import {
+  Home,
+  Scan,
+  Plus,
+  Minus,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowDown,
+  RotateCcw,
+  RotateCw,
+} from "lucide-react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { dayColor, markerId } from "./presentation.js";
 import { terrainPoint } from "./relief-layout.js";
+const controlIcons = {
+  reset: Home,
+  fit: Scan,
+  in: Plus,
+  out: Minus,
+  left: ArrowLeft,
+  right: ArrowRight,
+  up: ArrowUp,
+  down: ArrowDown,
+  "rotate-left": RotateCcw,
+  "rotate-right": RotateCw,
+};
 export default function CountryModel({
   country,
   items = [],
@@ -452,20 +476,58 @@ export default function CountryModel({
         <>
           <div className="terrain-controls" aria-label="Relief controls">
             {[
-              ["reset", "Reset view"],
-              ["fit", "Fit places"],
-              ["in", "Zoom in"],
-              ["out", "Zoom out"],
-              ["left", "Pan left"],
-              ["right", "Pan right"],
-              ["up", "Pan north"],
-              ["down", "Pan south"],
-              ["rotate-left", "Rotate left"],
-              ["rotate-right", "Rotate right"],
-            ].map(([action, label]) => (
-              <button key={action} onClick={() => operate(action)}>
-                {label}
-              </button>
+              [
+                "Frame",
+                [
+                  ["reset", "Reset view"],
+                  ["fit", "Fit places"],
+                ],
+              ],
+              [
+                "Zoom",
+                [
+                  ["in", "Zoom in"],
+                  ["out", "Zoom out"],
+                ],
+              ],
+              [
+                "Pan",
+                [
+                  ["left", "Pan left"],
+                  ["right", "Pan right"],
+                  ["up", "Pan north"],
+                  ["down", "Pan south"],
+                ],
+              ],
+              [
+                "Rotate",
+                [
+                  ["rotate-left", "Rotate left"],
+                  ["rotate-right", "Rotate right"],
+                ],
+              ],
+            ].map(([group, actions]) => (
+              <div
+                className="terrain-control-group"
+                role="group"
+                aria-label={group}
+                key={group}
+              >
+                {actions.map(([action, label]) => {
+                  const Icon = controlIcons[action];
+                  return (
+                    <button
+                      className="terrain-icon-control"
+                      key={action}
+                      aria-label={label}
+                      title={label}
+                      onClick={() => operate(action)}
+                    >
+                      <Icon size={19} aria-hidden="true" />
+                    </button>
+                  );
+                })}
+              </div>
             ))}
           </div>
         </>

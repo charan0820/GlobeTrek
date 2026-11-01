@@ -32,7 +32,6 @@
 }
 .country-workspace {
   position: relative;
-  animation: country-reveal 200ms ease-out;
 }
 .country-workspace-heading {
   display: flex;
@@ -630,4 +629,27 @@
   inset: auto;
   width: min(100%, 380px);
   margin-top: 16px;
+}
+
+.country-scroll-progress {
+  color: var(--muted);
+  margin: 8px 0;
+}
+.country-scroll-progress [role="progressbar"] {
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+  margin-top: 4px;
+}
+.country-scroll-progress span {
+  display: block;
+  height: 100%;
+  background: var(--action);
+  transform-origin: left;
+}
+.country-entry-status {
+  font-size: 14px;
+  min-height: 1.5em;
+  margin: 8px 0;
+  color: var(--muted);
 }

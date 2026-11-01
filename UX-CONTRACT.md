@@ -66,3 +66,19 @@ Below 1100px, navigation precedes globe, country search/list and preview in docu
 Supported polygons rise temporarily on hover and persistently on click. Selected height takes precedence; leaving or cancelling a pointer clears only hover. Unsupported geography remains flat and inactive. Country name labels are informational, ignore pointer input, suppress rear-facing/crowded labels and prioritise selected/hovered names. Country links remain usable without WebGL or labels.
 
 The theme control is in the top-right shared utility header, with space reserved for it; it scrolls with the header. Navigation and text actions share a 200ms sliding/fading hover background and equivalent keyboard focus treatment. Text does not move; ordinary reading copy does not animate. Reduced motion makes these effects immediate.
+
+## Destination motion (31 October 2026)
+
+`discovery-motion.jsx` is the shared presentation owner; Discovery retains navigation/selection and CountryWorkspace retains draft/panel ownership. Reduced motion removes travel effects. Navigation never waits for Motion completion. No exit animation retains an obsolete actionable destination. A polite entry status names the latest requested destination. Country-list progress is a non-live progressbar with explicit scroll-position label; ResizeObserver and filter changes recalculate its range. It is absent when every result is visible.
+
+## Fluid atlas presentation ownership
+
+The shell registry owns only which contextual island is presented. Route publishers own its contents and existing actions, with trip context taking precedence over country context. Entries are route-scoped and removed on unmount. No duplicate pricing/save/hold state is introduced. Desktop panel collapse preserves mounted contents, disables hidden focus through inert, retains track width and restores scroll. Collapse preferences are shared across Explore/Plan and stored separately for discovery/planning in sessionStorage; storage failure is harmless.
+
+Below 1100px, one panel sheet can be open at once. Place/product dialogs supersede it; close restores focus to a connected trigger or the established route fallback. Public route/query state remains canonical. Page-entry motion does not key/remount the route tree on query updates. Primary controls are 48px; secondary/icon and model controls have at least 44px targets. The existing scroll implementation is retained.
+
+Planner controls retain their existing state handlers and accessible names. View and route scope are separately labelled groups. Taller desktop panels remain independently scrollable; collapse returns to intrinsic height without affecting the draft or map selection.
+
+The dated Trip days tabs are the sole day selector; map markers retain day/stop labels. Icon-only relief controls preserve existing aria-label names, title descriptions and keyboard activation.
+
+Desktop planner List view uses distinct controls and collection rows beside the day plan. Neither panel may share the toolbar grid cell; verify non-overlapping bounds when changing geographic presentation.

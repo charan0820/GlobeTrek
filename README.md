@@ -16,7 +16,7 @@ npm run demo
 
 Open [the local application](http://localhost:3000). Initial seeding creates a year of inventory and can take a few minutes. The demo uses a temporary MongoDB replica set and a random session secret: **stopping it removes its database**. Source files and documentation remain saved.
 
-For a persistent local replica set, copy `.env.example` to `.env`, supply your own database URI and session secret, then run `npm run seed` and `npm start`. Never commit `.env`. Keep browser and API on the same origin in the built application.
+For a persistent local replica set, copy `.env.example` to `server/.env`, supply your own database URI and session secret, and set `APP_ORIGIN=http://localhost:3000` for the built app. Verify the database target before running `npm run seed`, then run `npm start`. Never commit `.env`. For Vite development, use `APP_ORIGIN=http://localhost:5173` and `npm run dev` instead.
 
 ## Product behavior
 

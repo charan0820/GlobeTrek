@@ -1,0 +1,531 @@
+:root {
+  --atlas-side: clamp(260px, 22vw, 340px);
+}
+.legacy-discovery-navigation {
+  display: none;
+}
+.shared-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 24px;
+}
+.page-entry {
+  min-width: 0;
+}
+h1 {
+  font-size: clamp(40px, 5vw, 72px);
+}
+.atlas-world h1 {
+  font-size: clamp(44px, 5.3vw, 76px);
+}
+.country-workspace-heading h1 {
+  font-size: clamp(40px, 5vw, 72px);
+}
+.button {
+  min-height: 48px;
+  padding: 12px 18px;
+}
+.icon-button,
+.view-switch button,
+.tabs button {
+  min-height: 44px;
+}
+.floating-panel {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 16px;
+  box-shadow: 0 4px 16px #00000006;
+}
+.panel-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 0;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  font-weight: 600;
+  text-align: left;
+}
+.panel-toggle span {
+  font-size: 22px;
+}
+.floating-panel.is-collapsed {
+  overflow: hidden;
+}
+.atlas-navigation-panel nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+.atlas-navigation-panel .brand {
+  font-size: 48px;
+}
+.context-island-slot {
+  position: fixed;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, calc(100% - 24px));
+  z-index: 40;
+}
+.context-island-slot:has(.is-expanded) {
+  width: min(480px, calc(100% - 24px));
+}
+.context-island {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px #00000018;
+  overflow: hidden;
+}
+.island-trigger {
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  text-align: left;
+  font-weight: 600;
+}
+.island-trigger span:first-child {
+  overflow-wrap: anywhere;
+}
+.island-content {
+  padding: 0 20px 20px;
+  max-height: 55dvh;
+  overflow-y: auto;
+}
+.island-content p {
+  margin: 8px 0 16px;
+}
+.island-content .view-switch {
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.app-shell:has(~ .context-island-slot) main {
+  padding-bottom: 112px;
+}
+.atlas-sheet.modal {
+  top: auto;
+  bottom: 0;
+  left: 0;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  max-height: 85dvh;
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+}
+.workspace-modes button,
+.view-switch button {
+  transition: none;
+}
+@media (min-width: 1100px) {
+  .discovery-shell {
+    grid-template-columns: var(--atlas-side) minmax(0, 1fr);
+    column-gap: 20px;
+    padding: 0 20px;
+  }
+  .discovery-shell .demo-bar {
+    margin: 0 -20px;
+  }
+  .atlas-rail {
+    width: auto;
+    padding: 16px 0;
+    min-height: 0;
+    height: auto;
+  }
+  .atlas-main {
+    padding: 16px 0;
+  }
+  .atlas-discovery {
+    grid-template-columns: minmax(0, 1fr) var(--atlas-side);
+    gap: 20px;
+  }
+  .atlas-world {
+    min-height: 440px;
+    height: calc(100dvh - 150px);
+  }
+  .atlas-countries {
+    padding: 16px;
+    min-height: 0;
+    max-height: calc(100dvh - 160px);
+  }
+  .floating-panel {
+    max-height: calc(100dvh - 180px);
+    overflow: auto;
+    scrollbar-gutter: stable;
+  }
+  .country-explore-layout:not(.view-list),
+  .workspace-setup,
+  .embedded-planner .planner-workspace:not(.view-list) {
+    grid-template-columns: var(--atlas-side) minmax(0, 1fr) var(--atlas-side);
+    gap: 20px;
+  }
+  .embedded-planner .planner-collection {
+    padding: 16px;
+  }
+  .country-collection {
+    padding: 16px;
+  }
+  .country-model,
+  .country-geography .map-panel {
+    height: clamp(360px, 65vh, 800px);
+  }
+  .country-explore-layout.view-list {
+    grid-template-columns: var(--atlas-side) minmax(0, 1fr);
+  }
+  .embedded-planner .planner-workspace.view-list {
+    grid-template-columns: var(--atlas-side) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "day controls" "day collection";
+  }
+  .embedded-planner .planner-workspace.view-list > .day-panel {
+    grid-area: day;
+  }
+  .embedded-planner .planner-workspace.view-list > .planner-map {
+    grid-area: controls;
+    position: static;
+  }
+  .embedded-planner .planner-workspace.view-list > .planner-collection {
+    grid-area: collection;
+  }
+}
+@media (max-width: 1099px) {
+  .discovery-shell .atlas-rail {
+    display: block;
+    padding: 12px;
+  }
+  .atlas-navigation-panel {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .atlas-navigation-panel .panel-inline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding-right: 48px;
+  }
+  .atlas-navigation-panel nav {
+    margin: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .atlas-navigation-panel .brand {
+    font-size: 42px;
+  }
+  .atlas-discovery,
+  .country-explore-layout,
+  .workspace-setup,
+  .embedded-planner .planner-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .atlas-world,
+  .atlas-countries,
+  .country-geography,
+  .country-context,
+  .country-collection,
+  .workspace-setup > *,
+  .embedded-planner .planner-workspace > * {
+    width: 100%;
+    min-width: 0;
+  }
+  .country-geography,
+  .embedded-planner .planner-map {
+    order: -1;
+    position: relative;
+  }
+  .country-context,
+  .country-collection,
+  .embedded-planner .day-panel,
+  .embedded-planner .planner-collection {
+    max-height: none;
+    padding: 12px;
+  }
+  .embedded-planner .planner-collection .add-list {
+    display: block;
+  }
+  .floating-panel.is-collapsed {
+    overflow: visible;
+  }
+  .country-explore-layout.view-list .country-context {
+    order: -1;
+  }
+  .atlas-countries {
+    margin-bottom: 20px;
+  }
+  .country-model,
+  .country-geography .map-panel {
+    height: clamp(340px, 55dvh, 580px);
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .shared-header-content {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace-modes button,
+  .view-switch button {
+    transition: none;
+  }
+}
+.workspace-modes button,
+.tabs button {
+  position: relative;
+}
+.atlas-tab-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 8px;
+  right: 8px;
+  height: 2px;
+  background: currentColor;
+  pointer-events: none;
+}
+
+.country-explore-layout.view-list .country-collection {
+  columns: auto;
+}
+@media (min-width: 1100px) {
+  .country-explore-layout.view-list .country-collection > .panel-body {
+    columns: 2;
+    column-gap: 24px;
+  }
+}
+@media (max-width: 1099px) {
+  .workspace-setup > .floating-panel,
+  .country-context.floating-panel {
+    display: block;
+  }
+}
+
+.workspace-modes button,
+.view-switch button {
+  transition: none;
+}
+.atlas-navigation-panel {
+  width: 100%;
+}
+.terrain-controls button,
+.region-shortcuts button {
+  min-height: 44px;
+}
+
+@media (max-width: 1099px) {
+  .modal.place-sheet,
+  .modal.country-details-sheet {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    max-height: 85dvh;
+    border-radius: 20px 20px 0 0;
+    padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  }
+}
+@media (min-width: 1100px) {
+  .floating-panel > .panel-toggle {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--surface);
+  }
+}
+
+/* Planner controls: presentation and route scope are separate decisions. */
+.planner-map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: end;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  margin-bottom: 12px;
+}
+.planner-tool-group {
+  min-width: 0;
+}
+.planner-tool-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.planner-map-toolbar .view-switch,
+.planner-map-toolbar .map-scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  width: fit-content;
+  border: 0;
+  background: var(--soft);
+  padding: 4px;
+  border-radius: 8px;
+}
+.planner-map-toolbar button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+.planner-map > .day-legend {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+}
+@media (min-width: 1100px) {
+  .embedded-planner .planner-workspace > .day-panel.floating-panel,
+  .embedded-planner .planner-workspace > .planner-collection.floating-panel {
+    position: sticky;
+    top: 24px;
+    height: calc(100dvh - 48px);
+    max-height: calc(100dvh - 48px);
+    align-self: start;
+  }
+  .embedded-planner .planner-workspace > .floating-panel.is-collapsed {
+    height: auto;
+  }
+}
+@media (max-width: 549px) {
+  .planner-map-toolbar {
+    padding: 12px;
+    gap: 12px;
+  }
+  .planner-map-toolbar button {
+    padding: 8px 10px;
+  }
+}
+
+.terrain-controls {
+  gap: 8px 12px;
+}
+.terrain-control-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-right: 12px;
+  border-right: 1px solid var(--line);
+}
+.terrain-control-group:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.terrain-controls .terrain-icon-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex: 0 0 44px;
+}
+
+/* Discovery: brand leads the central composition; geography gets more room. */
+.atlas-title h1 {
+  font-family: Allura, cursive;
+  font-size: clamp(64px, 7vw, 104px);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0;
+}
+.atlas-title h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+@media (min-width: 1100px) {
+  .discovery-shell {
+    --atlas-side: clamp(240px, 18vw, 300px);
+  }
+  .atlas-navigation-panel {
+    width: 200px;
+    max-width: 100%;
+    padding: 14px;
+  }
+  .atlas-navigation-panel .atlas-primary {
+    margin-top: 12px;
+    gap: 4px;
+  }
+  .atlas-navigation-panel .atlas-secondary {
+    margin-top: 24px;
+  }
+  .atlas-navigation-panel .atlas-secondary nav {
+    margin-top: 0;
+    gap: 4px;
+  }
+  .atlas-world {
+    height: auto;
+    min-height: 0;
+    justify-content: flex-start;
+  }
+  .atlas-world .globe-stage {
+    flex: none;
+    height: clamp(450px, calc(150dvh - 420px), 1200px);
+    min-height: 0;
+    max-height: none;
+  }
+}
+@media (max-width: 1099px) {
+  .atlas-world .globe-stage {
+    height: min(97.5vw, 870px);
+    min-height: 280px;
+  }
+  .atlas-navigation-panel .panel-inline {
+    padding-right: 48px;
+  }
+}
+
+/* Discovery rails follow document scrolling without pinning the whole page. */
+@media (min-width: 1100px) {
+  .discovery-shell > .atlas-rail {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    height: fit-content;
+  }
+  .atlas-discovery > .atlas-countries {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+    max-height: calc(100dvh - 160px);
+  }
+  .atlas-navigation-panel {
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+  }
+}

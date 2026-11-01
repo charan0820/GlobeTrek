@@ -1,3 +1,4 @@
+import { EditorialTitle, IslandContent } from "./atlas-presentation.jsx";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -129,7 +130,7 @@ export function Review() {
         <>
           <div className="page-heading">
             <div>
-              <h1>Your journey, together.</h1>
+              <EditorialTitle>Your journey, together.</EditorialTitle>
               <p>
                 Review exactly what you are reserving. Payment is simulated.
               </p>
@@ -228,6 +229,36 @@ export function ReservationDetail() {
           pending = r.status === "pending";
         return (
           <>
+            {pending && (
+              <IslandContent
+                id="reservation"
+                priority={20}
+                title={
+                  seconds > 0
+                    ? `On hold · ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+                    : "Hold expired"
+                }
+              >
+                <p>
+                  {seconds > 0
+                    ? "Your selected items are temporarily held. Complete the existing confirmation below."
+                    : "Recheck availability before reserving again."}
+                </p>
+                <button
+                  className="button"
+                  onClick={() =>
+                    document.querySelector(".booking-panel")?.scrollIntoView({
+                      behavior: matchMedia("(prefers-reduced-motion: reduce)")
+                        .matches
+                        ? "instant"
+                        : "smooth",
+                    })
+                  }
+                >
+                  Continue reservation
+                </button>
+              </IslandContent>
+            )}
             <Link className="back-link" to="/reservations">
               All reservations
             </Link>
@@ -364,7 +395,7 @@ export function Reservations() {
     <>
       <div className="page-heading">
         <div>
-          <h1>Your reservations</h1>
+          <EditorialTitle>Your reservations</EditorialTitle>
           <p>Compare destinations, booked dates and what’s included.</p>
         </div>
         <Link className="button secondary" to="/trips">

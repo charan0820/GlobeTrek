@@ -35,3 +35,13 @@ Approved npm access added build-only `polygon-clipping`, `earcut` and `pngjs` as
 New application interfaces: read-only `POST /api/estimates` and `POST /api/estimates/trip`; owned trip listings include shared pricing summaries. These use no external pricing API and log only the existing request count/status/duration fields. Estimates never create quotes or reserve inventory and have a separate 120-request/minute IP limiter. The final browser fixture evidence records its own scope; existing structured application logs remain the source for broader application counts.
 
 Resume verification — 31 October 2026: no new dependency/source downloads, hosted services or account connections. The isolated recovery browser fixture observed 82 application responses (76 × 200, 5 × 201, 1 expected revision-conflict 409) and 226 local-asset responses, all 200. These are that fixture's response counts, not totals across all browser suites; aborted requests are not counted as responses. The full smoke journey separately recorded two aborted prefetches. Raw scopes are retained in docs/evidence/country-workspace. Model loading/performance uses local assets and records its resource timing entries. The local replica-set and Edge processes ran with explicit execution approval; no persistent Atlas data was used.
+
+## 31 October 2026 - Motion destination slice
+
+- Added exact client dependency `motion@14.9.0` through the requested npm access approval. MIT license: `node_modules/motion/LICENSE.md`; versions and transitive packages recorded in package-lock.json. No account, subscription or runtime service calls. Registry request counts were not captured.
+- Read https://motion.dev/docs/react and https://transitions.dev/ as implementation references. Adapted free Panel reveal and Text states swap ideas; no Pro code/assets downloaded or copied. No new imagery/font/terrain downloads.
+- Existing catalog/relief fetch and prefetch behavior remains unchanged; progress reads local DOM geometry and does not issue API calls.
+
+## Fluid atlas follow-up - 31 October 2026
+
+Reused installed Motion 14.9.0 (MIT), existing Radix dialogs and local licensed imagery/fonts/terrain. Adapted the free Transitions.dev Panel reveal, Card resize, Text states swap, Texts reveal and Tabs sliding ideas in project code. No paid component, copied Pro source, new dependency, asset download or external account connection. Browser checks used the local application plus its existing public map service when Detailed map was exercised; no new runtime service was introduced. API responses/status counts for the recovery run remain in artifacts/travel-recovery/result.json; request totals are observations of that run, not lifetime usage.

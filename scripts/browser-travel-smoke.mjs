@@ -200,6 +200,7 @@ try {
   await page.getByRole("button", { name: /Use dark theme/ }).click();
   await capture("discovery-dark-mobile");
   await page.goto(`${base}/countries/JP`);
+  await page.getByRole("button", { name: "List", exact: true }).click();
   await page.getByRole("button", { name: "Senso-ji", exact: true }).waitFor();
   await capture("country-mobile");
   await page.getByRole("button", { name: "Detailed map", exact: true }).click();

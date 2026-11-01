@@ -13,6 +13,11 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Compass, Moon, Sun, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { AuthProvider, useAuth } from "./auth.jsx";
+import {
+  AtlasPresentation,
+  FloatingPanel,
+  PageEntry,
+} from "./atlas-presentation.jsx";
 import useSoftScroll from "./useSoftScroll.js";
 const lazyExport = (file, name) =>
   lazy(() => file().then((m) => ({ default: m[name] })));
@@ -23,7 +28,10 @@ const Discovery = lazyExport(() => import("./discovery.jsx"), "Discovery"),
   ),
   ProductDetail = lazyExport(() => import("./discovery.jsx"), "ProductDetail"),
   ResumeIntent = lazyExport(() => import("./discovery.jsx"), "ResumeIntent");
-const TripSetup = lazyExport(() => import("./CountryWorkspace.jsx"), "SetupEntry"),
+const TripSetup = lazyExport(
+    () => import("./CountryWorkspace.jsx"),
+    "SetupEntry",
+  ),
   Planner = lazyExport(() => import("./CountryWorkspace.jsx"), "PlannerEntry"),
   MyTrips = lazyExport(() => import("./planner.jsx"), "MyTrips");
 const Review = lazyExport(() => import("./reservations.jsx"), "Review"),
@@ -45,6 +53,7 @@ import "@fontsource/source-sans-3/latin-600.css";
 import "react-day-picker/style.css";
 import "./travel.css";
 import "./workspace.css";
+import "./atlas-presentation.css";
 const client = new QueryClient({
   defaultOptions: {
     queries: { retry: 1, staleTime: 15000, refetchOnWindowFocus: false },
@@ -139,20 +148,18 @@ function Shell() {
       </div>
       <div className="theme-header-slot">{themeButton}</div>
       <header className={discovery ? "atlas-rail" : "header wrap"}>
-        <Link className="brand" to="/" aria-label="GlobeTrek home">
-          <span>
-            GlobeTrek<span className="brand-dot">.</span>
-          </span>
-        </Link>
         {discovery ? (
-          <>
+          <FloatingPanel
+            title="Navigation"
+            storageKey="discovery-left"
+            className="atlas-navigation-panel"
+            inline
+          >
             <nav className="atlas-primary" aria-label="Start your journey">
               <Link to={user ? "/account" : "/login"}>
                 {user ? "Account" : "Login"}
               </Link>
-              <Link className="atlas-build" to="/planner/new">
-                Build your trip <ArrowRight size={16} />
-              </Link>
+              <Link to="/planner/new">Build your trip</Link>
             </nav>
             <details className="atlas-secondary" open={wide}>
               <summary>More navigation</summary>
@@ -161,13 +168,12 @@ function Shell() {
                 <Link to="/reservations">Reservations</Link>
               </nav>
             </details>
-            <p className="atlas-signoff">
-              Curiosity, given
-              <br />a direction.
-            </p>
-          </>
+          </FloatingPanel>
         ) : (
-          <>
+          <div className="shared-header-content">
+            <Link className="brand" to="/" aria-label="GlobeTrek home">
+              GlobeTrek.
+            </Link>
             <nav aria-label="Main navigation">
               <NavLink to="/" end>
                 Explore
@@ -178,7 +184,7 @@ function Shell() {
                 {user ? user.name.split(" ")[0] : "Account"}
               </NavLink>
             </nav>
-          </>
+          </div>
         )}
       </header>
       <main
@@ -189,40 +195,45 @@ function Shell() {
         }
       >
         <ErrorMessage error={authError} />
-        <Suspense fallback={<Status>Loading your journey…</Status>}>
-          <Routes>
-            <Route path="/" element={<Discovery />} />
-            <Route path="/countries/:code" element={<CountryExplorer />} />
-            <Route path="/discover/:kind/:id" element={<ProductDetail />} />
-            <Route
-              path="/hotels/:id"
-              element={<ProductDetail fixedKind="stays" />}
-            />
-            <Route path="/planner/new" element={<TripSetup />} />
-            <Route path="/planner/:id" element={<Planner />} />
-            <Route path="/trips" element={<MyTrips />} />
-            <Route path="/review/:id" element={<Review />} />
-            <Route path="/reservations" element={<Reservations />} />
-            <Route path="/bookings" element={<Reservations />} />
-            <Route path="/reservations/:id" element={<ReservationDetail />} />
-            <Route path="/login" element={<AuthPage />} />
-            <Route path="/register" element={<AuthPage register />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/resume" element={<ResumeIntent />} />
-            <Route
-              path="*"
-              element={
-                <div className="empty">
-                  <h1>A little off the map.</h1>
-                  <p>This page does not exist.</p>
-                  <Link className="button" to="/">
-                    Explore the world
-                  </Link>
-                </div>
-              }
-            />
-          </Routes>
-        </Suspense>
+        <PageEntry
+          identity={location.pathname}
+          cinematic={discovery || countryWorkspace}
+        >
+          <Suspense fallback={<Status>Loading your journey…</Status>}>
+            <Routes>
+              <Route path="/" element={<Discovery />} />
+              <Route path="/countries/:code" element={<CountryExplorer />} />
+              <Route path="/discover/:kind/:id" element={<ProductDetail />} />
+              <Route
+                path="/hotels/:id"
+                element={<ProductDetail fixedKind="stays" />}
+              />
+              <Route path="/planner/new" element={<TripSetup />} />
+              <Route path="/planner/:id" element={<Planner />} />
+              <Route path="/trips" element={<MyTrips />} />
+              <Route path="/review/:id" element={<Review />} />
+              <Route path="/reservations" element={<Reservations />} />
+              <Route path="/bookings" element={<Reservations />} />
+              <Route path="/reservations/:id" element={<ReservationDetail />} />
+              <Route path="/login" element={<AuthPage />} />
+              <Route path="/register" element={<AuthPage register />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/resume" element={<ResumeIntent />} />
+              <Route
+                path="*"
+                element={
+                  <div className="empty">
+                    <h1>A little off the map.</h1>
+                    <p>This page does not exist.</p>
+                    <Link className="button" to="/">
+                      Explore the world
+                    </Link>
+                  </div>
+                }
+              />
+            </Routes>
+          </Suspense>
+        </PageEntry>
       </main>
       {!discovery && (
         <footer className="footer wrap">
@@ -415,7 +426,9 @@ createRoot(document.getElementById("root")).render(
       <QueryClientProvider client={client}>
         <BrowserRouter>
           <AuthProvider>
-            <Shell />
+            <AtlasPresentation>
+              <Shell />
+            </AtlasPresentation>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

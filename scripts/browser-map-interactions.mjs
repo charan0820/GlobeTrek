@@ -229,7 +229,7 @@ try {
   await button("Detailed map").click();
   await button("All days").click();
   await readyMap();
-  assert.equal(await page.locator(".day-legend button").count(), 30);
+  assert.equal(await page.locator(".day-tabs button").count(), 30);
   checks.push(
     "Thirty-day guest draft remains operable with all-days map and explicit day legend",
   );

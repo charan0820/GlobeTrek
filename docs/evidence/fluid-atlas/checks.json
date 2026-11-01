@@ -1,0 +1,54 @@
+{
+  "results": [
+    {
+      "width": 320,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    },
+    {
+      "width": 390,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    },
+    {
+      "width": 768,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1024,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1100,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1440,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    },
+    {
+      "width": 1920,
+      "keyboard": true,
+      "island": true,
+      "panels": true,
+      "noOverflow": true
+    }
+  ],
+  "errors": []
+}

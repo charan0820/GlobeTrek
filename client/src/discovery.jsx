@@ -1,3 +1,8 @@
+import {
+  FloatingPanel,
+  IslandContent,
+  EditorialTitle,
+} from "./atlas-presentation.jsx";
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   Link,
@@ -18,6 +23,11 @@ import {
 } from "./ui.jsx";
 import { useAuth } from "./auth.jsx";
 import { dateOffset } from "./api.js";
+import {
+  DestinationReveal,
+  CountryScrollProgress,
+  CountryEntryStatus,
+} from "./discovery-motion.jsx";
 import DestinationPhoto from "./DestinationPhoto.jsx";
 import { PlacePhoto } from "./place-ui.jsx";
 import GeoBoundary from "./geo/GeoBoundary.jsx";
@@ -30,6 +40,7 @@ export function Discovery() {
   const navigate = useNavigate();
   const [entry, setEntry] = useState(null);
   const sequence = useRef(0);
+  const countryList = useRef(null);
   function enter(country, event) {
     if (
       event &&
@@ -97,7 +108,10 @@ export function Discovery() {
         return (
           <section className="atlas-discovery" aria-label="Explore the world">
             <div className="atlas-world">
-              <h1>A world to explore.</h1>
+              <div className="atlas-title">
+                <EditorialTitle>GlobeTrek.</EditorialTitle>
+                <h2>A world to explore.</h2>
+              </div>
               <div className="globe-stage">
                 <GeoBoundary>
                   <Suspense
@@ -121,7 +135,9 @@ export function Discovery() {
                 Drag to explore. Click to preview; double-click to enter.
               </p>
             </div>
-            <aside
+            <FloatingPanel
+              title="Destinations"
+              storageKey="discovery-right"
               className="atlas-countries"
               aria-label="Choose your destination"
             >
@@ -136,6 +152,7 @@ export function Discovery() {
                 onCompositionChange={setComposing}
               />
               <div
+                ref={countryList}
                 className="country-picks"
                 role="group"
                 aria-label="Available countries"
@@ -165,6 +182,8 @@ export function Discovery() {
                   </p>
                 )}
               </div>
+              <CountryScrollProgress container={countryList} filter={search} />
+              <CountryEntryStatus country={entry?.country.name} />
               {committed.length >= 2 && suggestions.data?.length > 0 && (
                 <div
                   className="search-suggestions"
@@ -198,7 +217,8 @@ export function Discovery() {
                 </p>
               )}
               {active && (
-                <section
+                <DestinationReveal
+                  identity={active.code}
                   className="country-dossier"
                   aria-label="Selected country"
                 >
@@ -215,9 +235,21 @@ export function Discovery() {
                     Explore {active.name}
                     <ArrowRight size={18} />
                   </Link>
-                </section>
+                </DestinationReveal>
               )}
-            </aside>
+            </FloatingPanel>
+            {active && (
+              <IslandContent id="discovery" title={active.name}>
+                <p>{active.description}</p>
+                <Link
+                  className="button"
+                  to={`/countries/${active.code}`}
+                  onClick={(event) => enter(active, event)}
+                >
+                  Explore {active.name}
+                </Link>
+              </IslandContent>
+            )}
           </section>
         );
       }}

@@ -1,7 +1,14 @@
+import {
+  TabIndicator,
+  IslandContent,
+  EditorialTitle,
+  FloatingPanel,
+} from "./atlas-presentation.jsx";
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { useApi, QueryState, storageRead, Modal } from "./ui.jsx";
 import { useNarrow } from "./place-ui.jsx";
+import { DestinationReveal } from "./discovery-motion.jsx";
 import { useAuth } from "./auth.jsx";
 import { CountryCatalog, DetailContent } from "./discovery.jsx";
 import { Planner, TripSetup, SignIn } from "./planner.jsx";
@@ -55,13 +62,46 @@ function Workspace() {
   return (
     <QueryState query={country}>
       {(c) => (
-        <section className="country-workspace" data-country-workspace={code}>
+        <DestinationReveal
+          identity={code}
+          className="country-workspace"
+          data-country-workspace={code}
+        >
+          <IslandContent
+            id="country"
+            title={`${c.name} · ${mode === "plan" ? "Build your trip" : "Explore"}`}
+          >
+            <button className="button" onClick={() => changeMode("plan")}>
+              Build your trip
+            </button>
+            <div className="view-switch">
+              {[
+                ["model", "Model"],
+                ["map", "Detailed map"],
+                ["list", "List"],
+              ].map(([view, label]) => (
+                <button
+                  key={view}
+                  aria-pressed={(params.get("view") || "model") === view}
+                  onClick={() =>
+                    setParams((old) => {
+                      const p = new URLSearchParams(old);
+                      p.set("view", view);
+                      return p;
+                    })
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </IslandContent>
           <header className="country-workspace-heading">
             <div>
               <Link to="/" className="back-link">
                 Explore the world
               </Link>
-              <h1>{c.name}</h1>
+              <EditorialTitle>{c.name}</EditorialTitle>
               <p>{c.description}</p>
             </div>
             <nav
@@ -72,12 +112,17 @@ function Workspace() {
                 aria-pressed={mode === "explore"}
                 onClick={() => changeMode("explore")}
               >
+                <TabIndicator
+                  active={mode === "explore"}
+                  group="workspace-mode"
+                />
                 Explore
               </button>
               <button
                 aria-pressed={mode === "plan"}
                 onClick={() => changeMode("plan")}
               >
+                <TabIndicator active={mode === "plan"} group="workspace-mode" />
                 Build your trip
               </button>
             </nav>
@@ -102,13 +147,16 @@ function Workspace() {
                 />
               ) : (
                 <div className="workspace-setup">
-                  <aside>
+                  <FloatingPanel
+                    title="Trip context"
+                    storageKey="planning-left"
+                  >
                     <h2>Your dates, your pace.</h2>
                     <p>
                       Attractions are planning stops. Add stays and scheduled
                       tours when you are ready.
                     </p>
-                  </aside>
+                  </FloatingPanel>
                   <Suspense fallback={<p>Loading relief…</p>}>
                     {mode === "plan" && (
                       <Model
@@ -118,7 +166,12 @@ function Workspace() {
                       />
                     )}
                   </Suspense>
-                  <TripSetup embedded countryCode={code} />
+                  <FloatingPanel
+                    title="Dates and travelers"
+                    storageKey="planning-right"
+                  >
+                    <TripSetup embedded countryCode={code} />
+                  </FloatingPanel>
                 </div>
               )}
             </div>
@@ -155,6 +208,7 @@ function Workspace() {
                     return p;
                   });
               }}
+              variant="country-details-sheet"
               title="Place and booking details"
               description="Inspect the destination and choose dates without leaving your country workspace."
             >
@@ -176,7 +230,7 @@ function Workspace() {
               Destination guide
             </a>
           </p>
-        </section>
+        </DestinationReveal>
       )}
     </QueryState>
   );

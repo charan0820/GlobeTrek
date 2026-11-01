@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "errors": [],
+  "failedRequests": [
+    {
+      "url": "http://localhost:3003/api/countries/JP",
+      "reason": "net::ERR_ABORTED"
+    },
+    {
+      "url": "http://localhost:3003/relief/jp-desktop.glb",
+      "reason": "net::ERR_ABORTED"
+    }
+  ]
+}
